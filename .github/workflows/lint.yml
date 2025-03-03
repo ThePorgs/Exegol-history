@@ -1,4 +1,4 @@
-name: format-and-lint
+name: lint
 on: push
 jobs:
   build:
