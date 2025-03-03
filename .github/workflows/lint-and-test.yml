@@ -1,4 +1,4 @@
-name: lint
+name: lint-and-test
 on: push
 jobs:
   build:
@@ -16,3 +16,7 @@ jobs:
       # Update output format to enable automatic inline annotations.
       - name: Run Ruff
         run: ruff check --output-format=github .
+      - name: Install dependencies
+        run: poetry install --with dev
+      - name: Run tests
+        run: poetry run pytest -v
