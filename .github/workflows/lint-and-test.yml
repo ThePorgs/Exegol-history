@@ -14,8 +14,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install ruff
           pipx install poetry
-      # Update output format to enable automatic inline annotations.
-      - name: Run Ruff
+      - name: Run Ruff formatter
+        run: ruff format --check .
+      - name: Run Ruff linter
         run: ruff check --output-format=github .
       - name: Install dependencies
         run: poetry install --with dev
