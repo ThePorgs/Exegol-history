@@ -1,0 +1,21 @@
+# Main entrypoint workflow
+# This workflow orchestrates all checks and tests by calling the individual workflows
+# in the appropriate order. It serves as the single entry point for CI/CD.
+
+name: Checks and tests
+on: [push, pull_request]
+
+jobs:
+  quality:
+    name: Code Quality Checks
+    uses: ./.github/workflows/sub_lint.yml
+
+  testing:
+    name: Main Testing
+    needs: quality
+    uses: ./.github/workflows/sub_testing.yml
+
+  compatibility:
+    name: Compatibility Testing
+    needs: testing
+    uses: ./.github/workflows/sub_compatibility.yml 
