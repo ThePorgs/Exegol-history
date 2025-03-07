@@ -15,10 +15,19 @@ from exegol_history.db_api.creds import (
     delete_credential,
     GROUP_NAME_CREDENTIALS,
 )
-from exegol_history.db_api.hosts import add_host, get_hosts, delete_host, GROUP_NAME_HOSTS
+from exegol_history.db_api.hosts import (
+    add_host,
+    get_hosts,
+    delete_host,
+    GROUP_NAME_HOSTS,
+)
 from exegol_history.tui.db_creds.db_creds import DbCredsApp
 from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
-from exegol_history.db_api.formatter import format_into_json, format_into_csv, format_into_txt
+from exegol_history.db_api.formatter import (
+    format_into_json,
+    format_into_csv,
+    format_into_txt,
+)
 from exegol_history.db_api.parsing import (
     parse_creds,
     parse_hosts,

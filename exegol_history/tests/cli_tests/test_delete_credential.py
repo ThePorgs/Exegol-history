@@ -1,6 +1,10 @@
 import pytest
 
-from exegol_history.db_api.creds import add_credential, get_credentials, delete_credential
+from exegol_history.db_api.creds import (
+    add_credential,
+    get_credentials,
+    delete_credential,
+)
 from common_cli import (
     USERNAME_TEST_VALUE,
     PASSWORD_TEST_VALUE,

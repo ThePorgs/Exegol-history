@@ -17,7 +17,9 @@ from exegol_history.db_api.creds import (
 from exegol_history.db_api.utils import copy_in_clipboard
 from exegol_history.tui.db_creds.add_credential import AddCredentialScreen
 from exegol_history.tui.db_creds.edit_credential import EditCredentialScreen
-from exegol_history.tui.db_creds.delete_credential import DeleteCredentialConfirmationScreen
+from exegol_history.tui.db_creds.delete_credential import (
+    DeleteCredentialConfirmationScreen,
+)
 
 CREDS_COLUMNS = ["Username", "Password", "Hash", "Domain"]
 
