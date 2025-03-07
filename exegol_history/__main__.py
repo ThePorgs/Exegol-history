@@ -102,9 +102,15 @@ def parse_arguments() -> None:
         "del", help="Delete an object (credentials, hosts, ...)."
     )
     tui_parser = subparsers.add_parser(
-        "tui",
+        "export",
         help="""
 			Launch the TUI to manage an object (credentials, hosts, ...).
+		""",
+    )
+    subparsers.add_parser(
+        "env",
+        help="""
+			Display environment variables related to Exegol-history.
 		""",
     )
 
@@ -314,20 +320,38 @@ def main():
                 print("[[bold red]*[/bold red]] The provided IP does not exist !")
 
     # TUI mode
-    if args.command == "tui":
+    if args.command == "export":
         if args.subcommand == "creds":
             app = DbCredsApp(config, kp)
-            creds = app.run()
+            username, password, nt_hash, domain = app.run()
 
             try:
-                print(f"{creds[0]}\n{creds[1]}\n{creds[2]}\n{creds[3]}")
+                print(f"export USER='{username}'")
+                print(f"export PASSWORD='{password}'")
+                print(f"export NT_HASH='{nt_hash}'")
+                print(f"export DOMAIN='{domain}'")
             except Exception:
                 pass
         elif args.subcommand == "hosts":
             app = DbHostsApp(config, kp)
-            hosts = app.run()
+            ip, hostname, role = app.run()
 
             try:
-                print(f"{hosts[0]}\n{hosts[1]}\n{hosts[2]}")
+                print(f"export IP='{ip}'")
+                print(f"export TARGET='{ip}'")
+                print(f"export HOSTNAME='{hostname}'")
+
+                if role == "DC":
+                    print(f"export DC_HOST='{ip}'")
             except Exception:
                 pass
+
+    if args.command == "env":
+        print(f" Username:{os.environ.get('USER')}")
+        print(f" Password:{os.environ.get('PASSWORD')}")
+        print(f" NT Hash:{os.environ.get('NT_HASH')}")
+        print(f" Domain:{os.environ.get('DOMAIN')}")
+        print(f" IP:{os.environ.get('IP')}")
+        print(f" Target:{os.environ.get('TARGET')}")
+        print(f" Hostname:{os.environ.get('HOSTNAME')}")
+        print(f" DC Host:{os.environ.get('DC_HOST')}")

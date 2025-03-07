@@ -51,7 +51,6 @@ class DbHostsApp(App):
 
         table = self.query_one(DataTable)
         table.clear()
-        table.add_columns(*HOSTS_COLUMNS)
         table.add_rows(tmp)
         self.original_data = tmp
 
