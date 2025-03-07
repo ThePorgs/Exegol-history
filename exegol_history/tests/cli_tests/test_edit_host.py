@@ -1,4 +1,4 @@
-from dbassets.db_api.hosts import add_host, get_hosts, edit_host
+from exegol_history.db_api.hosts import add_host, get_hosts, edit_host
 from common_cli import IP_TEST_VALUE, HOSTNAME_TEST_VALUE, ROLE_TEST_VALUE
 from pykeepass import PyKeePass
 

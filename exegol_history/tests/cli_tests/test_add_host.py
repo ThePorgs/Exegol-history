@@ -1,13 +1,13 @@
 import pytest
 
-from dbassets.db_api.hosts import add_host, get_hosts
+from exegol_history.db_api.hosts import add_host, get_hosts
 from common_cli import (
     IP_TEST_VALUE,
     HOSTNAME_TEST_VALUE,
     ROLE_TEST_VALUE,
     TEST_HOSTS_CSV,
 )
-from dbassets.db_api.parsing import parse_hosts, HostsFileType
+from exegol_history.db_api.parsing import parse_hosts, HostsFileType
 from pykeepass import PyKeePass
 
 

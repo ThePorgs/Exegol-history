@@ -8,77 +8,50 @@ from textual import events
 from pykeepass import PyKeePass
 from typing import Any
 
-from dbassets.db_api.creds import (
-    add_credential,
-    get_credentials,
-    delete_credential,
-    edit_credential,
-)
-from dbassets.db_api.utils import copy_in_clipboard
-from dbassets.tui.db_creds.add_credential import AddCredentialScreen
-from dbassets.tui.db_creds.edit_credential import EditCredentialScreen
-from dbassets.tui.db_creds.delete_credential import DeleteCredentialConfirmationScreen
+from exegol_history.db_api.hosts import add_host, get_hosts, delete_host, edit_host
+from exegol_history.db_api.utils import copy_in_clipboard
+from exegol_history.tui.db_hosts.add_host import AddHostScreen
+from exegol_history.tui.db_hosts.edit_host import EditHostScreen
+from exegol_history.tui.db_hosts.delete_host import DeleteHostConfirmationScreen
 
-CREDS_COLUMNS = ["Username", "Password", "Hash", "Domain"]
+HOSTS_COLUMNS = ["IP", "Hostname", "Role"]
 
 """
-This is the main application displaying the credentials table and a search bar
+This is the main application displaying the hosts table and a search bar
 """
 
 
-class DbCredsApp(App):
+class DbHostsApp(App):
     BINDINGS = [
         Binding(
             "f1",
-            "copy_username_clipboard",
-            " username",
-            id="copy_username_clipboard",
-            tooltip="Copy the username to the clipboard.",
+            "copy_ip_clipboard",
+            " IP",
+            id="copy_ip_clipboard",
+            tooltip="Copy the IP to the clipboard.",
         ),
         Binding(
             "f2",
-            "copy_password_clipboard",
-            " password",
-            id="copy_password_clipboard",
-            tooltip="Copy the password to the clipboard.",
+            "copy_hostname_clipboard",
+            " hostname",
+            id="copy_hostname_clipboard",
+            tooltip="Copy the hostname to the clipboard.",
         ),
+        Binding("f3", "add_host", "+ host", id="add_host", tooltip="Add a host."),
         Binding(
-            "f3",
-            "copy_hash_clipboard",
-            " hash",
-            id="copy_hash_clipboard",
-            tooltip="Copy the hash to the clipboard.",
+            "f4", "delete_host", " host", id="delete_host", tooltip="Delete a host."
         ),
-        Binding(
-            "f4",
-            "add_credential",
-            "+ credential",
-            id="add_credential",
-            tooltip="Add a credential.",
-        ),
-        Binding(
-            "f5",
-            "delete_credential",
-            " credential",
-            id="delete_credential",
-            tooltip="Delete a credential.",
-        ),
-        Binding(
-            "f6",
-            "edit_credential",
-            " credential",
-            id="edit_credential",
-            tooltip="Edit a credential.",
-        ),
+        Binding("f5", "edit_host", " host", id="edit_host", tooltip="Edit a host."),
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
     ]
 
     def update_table(self) -> None:
         # Refresh the table
-        tmp = get_credentials(self.kp)
+        tmp = get_hosts(self.kp)
 
         table = self.query_one(DataTable)
         table.clear()
+        table.add_columns(*HOSTS_COLUMNS)
         table.add_rows(tmp)
         self.original_data = tmp
 
@@ -91,10 +64,10 @@ class DbCredsApp(App):
         yield self.main_view()
 
     def on_mount(self) -> None:
-        tmp = get_credentials(self.kp)
+        tmp = get_hosts(self.kp)
 
         table = self.query_one(DataTable)
-        table.add_columns(*CREDS_COLUMNS)
+        table.add_columns(*HOSTS_COLUMNS)
         table.add_rows(tmp)
         table.zebra_stripes = True
         table.cursor_type = "row"
@@ -115,8 +88,7 @@ class DbCredsApp(App):
 
     def on_input_changed(self, event: Input.Changed) -> None:
         try:
-            """Filter the DataTable when the search bar input changes."""
-            search_query = event.value.lower()  # Case-insensitive search
+            search_query = event.value.lower()
             data_table = self.query_one(DataTable)
 
             # Clear current rows
@@ -135,53 +107,41 @@ class DbCredsApp(App):
         except Exception:
             pass
 
-    def action_copy_username_clipboard(self) -> None:
+    def action_copy_ip_clipboard(self) -> None:
         table = self.query_one(DataTable)
         selected_row = table.cursor_row
-
         try:
             row_data = table.get_row_at(selected_row)
-            username = row_data[0]
-            copy_in_clipboard(username)
+            ip = row_data[0]
+            copy_in_clipboard(ip)
         except Exception:
             pass
 
         sys.exit(0)
 
-    def action_copy_password_clipboard(self) -> None:
+    def action_copy_hostname_clipboard(self) -> None:
         table = self.query_one(DataTable)
         selected_row = table.cursor_row
+
         try:
             row_data = table.get_row_at(selected_row)
-            password = row_data[1]
-            copy_in_clipboard(password)
+            hostname = row_data[1]
+            copy_in_clipboard(hostname)
         except Exception:
             pass
 
         sys.exit(0)
 
-    def action_copy_hash_clipboard(self) -> None:
-        table = self.query_one(DataTable)
-        selected_row = table.cursor_row
-        try:
-            row_data = table.get_row_at(selected_row)
-            hash = row_data[2]
-            copy_in_clipboard(hash)
-        except Exception:
-            pass
-
-        sys.exit(0)
-
-    def action_add_credential(self) -> None:
-        def check_added_creds(parsed_creds: []) -> None:
-            for cred in parsed_creds:
-                add_credential(self.kp, cred[0], cred[1], cred[2], cred[3])
+    def action_add_host(self) -> None:
+        def check_added_host(parsed_hosts: []) -> None:
+            for host in parsed_hosts:
+                add_host(self.kp, host[0], host[1], host[2])
 
             self.update_table()
 
-        self.push_screen(AddCredentialScreen(), check_added_creds)
+        self.push_screen(AddHostScreen(), check_added_host)
 
-    def action_delete_credential(self) -> None:
+    def action_delete_host(self) -> None:
         def check_delete(delete: bool) -> None:
             if delete:
                 table = self.query_one(DataTable)
@@ -189,29 +149,27 @@ class DbCredsApp(App):
 
                 try:
                     row_data = table.get_row_at(selected_row)
-                    delete_credential(self.kp, row_data[0])
-                    self.update_table()
+                    delete_host(self.kp, row_data[0])
                 except Exception:
                     pass
 
-        self.push_screen(DeleteCredentialConfirmationScreen(), check_delete)
+                self.update_table()
 
-    def action_edit_credential(self) -> None:
-        def check_edit_creds(creds: (str, str, str, str, str)) -> None:
-            edit_credential(self.kp, creds[0], creds[1], creds[2], creds[3], creds[4])
+        self.push_screen(DeleteHostConfirmationScreen(), check_delete)
+
+    def action_edit_host(self) -> None:
+        def check_edit_host(host: (str, str, str, str)) -> None:
+            edit_host(self.kp, host[0], host[1], host[2], host[3])
 
             self.update_table()
 
         table = self.query_one(DataTable)
-        selected_row = table.cursor_row
 
         try:
+            selected_row = table.cursor_row
             row_data = table.get_row_at(selected_row)
             self.push_screen(
-                EditCredentialScreen(
-                    row_data[0], row_data[1], row_data[2], row_data[3]
-                ),
-                check_edit_creds,
+                EditHostScreen(row_data[0], row_data[1], row_data[2]), check_edit_host
             )
         except Exception:
             pass

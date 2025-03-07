@@ -12,8 +12,8 @@ from textual.widgets import (
 )
 from textual.containers import Vertical, Horizontal
 
-from dbassets.db_api.parsing import parse_hosts, HostsFileType
-from dbassets.tui.common.open_file import OpenFileScreen
+from exegol_history.db_api.parsing import parse_hosts, HostsFileType
+from exegol_history.tui.common.open_file import OpenFileScreen
 
 """
 This screen is used to add a host

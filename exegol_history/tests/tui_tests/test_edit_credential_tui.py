@@ -1,7 +1,7 @@
 import pytest
 
-from dbassets.tui.db_creds.db_creds import DbCredsApp
-from dbassets.db_api.creds import get_credentials
+from exegol_history.tui.db_creds.db_creds import DbCredsApp
+from exegol_history.db_api.creds import get_credentials
 from common_tui import (
     USERNAME_TEST_VALUE,
     PASSWORD_TEST_VALUE,

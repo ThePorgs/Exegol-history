@@ -11,7 +11,7 @@
       "poetry install"
     ],
     "scripts": {
-      "dbassets": "poetry run python db-assets.py",
+      "exegol-history": "poetry run python exegol-history.py",
       "test": "poetry run pytest -v",
       "format": "ruff format ."
     }

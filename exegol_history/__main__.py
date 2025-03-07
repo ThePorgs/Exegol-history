@@ -9,24 +9,24 @@ from rich.traceback import install
 from pykeepass import PyKeePass, create_database
 from typing import Any
 
-from dbassets.db_api.creds import (
+from exegol_history.db_api.creds import (
     add_credential,
     get_credentials,
     delete_credential,
     GROUP_NAME_CREDENTIALS,
 )
-from dbassets.db_api.hosts import add_host, get_hosts, delete_host, GROUP_NAME_HOSTS
-from dbassets.tui.db_creds.db_creds import DbCredsApp
-from dbassets.tui.db_hosts.db_hosts import DbHostsApp
-from dbassets.db_api.formatter import format_into_json, format_into_csv, format_into_txt
-from dbassets.db_api.parsing import (
+from exegol_history.db_api.hosts import add_host, get_hosts, delete_host, GROUP_NAME_HOSTS
+from exegol_history.tui.db_creds.db_creds import DbCredsApp
+from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
+from exegol_history.db_api.formatter import format_into_json, format_into_csv, format_into_txt
+from exegol_history.db_api.parsing import (
     parse_creds,
     parse_hosts,
     CredsFileType,
     HostsFileType,
 )
 
-DBASSETS_HOME_FOLDER_NAME = ".dbassets"
+exegol_history_HOME_FOLDER_NAME = ".exegol_history"
 
 
 def setup(db_path: str, db_key_path: str) -> None:
@@ -54,7 +54,7 @@ def setup_groups(kp: PyKeePass) -> None:
 
 def load_config() -> dict[str, Any]:
     config_path = os.path.expanduser(
-        os.path.join("~", DBASSETS_HOME_FOLDER_NAME, "config.toml")
+        os.path.join("~", exegol_history_HOME_FOLDER_NAME, "config.toml")
     )
 
     if not os.path.isfile(config_path):
@@ -71,7 +71,7 @@ def load_config() -> dict[str, Any]:
 
 def parse_arguments() -> None:
     parser = argparse.ArgumentParser(
-        prog="dbassets",
+        prog="exegol_history",
         description="""
 			This program can be used to easily manage credentials 
 			and assets found during an engagement.
@@ -207,13 +207,13 @@ def parse_arguments() -> None:
 def main():
     install()
     config = load_config()
-    dbassets_home_folder = os.path.join("~", DBASSETS_HOME_FOLDER_NAME)
+    exegol_history_home_folder = os.path.join("~", exegol_history_HOME_FOLDER_NAME)
 
     db_path = os.path.expanduser(
-        os.path.join(dbassets_home_folder, config["paths"]["db_name"])
+        os.path.join(exegol_history_home_folder, config["paths"]["db_name"])
     )
     db_key_path = os.path.expanduser(
-        os.path.join(dbassets_home_folder, config["paths"]["db_key_name"])
+        os.path.join(exegol_history_home_folder, config["paths"]["db_key_name"])
     )
 
     if not os.path.isfile(db_path):

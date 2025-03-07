@@ -1,8 +1,8 @@
 import pytest
 
-from dbassets.db_api.formatter import format_into_json, format_into_csv, format_into_txt
-from dbassets.db_api.creds import add_credential, get_credentials
-from dbassets.db_api.parsing import parse_creds, CredsFileType
+from exegol_history.db_api.formatter import format_into_json, format_into_csv, format_into_txt
+from exegol_history.db_api.creds import add_credential, get_credentials
+from exegol_history.db_api.parsing import parse_creds, CredsFileType
 from common_cli import (
     USERNAME_TEST_VALUE,
     PASSWORD_TEST_VALUE,

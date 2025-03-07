@@ -13,8 +13,8 @@ from textual.widgets import (
 from textual.containers import Vertical, Horizontal
 from textual.validation import Length
 
-from dbassets.db_api.parsing import parse_creds, CredsFileType
-from dbassets.tui.common.open_file import OpenFileScreen
+from exegol_history.db_api.parsing import parse_creds, CredsFileType
+from exegol_history.tui.common.open_file import OpenFileScreen
 
 """
 This screen is used to add a credential

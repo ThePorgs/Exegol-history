@@ -1,7 +1,7 @@
 import pytest
 
-from dbassets.tui.db_hosts.db_hosts import DbHostsApp
-from dbassets.db_api.hosts import get_hosts
+from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
+from exegol_history.db_api.hosts import get_hosts
 from common_tui import (
     IP_TEST_VALUE,
     select_input_and_enter_text,

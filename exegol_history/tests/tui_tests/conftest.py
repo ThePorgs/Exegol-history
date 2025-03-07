@@ -2,13 +2,13 @@ import os
 import pytest
 import tomllib
 
-from dbassets.__main__ import setup
+from exegol_history.__main__ import setup
 from pykeepass import PyKeePass
 from typing import Any
 
 TEST_DB_NAME = "test.kdbx"
 TEST_KEY_NAME = "test.key"
-TEST_ARTIFACTS_PATH = os.path.join("dbassets", "tests", "artifacts")
+TEST_ARTIFACTS_PATH = os.path.join("exegol_history", "tests", "artifacts")
 
 TEST_DB_PATH = os.path.join(TEST_ARTIFACTS_PATH, TEST_DB_NAME)
 TEST_KEY_PATH = os.path.join(TEST_ARTIFACTS_PATH, TEST_KEY_NAME)
