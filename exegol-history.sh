@@ -27,7 +27,7 @@ case "$1" in
         if [ -z "$2" ]; then
             exit 1
         fi
-        if VARS=$("${PYTHON_CMD[@]}" export "$@"); then
+        if VARS=$("${PYTHON_CMD[@]}" "$@"); then
             if [ -n "$VARS" ]; then
                 eval "$VARS"
                 NUM_VARS=$(echo "$VARS" | wc -l)
