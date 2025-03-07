@@ -38,7 +38,7 @@ case "$1" in
         fi
         ;;
     env)
-        "${PYTHON_CMD[@]}" env "$@"
+        "${PYTHON_CMD[@]}" env
         ;;
     *)
         "${PYTHON_CMD[@]}" "$@"

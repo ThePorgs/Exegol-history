@@ -339,10 +339,12 @@ def main():
             try:
                 print(f"export IP='{ip}'")
                 print(f"export TARGET='{ip}'")
-                print(f"export HOSTNAME='{hostname}'")
+                print(f"export DB_HOSTNAME='{hostname}'")
 
                 if role == "DC":
                     print(f"export DC_HOST='{ip}'")
+                else:
+                    print(f"export DC_HOST=''")
             except Exception:
                 pass
 
@@ -353,5 +355,5 @@ def main():
         print(f" Domain:{os.environ.get('DOMAIN')}")
         print(f" IP:{os.environ.get('IP')}")
         print(f" Target:{os.environ.get('TARGET')}")
-        print(f" Hostname:{os.environ.get('HOSTNAME')}")
+        print(f" Hostname:{os.environ.get('DB_HOSTNAME')}")
         print(f" DC Host:{os.environ.get('DC_HOST')}")
