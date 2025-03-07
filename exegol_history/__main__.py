@@ -323,9 +323,9 @@ def main():
     if args.command == "export":
         if args.subcommand == "creds":
             app = DbCredsApp(config, kp)
-            username, password, nt_hash, domain = app.run()
 
             try:
+                username, password, nt_hash, domain = app.run()
                 print(f"export USER='{username}'")
                 print(f"export PASSWORD='{password}'")
                 print(f"export NT_HASH='{nt_hash}'")
@@ -334,9 +334,9 @@ def main():
                 pass
         elif args.subcommand == "hosts":
             app = DbHostsApp(config, kp)
-            ip, hostname, role = app.run()
 
             try:
+                ip, hostname, role = app.run()
                 print(f"export IP='{ip}'")
                 print(f"export TARGET='{ip}'")
                 print(f"export DB_HOSTNAME='{hostname}'")
@@ -344,7 +344,7 @@ def main():
                 if role == "DC":
                     print(f"export DC_HOST='{ip}'")
                 else:
-                    print(f"export DC_HOST=''")
+                    print("export DC_HOST=''")
             except Exception:
                 pass
 
