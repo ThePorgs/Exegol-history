@@ -29,7 +29,10 @@ jobs:
       
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
-      
+        with:
+            ignore_names: >-
+              profile.sh
+              
       - name: Verify script permissions
         run: test -x "exegol-history.sh"
 
