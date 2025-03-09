@@ -7,7 +7,7 @@ authors = ["lap1nou"]
 [tool.poetry.dependencies]
 python = "^3.10"
 rich  = "^13.9.2"
-textual = "^1.0.0"
+textual = "^2.1.2"
 pykeepass = "^4.1.0.post1"
 
 [tool.poetry.scripts]
