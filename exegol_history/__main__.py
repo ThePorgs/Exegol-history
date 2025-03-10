@@ -3,7 +3,6 @@ import argparse
 import secrets
 import tomllib
 import shutil
-import sys
 
 from rich.console import Console
 from rich.traceback import install
