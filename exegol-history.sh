@@ -8,12 +8,12 @@ HISTORY_SCRIPT="$SCRIPT_DIR/exegol-history.py"
 if [ ! -f "$VENV_PYTHON" ]; then
     echo "[-] Python virtual environment not found at: $VENV_PYTHON"
     echo "    Please ensure the virtual environment is properly set up."
-    exit 1
+    return 1
 fi
 
 if [ ! -f "$HISTORY_SCRIPT" ]; then
     echo "[-] History script not found at: $HISTORY_SCRIPT"
-    exit 1
+    return 1
 fi
 
 # Change this:
@@ -25,7 +25,7 @@ PYTHON_CMD=("$VENV_PYTHON" "$HISTORY_SCRIPT")
 case "$1" in
     export)
         if [ -z "$2" ]; then
-            exit 1
+            return 1
         fi
         if VARS=$("${PYTHON_CMD[@]}" "$@"); then
             if [ -n "$VARS" ]; then
