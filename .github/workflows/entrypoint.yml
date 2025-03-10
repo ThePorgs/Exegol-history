@@ -1,0 +1,42 @@
+# Main entrypoint workflow
+# This workflow orchestrates all checks and tests by calling the individual workflows
+# in the appropriate order. It serves as the single entry point for CI/CD.
+
+name: Checks and tests
+# Trigger the workflow on push and pull request events
+on: [push, pull_request]
+
+# Concurrency configuration to prevent multiple workflow runs
+# from executing simultaneously and to cancel any in-progress runs
+concurrency:
+  # Define a concurrency group for all workflow runs
+  group: nightly_builds
+  # Cancel any in-progress workflow runs in the same concurrency group
+  cancel-in-progress: true
+
+jobs:
+  # Code quality checks (linting, formatting, etc.)
+  quality:
+    name: Code Quality Checks
+    uses: ./.github/workflows/sub_lint.yml
+
+  # Shell script testing
+  shell-testing:
+    name: Shell Script Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+            ignore_names: >-
+              profile.sh
+              
+      - name: Verify script permissions
+        run: test -x "exegol-history.sh"
+
+  # Main test suite execution
+  testing:
+    name: Main Testing
+    uses: ./.github/workflows/sub_test.yml

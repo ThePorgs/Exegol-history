@@ -1,24 +1,24 @@
 [tool.poetry]
-name = "dbassets"
+name = "exegol-history"
 version = "1.0"
-description = "db-assets is a TUI to manage compromised credentials and hosts during an engagement."
+description = "exegol-history is a TUI to manage compromised credentials and hosts during an engagement."
 authors = ["lap1nou"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 rich  = "^13.9.2"
-textual = "^1.0.0"
+textual = "^2.1.2"
 pykeepass = "^4.1.0.post1"
 
 [tool.poetry.scripts]
-dbassets="dbassets.__main__:main"
+exegol-history="exegol_history.__main__:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "8.3.4"
 pytest-asyncio = "0.25.2"
 
 [tool.ruff.lint.extend-per-file-ignores]
-"dbassets/tests/*" = ["F811"]
+"exegol_history/tests/*" = ["F811"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

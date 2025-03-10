@@ -175,7 +175,12 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 
-dbassets/tests/artifacts/test.kdbx
-dbassets/tests/artifacts/test.key
+# Test artifacts
+exegol_history/tests/artifacts/test.kdbx
+exegol_history/tests/artifacts/test.key
 
+# Devbox
 devbox.lock
+
+# Other IDE
+.idea/
