@@ -29,7 +29,7 @@ git -C /opt/tools/ clone --depth 1 https://github.com/ThePorgs/Exegol-history
 alias exegol-history='source /PATH/TO/Exegol-history/exegol-history.sh'
 ```
 
-> **Warning**
+> [!WARNING]
 > You can also use `pipx`:
 > ```shell
 > pipx install git+https://github.com/ThePorgs/exegol-history
