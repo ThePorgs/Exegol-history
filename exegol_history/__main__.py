@@ -89,7 +89,7 @@ def parse_arguments() -> None:
 
     subparsers = parser.add_subparsers(
         dest="command",
-        required=False,
+        required=True,
         help="Operation to execute (adding, deleting, TUI).",
     )
     add_parser = subparsers.add_parser(
