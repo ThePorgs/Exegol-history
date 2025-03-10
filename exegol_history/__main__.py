@@ -349,11 +349,11 @@ def main():
                 pass
 
     if args.command == "env":
-        print(f" Username:{os.environ.get('USER')}")
-        print(f" Password:{os.environ.get('PASSWORD')}")
-        print(f" NT Hash:{os.environ.get('NT_HASH')}")
-        print(f" Domain:{os.environ.get('DOMAIN')}")
-        print(f" IP:{os.environ.get('IP')}")
-        print(f" Target:{os.environ.get('TARGET')}")
-        print(f" Hostname:{os.environ.get('DB_HOSTNAME')}")
-        print(f" DC Host:{os.environ.get('DC_HOST')}")
+        env_vars = ["USER", "PASSWORD", "NT_HASH", "DOMAIN", "IP", "TARGET", "DB_HOSTNAME", "DC_HOST"]
+        not_none_vars = [var for var in env_vars if os.environ.get(var) is not None]
+
+        if not_none_vars:
+            for var in not_none_vars:
+                print(f"{var}:{os.environ.get(var)}")
+        else:
+            print("No environment variables are set.")
