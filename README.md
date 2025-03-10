@@ -23,14 +23,18 @@ A typical workflow with `Exegol-history`:
 ![](screenshots/screenshot04.png)
 
 ## ⚙️ Install
-```
-# without the wrapper
-pipx install git+https://github.com/ThePorgs/exegol-history
-
-# with the wrapper
-git clone https://github.com/ThePorgs/exegol-history
+The best way to install it is by cloning the repository and manually adding an alias:
+```shell
+git -C /opt/tools/ clone --depth 1 https://github.com/ThePorgs/Exegol-history
 alias exegol-history='source /PATH/TO/Exegol-history/exegol-history.sh'
 ```
+
+> **Warning**
+> You can also use `pipx`:
+> ```shell
+> pipx install git+https://github.com/ThePorgs/exegol-history
+> ```
+> but you won't get the wrapper that automatically set environment variables ! You can however create a wrapper for yourself.
 
 ## 📝 Configuration
 A small configuration file can be used to customise the database name and keybinds for the TUI:
