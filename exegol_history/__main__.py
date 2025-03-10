@@ -308,19 +308,25 @@ def main():
                 console.print(format_into_txt(hosts))
 
             elif args.json or (not args.csv and not args.txt):
-                console.print_json(format_into_json(hosts, field_names=["ip", "hostname", "role"]))
+                console.print_json(
+                    format_into_json(hosts, field_names=["ip", "hostname", "role"])
+                )
 
     if args.command == "del":
         if args.subcommand == "creds":
             try:
                 delete_credential(kp, args.username)
             except RuntimeError:
-                console.print("[[bold red]*[/bold red]] The provided username does not exist !")
+                console.print(
+                    "[[bold red]*[/bold red]] The provided username does not exist !"
+                )
         elif args.subcommand == "hosts":
             try:
                 delete_host(kp, args.ip)
             except RuntimeError:
-                console.print("[[bold red]*[/bold red]] The provided IP does not exist !")
+                console.print(
+                    "[[bold red]*[/bold red]] The provided IP does not exist !"
+                )
 
     # TUI mode
     if args.command == "export":
@@ -352,7 +358,16 @@ def main():
                 pass
 
     if args.command == "env":
-        env_vars = ["USER", "PASSWORD", "NT_HASH", "DOMAIN", "IP", "TARGET", "DB_HOSTNAME", "DC_HOST"]
+        env_vars = [
+            "USER",
+            "PASSWORD",
+            "NT_HASH",
+            "DOMAIN",
+            "IP",
+            "TARGET",
+            "DB_HOSTNAME",
+            "DC_HOST",
+        ]
         not_none_vars = [var for var in env_vars if os.environ.get(var) is not None]
 
         if not_none_vars:
