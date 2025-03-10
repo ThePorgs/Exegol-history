@@ -30,7 +30,7 @@ case "$1" in
         if VARS=$("${PYTHON_CMD[@]}" "$@"); then
             if [ -n "$VARS" ]; then
                 eval "$VARS"
-                NUM_VARS=$(echo "$VARS" | wc -l)
+                NUM_VARS=$(echo "$VARS" | grep "export" | wc -l)
                 echo "[+] Exported $NUM_VARS variables."
             else
                 echo "[-] No variables to export."

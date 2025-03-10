@@ -3,8 +3,9 @@ import argparse
 import secrets
 import tomllib
 import shutil
+import sys
 
-from rich import print
+from rich.console import Console
 from rich.traceback import install
 from pykeepass import PyKeePass, create_database
 from typing import Any
@@ -36,6 +37,8 @@ from exegol_history.db_api.parsing import (
 )
 
 exegol_history_HOME_FOLDER_NAME = ".exegol_history"
+
+console = Console(soft_wrap=True)
 
 
 def setup(db_path: str, db_key_path: str) -> None:
@@ -283,41 +286,41 @@ def main():
             creds = get_credentials(kp, args.username)
 
             if args.csv:
-                print(format_into_csv(creds))
+                console.print(format_into_csv(creds))
 
-            if args.json:
-                print(
+            elif args.txt:
+                console.print(format_into_txt(creds))
+
+            elif args.json or (not args.csv and not args.txt):
+                console.print_json(
                     format_into_json(
                         creds, field_names=["username", "password", "hash", "domain"]
                     )
                 )
 
-            if args.txt or not args.csv or not args.json:
-                print(format_into_txt(creds))
-
         elif args.subcommand == "hosts":
             hosts = get_hosts(kp, args.ip)
 
             if args.csv:
-                print(format_into_csv(hosts))
+                console.print(format_into_csv(hosts))
 
-            if args.json:
-                print(format_into_json(hosts, field_names=["ip", "hostname", "role"]))
+            elif args.txt:
+                console.print(format_into_txt(hosts))
 
-            if args.txt:
-                print(format_into_txt(hosts))
+            elif args.json or (not args.csv and not args.txt):
+                console.print_json(format_into_json(hosts, field_names=["ip", "hostname", "role"]))
 
     if args.command == "del":
         if args.subcommand == "creds":
             try:
                 delete_credential(kp, args.username)
             except RuntimeError:
-                print("[[bold red]*[/bold red]] The provided username does not exist !")
+                console.print("[[bold red]*[/bold red]] The provided username does not exist !")
         elif args.subcommand == "hosts":
             try:
                 delete_host(kp, args.ip)
             except RuntimeError:
-                print("[[bold red]*[/bold red]] The provided IP does not exist !")
+                console.print("[[bold red]*[/bold red]] The provided IP does not exist !")
 
     # TUI mode
     if args.command == "export":
@@ -326,10 +329,10 @@ def main():
 
             try:
                 username, password, nt_hash, domain = app.run()
-                print(f"export USER='{username}'")
-                print(f"export PASSWORD='{password}'")
-                print(f"export NT_HASH='{nt_hash}'")
-                print(f"export DOMAIN='{domain}'")
+                console.print(f"export USER='{username}'")
+                console.print(f"export PASSWORD='{password}'")
+                console.print(f"export NT_HASH='{nt_hash}'")
+                console.print(f"export DOMAIN='{domain}'")
             except Exception:
                 pass
         elif args.subcommand == "hosts":
@@ -337,14 +340,14 @@ def main():
 
             try:
                 ip, hostname, role = app.run()
-                print(f"export IP='{ip}'")
-                print(f"export TARGET='{ip}'")
-                print(f"export DB_HOSTNAME='{hostname}'")
+                console.print(f"export IP='{ip}'")
+                console.print(f"export TARGET='{ip}'")
+                console.print(f"export DB_HOSTNAME='{hostname}'")
 
                 if role == "DC":
-                    print(f"export DC_HOST='{ip}'")
+                    console.print(f"export DC_HOST='{ip}'")
                 else:
-                    print("export DC_HOST=''")
+                    console.print("export DC_HOST=''")
             except Exception:
                 pass
 
@@ -354,6 +357,6 @@ def main():
 
         if not_none_vars:
             for var in not_none_vars:
-                print(f"{var}:{os.environ.get(var)}")
+                console.print(f"{var}:{os.environ.get(var)}")
         else:
-            print("No environment variables are set.")
+            console.print("No environment variables are set.")

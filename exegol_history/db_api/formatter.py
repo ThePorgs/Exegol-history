@@ -5,8 +5,8 @@ def format_into_txt(objects) -> str:
     output = ""
 
     for object in objects:
-        for key, value in object.items():
-            output += f"{key}: {value}\n"
+        for attribute in object:
+            output += f"{attribute}\n"
 
     return output
 
