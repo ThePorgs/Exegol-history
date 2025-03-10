@@ -173,6 +173,9 @@ def parse_arguments() -> None:
     credential_get_parser.add_argument(
         "-u", "--username", help="Specific username to get credential of."
     )
+    credential_get_parser.add_argument(
+        "-r", "--redacted", action="store_true", help="Hide sensitive credentials"
+    )
 
     # Delete
     credential_delete_parser = delete_subparsers.add_parser(
@@ -282,7 +285,7 @@ def main():
 
     if args.command == "get":
         if args.subcommand == "creds":
-            creds = get_credentials(kp, args.username)
+            creds = get_credentials(kp, args.username, args.redacted)
 
             if args.csv:
                 console.print(format_into_csv(creds))
