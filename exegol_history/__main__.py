@@ -292,7 +292,7 @@ def main():
                     )
                 )
 
-            if args.txt:
+            if args.txt or not args.csv or not args.json:
                 print(format_into_txt(creds))
 
         elif args.subcommand == "hosts":
