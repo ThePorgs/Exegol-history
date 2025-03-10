@@ -25,7 +25,7 @@ def add_credential(
 
 
 def get_credentials(
-    kp: PyKeePass, searched_username: str = ""
+    kp: PyKeePass, searched_username: str = "", redacted: bool = "false"
 ) -> [(str, str, str, str)]:
     array = []
     group = kp.find_groups(name=GROUP_NAME_CREDENTIALS, first=True)
@@ -35,6 +35,10 @@ def get_credentials(
         password = entry.password
         hash = entry.get_custom_property(EXEGOL_DB_HASH_PROPERTY)
         domain = entry.get_custom_property(EXEGOL_DB_DOMAIN_PROPERTY)
+
+        if redacted:
+            password = "**********"
+            hash = "**********"
 
         if not username:
             username = ""
