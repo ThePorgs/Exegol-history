@@ -337,10 +337,13 @@ def main():
 
             try:
                 username, password, nt_hash, domain = app.run()
-                console.print(f"export USER='{username}'")
-                console.print(f"export PASSWORD='{password}'")
-                console.print(f"export NT_HASH='{nt_hash}'")
-                console.print(f"export DOMAIN='{domain}'")
+
+                with open("../profile.sh", "w") as profile:
+                    profile.write(f"export USER='{username}'")
+                    profile.write(f"export PASSWORD='{password}'")
+                    profile.write(f"export NT_HASH='{nt_hash}'")
+                    profile.write(f"export DOMAIN='{domain}'")
+
             except Exception:
                 pass
         elif args.subcommand == "hosts":
@@ -348,14 +351,16 @@ def main():
 
             try:
                 ip, hostname, role = app.run()
-                console.print(f"export IP='{ip}'")
-                console.print(f"export TARGET='{ip}'")
-                console.print(f"export DB_HOSTNAME='{hostname}'")
 
-                if role == "DC":
-                    console.print(f"export DC_HOST='{ip}'")
-                else:
-                    console.print("export DC_HOST=''")
+                with open("../profile.sh", "w") as profile:
+                    profile.write(f"export IP='{ip}'")
+                    profile.write(f"export TARGET='{ip}'")
+                    profile.write(f"export DB_HOSTNAME='{hostname}'")
+
+                    if role == "DC":
+                        profile.write(f"export DC_HOST='{ip}'")
+                    else:
+                        profile.write("export DC_HOST=''")
             except Exception:
                 pass
 
