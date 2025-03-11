@@ -36,6 +36,7 @@ from exegol_history.db_api.parsing import (
 )
 
 exegol_history_HOME_FOLDER_NAME = ".exegol_history"
+PROFILE_SH_PATH = "/opt/tools/Exegol-history/profile.sh"
 
 console = Console(soft_wrap=True)
 
@@ -338,11 +339,11 @@ def main():
             try:
                 username, password, nt_hash, domain = app.run()
 
-                with open("../profile.sh", "w") as profile:
-                    profile.write(f"export USER='{username}'")
-                    profile.write(f"export PASSWORD='{password}'")
-                    profile.write(f"export NT_HASH='{nt_hash}'")
-                    profile.write(f"export DOMAIN='{domain}'")
+                with open(PROFILE_SH_PATH, "w") as profile:
+                    profile.write(f"export USER='{username}'\n")
+                    profile.write(f"export PASSWORD='{password}'\n")
+                    profile.write(f"export NT_HASH='{nt_hash}'\n")
+                    profile.write(f"export DOMAIN='{domain}'\n")
 
             except Exception:
                 pass
@@ -352,15 +353,15 @@ def main():
             try:
                 ip, hostname, role = app.run()
 
-                with open("../profile.sh", "w") as profile:
-                    profile.write(f"export IP='{ip}'")
-                    profile.write(f"export TARGET='{ip}'")
-                    profile.write(f"export DB_HOSTNAME='{hostname}'")
+                with open(PROFILE_SH_PATH, "w") as profile:
+                    profile.write(f"export IP='{ip}'\n")
+                    profile.write(f"export TARGET='{ip}'\n")
+                    profile.write(f"export DB_HOSTNAME='{hostname}'\n")
 
                     if role == "DC":
-                        profile.write(f"export DC_HOST='{ip}'")
+                        profile.write(f"export DC_HOST='{ip}'\n")
                     else:
-                        profile.write("export DC_HOST=''")
+                        profile.write("export DC_HOST=''\n")
             except Exception:
                 pass
 
