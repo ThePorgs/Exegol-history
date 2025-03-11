@@ -1,7 +1,4 @@
-# IMPORPTANT : soon, this file will be removed soon.
-#   You can now manage credentials with the new exegol-history
-#   with the exh (short) / exegol-history (long) command
-
+#info: this file is used as buffer by the exegol-history.py utility. Exegol terminals source it to export env vars
 #export INTERFACE='eth0'
 #export DOMAIN='DOMAIN.LOCAL'
 #export DOMAIN_SID='S-1-5-11-39129514-1145628974-103568174'
