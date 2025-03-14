@@ -99,19 +99,19 @@ def parse_arguments() -> None:
         "add", help="Add an object (credentials, hosts, ...)."
     )
     get_parser = subparsers.add_parser(
-        "get", help="Get an object (credentials, hosts, ...)."
+        "export", help="Export an object (credentials, hosts, ...)."
     )
-    delete_parser = subparsers.add_parser(
-        "del", help="Delete an object (credentials, hosts, ...)."
+    delete_parser = subparsers.add_subparsers(
+        "rm", help="Remove an object (credentials, hosts, ...)."
     )
     tui_parser = subparsers.add_parser(
-        "export",
+        "set",
         help="""
 			Launch the TUI to manage an object (credentials, hosts, ...).
 		""",
     )
     subparsers.add_parser(
-        "env",
+        "show",
         help="""
 			Display environment variables related to Exegol-history.
 		""",
@@ -284,7 +284,7 @@ def main():
                         for host in parsed_hosts:
                             add_host(kp, host[0], host[1], host[2])
 
-    if args.command == "get":
+    if args.command == "export":
         if args.subcommand == "creds":
             creds = get_credentials(kp, args.username, args.redacted)
 
@@ -315,7 +315,7 @@ def main():
                     format_into_json(hosts, field_names=["ip", "hostname", "role"])
                 )
 
-    if args.command == "del":
+    if args.command == "rm":
         if args.subcommand == "creds":
             try:
                 delete_credential(kp, args.username)
@@ -332,7 +332,7 @@ def main():
                 )
 
     # TUI mode
-    if args.command == "export":
+    if args.command == "set":
         if args.subcommand == "creds":
             app = DbCredsApp(config, kp)
 
@@ -365,7 +365,7 @@ def main():
             except Exception:
                 pass
 
-    if args.command == "env":
+    if args.command == "show":
         env_vars = [
             "USER",
             "PASSWORD",
