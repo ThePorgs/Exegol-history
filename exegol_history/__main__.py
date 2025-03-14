@@ -106,7 +106,7 @@ def parse_arguments() -> None:
         "rm", help="Remove existing credentials or hosts from the database."
     )
     tui_parser = subparsers.add_parser(
-        "set",
+        "apply",
         help="Select credentials or assets and set them in the current shell to use with the preset history commands.",
     )
     subparsers.add_parser(
