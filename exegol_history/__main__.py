@@ -252,11 +252,11 @@ def parse_arguments() -> None:
     )
 
     # TUI
-    tui_creds_parser = tui_subparsers.add_parser(
+    tui_parser = tui_subparsers.add_parser(
         "creds",
         help="Manage credentials using the TUI and set related environment variables.",
     )
-    tui_hosts_parser = tui_subparsers.add_parser(
+    tui_parser = tui_subparsers.add_parser(
         "hosts",
         help="Manage hosts using the TUI and set related environment variables.",
     )
