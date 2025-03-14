@@ -106,11 +106,11 @@ def parse_arguments() -> None:
     )
     tui_parser = subparsers.add_parser(
         "set",
-        help="Select credentianls or assets and set them in the current shell to use with the preset history commands",
+        help="Select credentials or assets and set them in the current shell to use with the preset history commands.",
     )
     subparsers.add_parser(
         "show",
-        help="Display exegol history values currently set in the shell (i.e. environment variables)",
+        help="Display exegol history values currently set in the shell (i.e., environment variables).",
     )
 
     add_subparsers = add_parser.add_subparsers(
