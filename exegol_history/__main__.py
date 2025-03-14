@@ -93,7 +93,7 @@ def parse_arguments() -> None:
     subparsers = parser.add_subparsers(
         dest="command",
         required=True,
-        help="Command to execute (add, export, rm, set, show).",
+        help="Command to execute (add, export, rm, apply, show).",
     )
     add_parser = subparsers.add_parser(
         "add", help="Add new credentials or hosts to the database."
@@ -106,8 +106,8 @@ def parse_arguments() -> None:
         "rm", help="Remove existing credentials or hosts from the database."
     )
     tui_parser = subparsers.add_parser(
-        "set",
-        help="Select credentials or assets and set them in the current shell to use with the preset history commands.",
+        "apply",
+        help="Select credentials or assets and apply them in the current shell to use with the preset history commands.",
     )
     subparsers.add_parser(
         "show",
@@ -371,7 +371,7 @@ def main():
                 )
 
     # TUI mode
-    if args.command == "set":
+    if args.command == "apply":
         if args.subcommand == "creds":
             app = DbCredsApp(config, kp)
 
