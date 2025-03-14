@@ -99,7 +99,8 @@ def parse_arguments() -> None:
         "add", help="Add new credentials or hosts to the database."
     )
     get_parser = subparsers.add_parser(
-        "export", help="Export credentials or hosts from the database in various formats."
+        "export",
+        help="Export credentials or hosts from the database in various formats.",
     )
     delete_parser = subparsers.add_parser(
         "rm", help="Remove existing credentials or hosts from the database."
@@ -139,10 +140,20 @@ def parse_arguments() -> None:
     credential_add_parser = add_subparsers.add_parser(
         "creds", help="Add or update credentials in the database."
     )
-    credential_add_parser.add_argument("-u", "--username", help="Username for the credential entry.")
-    credential_add_parser.add_argument("-p", "--password", help="Password for the credential entry.")
-    credential_add_parser.add_argument("-H", "--hash", help="Password hash (such as NTLM, MD5, etc.) for the credential entry.")
-    credential_add_parser.add_argument("-d", "--domain", help="Domain associated with the credential entry.")
+    credential_add_parser.add_argument(
+        "-u", "--username", help="Username for the credential entry."
+    )
+    credential_add_parser.add_argument(
+        "-p", "--password", help="Password for the credential entry."
+    )
+    credential_add_parser.add_argument(
+        "-H",
+        "--hash",
+        help="Password hash (such as NTLM, MD5, etc.) for the credential entry.",
+    )
+    credential_add_parser.add_argument(
+        "-d", "--domain", help="Domain associated with the credential entry."
+    )
     credential_add_parser.add_argument(
         "-f", "--file", help="Import multiple credentials from a file."
     )
@@ -157,7 +168,9 @@ def parse_arguments() -> None:
         "creds", help="Export credential information from the database."
     )
     credential_get_parser.add_argument(
-        "--json", action="store_true", help="Export data in JSON format (default if no format specified)."
+        "--json",
+        action="store_true",
+        help="Export data in JSON format (default if no format specified).",
     )
     credential_get_parser.add_argument(
         "--csv", action="store_true", help="Export data in CSV format."
@@ -166,10 +179,15 @@ def parse_arguments() -> None:
         "--txt", action="store_true", help="Export data in plain text format."
     )
     credential_get_parser.add_argument(
-        "-u", "--username", help="Filter export to only show credentials with this specific username."
+        "-u",
+        "--username",
+        help="Filter export to only show credentials with this specific username.",
     )
     credential_get_parser.add_argument(
-        "-r", "--redacted", action="store_true", help="Mask sensitive information like passwords and hashes in the output."
+        "-r",
+        "--redacted",
+        action="store_true",
+        help="Mask sensitive information like passwords and hashes in the output.",
     )
 
     # Delete
@@ -177,18 +195,29 @@ def parse_arguments() -> None:
         "creds", help="Delete credentials from the database."
     )
     credential_delete_parser.add_argument(
-        "-u", "--username", required=True, help="Username of the credential entry to delete."
+        "-u",
+        "--username",
+        required=True,
+        help="Username of the credential entry to delete.",
     )
 
     # Hosts
     # Add / edit
-    hosts_add_parser = add_subparsers.add_parser("hosts", help="Add or update host information in the database.")
+    hosts_add_parser = add_subparsers.add_parser(
+        "hosts", help="Add or update host information in the database."
+    )
     hosts_add_parser.add_argument("--ip", help="IP address of the host.")
     hosts_add_parser.add_argument(
-        "-r", "--role", help="Role of the host in the environment (e.g., SCCM, ADCS, DC, WKS)."
+        "-r",
+        "--role",
+        help="Role of the host in the environment (e.g., SCCM, ADCS, DC, WKS).",
     )
-    hosts_add_parser.add_argument("-n", "--hostname", help="Hostname or NetBIOS name of the host.")
-    hosts_add_parser.add_argument("-f", "--file", help="Import multiple hosts from a file.")
+    hosts_add_parser.add_argument(
+        "-n", "--hostname", help="Hostname or NetBIOS name of the host."
+    )
+    hosts_add_parser.add_argument(
+        "-f", "--file", help="Import multiple hosts from a file."
+    )
     hosts_add_parser.add_argument(
         "--file-type",
         choices=[host_type.name for host_type in HostsFileType],
@@ -196,9 +225,13 @@ def parse_arguments() -> None:
     )
 
     # Get
-    hosts_get_parser = get_subparsers.add_parser("hosts", help="Export host information from the database.")
+    hosts_get_parser = get_subparsers.add_parser(
+        "hosts", help="Export host information from the database."
+    )
     hosts_get_parser.add_argument(
-        "--json", action="store_true", help="Export data in JSON format (default if no format specified)."
+        "--json",
+        action="store_true",
+        help="Export data in JSON format (default if no format specified).",
     )
     hosts_get_parser.add_argument(
         "--csv", action="store_true", help="Export data in CSV format."
@@ -206,15 +239,27 @@ def parse_arguments() -> None:
     hosts_get_parser.add_argument(
         "--txt", action="store_true", help="Export data in plain text format."
     )
-    hosts_get_parser.add_argument("--ip", help="Filter export to only show hosts with this specific IP address.")
+    hosts_get_parser.add_argument(
+        "--ip", help="Filter export to only show hosts with this specific IP address."
+    )
 
     # Delete
-    hosts_delete_parser = delete_subparsers.add_parser("hosts", help="Delete host information from the database.")
-    hosts_delete_parser.add_argument("--ip", required=True, help="IP address of the host to delete.")
+    hosts_delete_parser = delete_subparsers.add_parser(
+        "hosts", help="Delete host information from the database."
+    )
+    hosts_delete_parser.add_argument(
+        "--ip", required=True, help="IP address of the host to delete."
+    )
 
     # TUI
-    tui_creds_parser = tui_subparsers.add_parser("creds", help="Manage credentials using the TUI and set related environment variables.")
-    tui_hosts_parser = tui_subparsers.add_parser("hosts", help="Manage hosts using the TUI and set related environment variables.")
+    tui_creds_parser = tui_subparsers.add_parser(
+        "creds",
+        help="Manage credentials using the TUI and set related environment variables.",
+    )
+    tui_hosts_parser = tui_subparsers.add_parser(
+        "hosts",
+        help="Manage hosts using the TUI and set related environment variables.",
+    )
 
     return parser.parse_args()
 
