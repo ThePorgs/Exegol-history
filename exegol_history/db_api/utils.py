@@ -1,7 +1,7 @@
 import subprocess
 import re
 
-PROFILE_SH_PATH = "./profile.sh"
+PROFILE_SH_PATH = "/opt/tools/Exegol-history/profile.sh"
 VARIABLE_REGEX = r"export (.*)='.*?'"
 
 
