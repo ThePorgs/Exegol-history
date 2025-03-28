@@ -84,10 +84,13 @@ class DbCredsApp(App):
         table.add_rows(tmp)
         self.original_data = tmp
 
-    def __init__(self, config: dict[str, Any], kp: PyKeePass):
+    def __init__(
+        self, config: dict[str, Any], kp: PyKeePass, show_add_screen: bool = False
+    ):
         super().__init__()
         self.config = config
         self.kp = kp
+        self.show_add_screen = show_add_screen
 
     def compose(self) -> ComposeResult:
         yield self.main_view()
@@ -104,6 +107,9 @@ class DbCredsApp(App):
 
         # Apply keybindings from config
         self.set_keymap(self.config["keybindings"])
+
+        if self.show_add_screen:
+            self.push_screen(AddCredentialScreen(), self.check_added_creds)
 
     def on_key(self, event: events.Key) -> None:
         if event.key == "enter":
@@ -174,14 +180,17 @@ class DbCredsApp(App):
 
         sys.exit(0)
 
+    def check_added_creds(self, parsed_creds: []) -> None:
+        for cred in parsed_creds:
+            add_credential(self.kp, cred[0], cred[1], cred[2], cred[3])
+
+        self.update_table()
+
+        if self.show_add_screen:
+            sys.exit(0)
+
     def action_add_credential(self) -> None:
-        def check_added_creds(parsed_creds: []) -> None:
-            for cred in parsed_creds:
-                add_credential(self.kp, cred[0], cred[1], cred[2], cred[3])
-
-            self.update_table()
-
-        self.push_screen(AddCredentialScreen(), check_added_creds)
+        self.push_screen(AddCredentialScreen(), self.check_added_creds)
 
     def action_delete_credential(self) -> None:
         def check_delete(delete: bool) -> None:

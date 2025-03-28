@@ -54,10 +54,13 @@ class DbHostsApp(App):
         table.add_rows(tmp)
         self.original_data = tmp
 
-    def __init__(self, config: dict[str, Any], kp: PyKeePass):
+    def __init__(
+        self, config: dict[str, Any], kp: PyKeePass, show_add_screen: bool = False
+    ):
         super().__init__()
         self.config = config
         self.kp = kp
+        self.show_add_screen = show_add_screen
 
     def compose(self) -> ComposeResult:
         yield self.main_view()
@@ -74,6 +77,9 @@ class DbHostsApp(App):
 
         # Apply keybindings from config
         self.set_keymap(self.config["keybindings"])
+
+        if self.show_add_screen:
+            self.push_screen(AddHostScreen(), self.check_added_host)
 
     def on_key(self, event: events.Key) -> None:
         if event.key == "enter":
@@ -131,14 +137,17 @@ class DbHostsApp(App):
 
         sys.exit(0)
 
+    def check_added_host(self, parsed_hosts: []) -> None:
+        for host in parsed_hosts:
+            add_host(self.kp, host[0], host[1], host[2])
+
+        self.update_table()
+
+        if self.show_add_screen:
+            sys.exit(0)
+
     def action_add_host(self) -> None:
-        def check_added_host(parsed_hosts: []) -> None:
-            for host in parsed_hosts:
-                add_host(self.kp, host[0], host[1], host[2])
-
-            self.update_table()
-
-        self.push_screen(AddHostScreen(), check_added_host)
+        self.push_screen(AddHostScreen(), self.check_added_host)
 
     def action_delete_host(self) -> None:
         def check_delete(delete: bool) -> None:

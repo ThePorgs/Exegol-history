@@ -3,6 +3,7 @@ import argparse
 import secrets
 import tomllib
 import shutil
+import sys
 
 from rich.console import Console
 from rich.traceback import install
@@ -265,6 +266,11 @@ def main():
                         for cred in parsed_creds:
                             add_credential(kp, cred[0], cred[1], cred[2], cred[3])
 
+            # If no arguments are given, display the TUI adding screen
+            if len(sys.argv) <= 3:
+                app = DbCredsApp(config, kp, show_add_screen=True)
+                app.run()
+
         elif args.subcommand == "hosts":
             if args.ip:
                 add_host(
@@ -283,6 +289,11 @@ def main():
                     if parsed_hosts:
                         for host in parsed_hosts:
                             add_host(kp, host[0], host[1], host[2])
+
+            # If no arguments are given, display the TUI adding screen
+            if len(sys.argv) <= 3:
+                app = DbHostsApp(config, kp, show_add_screen=True)
+                app.run()
 
     if args.command == "get":
         if args.subcommand == "creds":
@@ -321,14 +332,14 @@ def main():
                 delete_credential(kp, args.username)
             except RuntimeError:
                 console.print(
-                    "[[bold red]*[/bold red]] The provided username does not exist !"
+                    "[[bold red]![/bold red]] The provided username does not exist !"
                 )
         elif args.subcommand == "hosts":
             try:
                 delete_host(kp, args.ip)
             except RuntimeError:
                 console.print(
-                    "[[bold red]*[/bold red]] The provided IP does not exist !"
+                    "[[bold red]![/bold red]] The provided IP does not exist !"
                 )
 
     # TUI mode
@@ -345,8 +356,11 @@ def main():
                     profile.write(f"export NT_HASH='{nt_hash}'\n")
                     profile.write(f"export DOMAIN='{domain}'\n")
 
-            except Exception:
-                pass
+            except Exception as e:
+                console.print(
+                    f"[[bold red]![/bold red]] There was an error writing to profile.sh: {e}"
+                )
+                sys.exit(1)
         elif args.subcommand == "hosts":
             app = DbHostsApp(config, kp)
 
@@ -356,14 +370,14 @@ def main():
                 with open(PROFILE_SH_PATH, "w") as profile:
                     profile.write(f"export IP='{ip}'\n")
                     profile.write(f"export TARGET='{ip}'\n")
-                    profile.write(f"export DB_HOSTNAME='{hostname}'\n")
 
                     if role == "DC":
                         profile.write(f"export DC_HOST='{ip}'\n")
-                    else:
-                        profile.write("export DC_HOST=''\n")
-            except Exception:
-                pass
+            except Exception as e:
+                console.print(
+                    f"[[bold red]![/bold red]] There was an error writing to profile.sh: {e}"
+                )
+                sys.exit(1)
 
     if args.command == "env":
         env_vars = [
@@ -373,7 +387,6 @@ def main():
             "DOMAIN",
             "IP",
             "TARGET",
-            "DB_HOSTNAME",
             "DC_HOST",
         ]
         not_none_vars = [var for var in env_vars if os.environ.get(var) is not None]
