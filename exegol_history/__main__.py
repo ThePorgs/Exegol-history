@@ -35,9 +35,22 @@ from exegol_history.db_api.parsing import (
     CredsFileType,
     HostsFileType,
 )
+from exegol_history.db_api.utils import write_in_profile
 
 exegol_history_HOME_FOLDER_NAME = ".exegol_history"
-PROFILE_SH_PATH = "/opt/tools/Exegol-history/profile.sh"
+CREDS_VARIABLES = [
+    "USER",
+    "PASSWORD",
+    "NT_HASH",
+    "DOMAIN"
+]
+HOSTS_VARIABLES = [
+    "IP",
+    "TARGET",
+    "DB_HOSTNAME",
+    "DC_HOST",
+    "DC_IP"
+]
 
 console = Console(soft_wrap=True)
 
@@ -349,12 +362,14 @@ def main():
 
             try:
                 username, password, nt_hash, domain = app.run()
+                variables_correspondance = {
+                    CREDS_VARIABLES[0]: username, 
+                    CREDS_VARIABLES[1]: password,
+                    CREDS_VARIABLES[2]: nt_hash,
+                    CREDS_VARIABLES[3]: domain
+                }
 
-                with open(PROFILE_SH_PATH, "w") as profile:
-                    profile.write(f"export USER='{username}'\n")
-                    profile.write(f"export PASSWORD='{password}'\n")
-                    profile.write(f"export NT_HASH='{nt_hash}'\n")
-                    profile.write(f"export DOMAIN='{domain}'\n")
+                write_in_profile(variables_correspondance)
 
             except Exception as e:
                 console.print(
@@ -366,13 +381,17 @@ def main():
 
             try:
                 ip, hostname, role = app.run()
+                variables_correspondance = {
+                    HOSTS_VARIABLES[0]: ip, 
+                    HOSTS_VARIABLES[1]: ip,
+                    HOSTS_VARIABLES[2]: hostname
+                }
 
-                with open(PROFILE_SH_PATH, "w") as profile:
-                    profile.write(f"export IP='{ip}'\n")
-                    profile.write(f"export TARGET='{ip}'\n")
+                if role == "DC":
+                    variables_correspondance[HOSTS_VARIABLES[3]] = hostname
+                    variables_correspondance[HOSTS_VARIABLES[4]] = ip
 
-                    if role == "DC":
-                        profile.write(f"export DC_HOST='{ip}'\n")
+                write_in_profile(variables_correspondance)
             except Exception as e:
                 console.print(
                     f"[[bold red]![/bold red]] There was an error writing to profile.sh: {e}"
@@ -387,6 +406,7 @@ def main():
             "DOMAIN",
             "IP",
             "TARGET",
+            "DB_HOSTNAME",
             "DC_HOST",
         ]
         not_none_vars = [var for var in env_vars if os.environ.get(var) is not None]

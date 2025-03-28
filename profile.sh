@@ -7,5 +7,7 @@
 #export NT_HASH='c1c635aa12ae60b7fe39e28456a7bac6'
 #export DC_IP='192.168.56.101'
 #export DC_HOST='DC01.DOMAIN.LOCAL'
+#export DB_HOSTNAME='DC01.DOMAIN.LOCAL'
 #export TARGET='192.168.56.69'
+#export IP='192.168.56.69'
 #export ATTACKER_IP='192.168.56.1'

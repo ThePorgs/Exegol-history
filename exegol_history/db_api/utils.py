@@ -1,5 +1,8 @@
 import subprocess
+import re
 
+PROFILE_SH_PATH = "./profile.sh"
+VARIABLE_REGEX = fr"export (.*)='.*?'"
 
 def copy_in_clipboard(input: str):
     # Reference:
@@ -15,3 +18,20 @@ def copy_in_clipboard(input: str):
         input=input.encode("utf-8"),
         stdout=subprocess.DEVNULL,
     )
+
+def write_in_profile(variables_correspondance):
+    with open(PROFILE_SH_PATH, "r") as profile:
+        variables = profile.readlines()
+
+        for i, line in enumerate(variables):
+            tmp = re.search(VARIABLE_REGEX, line)
+
+            if tmp:
+                variable_name = tmp.group(1)
+
+                if variable_name in variables_correspondance.keys():
+                    line = f"export {variable_name}='{variables_correspondance[variable_name]}'\n"
+                    variables[i] = line
+
+            with open(PROFILE_SH_PATH, "w") as profile:
+                profile.write(''.join(variables))
