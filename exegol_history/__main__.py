@@ -38,19 +38,8 @@ from exegol_history.db_api.parsing import (
 from exegol_history.db_api.utils import write_in_profile
 
 exegol_history_HOME_FOLDER_NAME = ".exegol_history"
-CREDS_VARIABLES = [
-    "USER",
-    "PASSWORD",
-    "NT_HASH",
-    "DOMAIN"
-]
-HOSTS_VARIABLES = [
-    "IP",
-    "TARGET",
-    "DB_HOSTNAME",
-    "DC_HOST",
-    "DC_IP"
-]
+CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
+HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP"]
 
 console = Console(soft_wrap=True)
 
@@ -363,10 +352,10 @@ def main():
             try:
                 username, password, nt_hash, domain = app.run()
                 variables_correspondance = {
-                    CREDS_VARIABLES[0]: username, 
+                    CREDS_VARIABLES[0]: username,
                     CREDS_VARIABLES[1]: password,
                     CREDS_VARIABLES[2]: nt_hash,
-                    CREDS_VARIABLES[3]: domain
+                    CREDS_VARIABLES[3]: domain,
                 }
 
                 write_in_profile(variables_correspondance)
@@ -382,9 +371,9 @@ def main():
             try:
                 ip, hostname, role = app.run()
                 variables_correspondance = {
-                    HOSTS_VARIABLES[0]: ip, 
+                    HOSTS_VARIABLES[0]: ip,
                     HOSTS_VARIABLES[1]: ip,
-                    HOSTS_VARIABLES[2]: hostname
+                    HOSTS_VARIABLES[2]: hostname,
                 }
 
                 if role == "DC":
