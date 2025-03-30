@@ -23,7 +23,7 @@ def test_add_credential_only_username(open_keepass: PyKeePass):
     add_credential(kp, USERNAME_TEST_VALUE)
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE, "", "", "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
 
 
 def test_add_credential_half(open_keepass: PyKeePass):
@@ -32,7 +32,7 @@ def test_add_credential_half(open_keepass: PyKeePass):
     add_credential(kp, USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, "")
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, "")]
 
 
 def test_add_credential_search_username(open_keepass: PyKeePass):
@@ -42,7 +42,7 @@ def test_add_credential_search_username(open_keepass: PyKeePass):
     add_credential(kp, USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, "")
     credentials = get_credentials(kp, USERNAME_TEST_VALUE + "2")
 
-    assert credentials == [(USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, "")]
+    assert credentials == [("2", USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, "")]
 
 
 def test_add_credential_full(open_keepass: PyKeePass):
@@ -54,7 +54,13 @@ def test_add_credential_full(open_keepass: PyKeePass):
     credentials = get_credentials(kp)
 
     assert credentials == [
-        (USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
+        (
+            "1",
+            USERNAME_TEST_VALUE,
+            PASSWORD_TEST_VALUE,
+            HASH_TEST_VALUE,
+            DOMAIN_TEST_VALUE,
+        )
     ]
 
 
@@ -72,10 +78,10 @@ def test_add_credential_empty(open_keepass: PyKeePass):
 def test_add_credential_existing(open_keepass: PyKeePass):
     kp = open_keepass
 
-    add_credential(kp, USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, "")
+    add_credential(kp, USERNAME_TEST_VALUE, "", "", DOMAIN_TEST_VALUE)
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE, "", "", DOMAIN_TEST_VALUE)]
 
     add_credential(
         kp, USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, HASH_TEST_VALUE, DOMAIN_TEST_VALUE
@@ -83,7 +89,13 @@ def test_add_credential_existing(open_keepass: PyKeePass):
     credentials = get_credentials(kp)
 
     assert credentials == [
-        (USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
+        (
+            "1",
+            USERNAME_TEST_VALUE,
+            PASSWORD_TEST_VALUE,
+            HASH_TEST_VALUE,
+            DOMAIN_TEST_VALUE,
+        )
     ]
 
 
@@ -99,7 +111,13 @@ def test_add_credential_import_csv(open_keepass: PyKeePass):
     credentials = get_credentials(kp)
 
     assert credentials == [
-        (USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
+        (
+            "1",
+            USERNAME_TEST_VALUE,
+            PASSWORD_TEST_VALUE,
+            HASH_TEST_VALUE,
+            DOMAIN_TEST_VALUE,
+        )
     ]
 
 
@@ -111,16 +129,16 @@ def test_add_credential_json_format(open_keepass: PyKeePass):
     credentials = get_credentials(kp)
 
     json_text = format_into_json(
-        credentials, field_names=["username", "password", "hash", "domain"]
+        credentials, field_names=["id", "username", "password", "hash", "domain"]
     )
 
     assert (
         json_text
-        == '[{"username": "'
+        == '[{"id": "1", "username": "'
         + USERNAME_TEST_VALUE
         + '", "password": "", "hash": "'
         + HASH_TEST_VALUE
-        + '", "domain": ""}, {"username": "'
+        + '", "domain": ""}, {"id": "2", "username": "'
         + USERNAME_TEST_VALUE
         + "2"
         + '", "password": "", "hash": "'
@@ -146,7 +164,7 @@ def test_add_credential_csv_format(open_keepass: PyKeePass):
 
     assert (
         csv_text
-        == f"{USERNAME_TEST_VALUE},,{HASH_TEST_VALUE},\n{USERNAME_TEST_VALUE + '2'},{USERNAME_TEST_VALUE + '2'},{USERNAME_TEST_VALUE + '2'},{USERNAME_TEST_VALUE + '2'}\n"
+        == f"1,{USERNAME_TEST_VALUE},,{HASH_TEST_VALUE},\n2,{USERNAME_TEST_VALUE + '2'},{USERNAME_TEST_VALUE + '2'},{USERNAME_TEST_VALUE + '2'},{USERNAME_TEST_VALUE + '2'}\n"
     )
 
 
@@ -167,5 +185,5 @@ def test_add_credential_txt_format(open_keepass: PyKeePass):
 
     assert (
         txt_text
-        == f"{USERNAME_TEST_VALUE}\n\n{HASH_TEST_VALUE}\n\n{USERNAME_TEST_VALUE + '2'}\n{USERNAME_TEST_VALUE + '2'}\n{USERNAME_TEST_VALUE + '2'}\n{USERNAME_TEST_VALUE + '2'}\n"
+        == f"1\n{USERNAME_TEST_VALUE}\n\n{HASH_TEST_VALUE}\n\n2\n{USERNAME_TEST_VALUE + '2'}\n{USERNAME_TEST_VALUE + '2'}\n{USERNAME_TEST_VALUE + '2'}\n{USERNAME_TEST_VALUE + '2'}\n"
     )

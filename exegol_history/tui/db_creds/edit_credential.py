@@ -11,8 +11,9 @@ This screen is used to edit credentials informations such as the username, passw
 class EditCredentialScreen(ModalScreen):
     CSS_PATH = "../css/edit_object.tcss"
 
-    def __init__(self, username: str, password: str, hash: str, domain: str):
+    def __init__(self, id: str, username: str, password: str, hash: str, domain: str):
         super().__init__()
+        self.creds_id = id
         self.username = username
         self.password = password
         self.hash = hash
@@ -30,13 +31,12 @@ class EditCredentialScreen(ModalScreen):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "confirm":
-            old_username = self.username
             username = self.query_one("#username", Input).value
             password = self.query_one("#password", Input).value
             hash = self.query_one("#hash", Input).value
             domain = self.query_one("#domain", Input).value
 
             if username:
-                self.dismiss((old_username, username, password, hash, domain))
+                self.dismiss((self.creds_id, username, password, hash, domain))
         else:
             self.app.pop_screen()

@@ -1,13 +1,16 @@
 import pytest
 import os
+import subprocess
 
 from exegol_history.tui.db_creds.db_creds import DbCredsApp
+from exegol_history.db_api.utils import write_credential_in_profile
 from exegol_history.db_api.creds import get_credentials
 from common_tui import (
     USERNAME_TEST_VALUE,
     PASSWORD_TEST_VALUE,
     HASH_TEST_VALUE,
     DOMAIN_TEST_VALUE,
+    TEST_PROFILE_SH,
     select_input_and_enter_text,
 )
 from pykeepass import PyKeePass
@@ -44,7 +47,13 @@ async def test_add_credential_import_csv_tui(
     credentials = get_credentials(kp)
 
     assert credentials == [
-        (USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
+        (
+            "1",
+            USERNAME_TEST_VALUE,
+            PASSWORD_TEST_VALUE,
+            HASH_TEST_VALUE,
+            DOMAIN_TEST_VALUE,
+        )
     ]
 
 
@@ -78,7 +87,13 @@ async def test_add_credential_import_csv_file_tui(
     credentials = get_credentials(kp)
 
     assert credentials == [
-        (USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
+        (
+            "1",
+            USERNAME_TEST_VALUE,
+            PASSWORD_TEST_VALUE,
+            HASH_TEST_VALUE,
+            DOMAIN_TEST_VALUE,
+        )
     ]
 
 
@@ -97,7 +112,7 @@ async def test_add_credential_only_username_tui(
 
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE, "", "", "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
 
 
 @pytest.mark.asyncio
@@ -116,12 +131,14 @@ async def test_add_credential_half_tui(
 
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, "")]
 
 
 @pytest.mark.asyncio
 async def test_add_credential_full_tui(
-    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
+    open_keepass: PyKeePass,
+    load_mock_config: dict[str, Any],
+    create_mock_profile_sh: None,
 ):
     config = load_mock_config
     kp = open_keepass
@@ -138,13 +155,43 @@ async def test_add_credential_full_tui(
     credentials = get_credentials(kp)
 
     assert credentials == [
-        (USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
+        (
+            "1",
+            USERNAME_TEST_VALUE,
+            PASSWORD_TEST_VALUE,
+            HASH_TEST_VALUE,
+            DOMAIN_TEST_VALUE,
+        )
     ]
+
+    write_credential_in_profile(
+        TEST_PROFILE_SH,
+        USERNAME_TEST_VALUE,
+        PASSWORD_TEST_VALUE,
+        HASH_TEST_VALUE,
+        DOMAIN_TEST_VALUE,
+    )
+    command_output = subprocess.run(
+        [
+            "bash",
+            "-c",
+            f"source {TEST_PROFILE_SH} && echo $PASSWORD $USER $NT_HASH $DOMAIN",
+        ],
+        stdout=subprocess.PIPE,
+    )
+    envs = command_output.stdout.decode("utf8")
+
+    assert PASSWORD_TEST_VALUE in envs
+    assert USERNAME_TEST_VALUE in envs
+    assert HASH_TEST_VALUE in envs
+    assert DOMAIN_TEST_VALUE in envs
 
 
 @pytest.mark.asyncio
 async def test_add_credential_empty_tui(
-    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
+    open_keepass: PyKeePass,
+    load_mock_config: dict[str, Any],
+    create_mock_profile_sh: None,
 ):
     config = load_mock_config
     kp = open_keepass
@@ -170,12 +217,12 @@ async def test_add_credential_existing_tui(
     async with app.run_test() as pilot:
         await pilot.press("f4")
         await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#hash", HASH_TEST_VALUE)
+        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE)
         await pilot.click("#confirm_add")
 
         credentials = get_credentials(kp)
 
-        assert credentials == [(USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, "")]
+        assert credentials == [("1", USERNAME_TEST_VALUE, "", "", DOMAIN_TEST_VALUE)]
 
         await pilot.press("f4")
         await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
@@ -184,15 +231,21 @@ async def test_add_credential_existing_tui(
         await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE)
         await pilot.click("#confirm_add")
 
-    credentials = get_credentials(kp)
+        credentials = get_credentials(kp)
 
-    assert credentials == [
-        (USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
-    ]
+        assert credentials == [
+            (
+                "1",
+                USERNAME_TEST_VALUE,
+                PASSWORD_TEST_VALUE,
+                HASH_TEST_VALUE,
+                DOMAIN_TEST_VALUE,
+            )
+        ]
 
 
 @pytest.mark.asyncio
-async def test_add_credential_issue_3(
+async def test_add_credential_issue_3(  # https://github.com/ThePorgs/Exegol-history/issues/3
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
 ):
     config = load_mock_config
@@ -207,4 +260,48 @@ async def test_add_credential_issue_3(
 
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE, "", "", "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
+
+
+@pytest.mark.asyncio
+async def test_add_credential_multiple_local_account(
+    # This test was made in order to test the case
+    # were multiple local account were given, with only the domain being different
+    open_keepass: PyKeePass,
+    load_mock_config: dict[str, Any],
+):
+    config = load_mock_config
+    kp = open_keepass
+    app = DbCredsApp(config, kp)
+
+    async with app.run_test() as pilot:
+        await pilot.press("f4")
+        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
+        await select_input_and_enter_text(pilot, "#password", PASSWORD_TEST_VALUE)
+        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE)
+        await pilot.click("#confirm_add")
+
+        credentials = get_credentials(kp)
+
+        assert credentials == [
+            ("1", USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, "", DOMAIN_TEST_VALUE)
+        ]
+
+        await pilot.press("f4")
+        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
+        await select_input_and_enter_text(pilot, "#password", PASSWORD_TEST_VALUE)
+        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE + "2")
+        await pilot.click("#confirm_add")
+
+        credentials = get_credentials(kp)
+
+        assert credentials == [
+            ("1", USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, "", DOMAIN_TEST_VALUE),
+            (
+                "2",
+                USERNAME_TEST_VALUE,
+                PASSWORD_TEST_VALUE,
+                "",
+                DOMAIN_TEST_VALUE + "2",
+            ),
+        ]

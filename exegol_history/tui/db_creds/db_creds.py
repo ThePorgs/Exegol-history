@@ -21,7 +21,7 @@ from exegol_history.tui.db_creds.delete_credential import (
     DeleteCredentialConfirmationScreen,
 )
 
-CREDS_COLUMNS = ["Username", "Password", "Hash", "Domain"]
+CREDS_COLUMNS = ["ID", "Username", "Password", "Hash", "Domain"]
 
 """
 This is the main application displaying the credentials table and a search bar
@@ -220,7 +220,7 @@ class DbCredsApp(App):
             row_data = table.get_row_at(selected_row)
             self.push_screen(
                 EditCredentialScreen(
-                    row_data[0], row_data[1], row_data[2], row_data[3]
+                    row_data[0], row_data[1], row_data[2], row_data[3], row_data[4]
                 ),
                 check_edit_creds,
             )

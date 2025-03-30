@@ -14,7 +14,9 @@
       "exegol-history": "poetry run python exegol-history.py",
       "test": "poetry run pytest -v",
       "format": "ruff format .",
-      "lint": "ruff check ."
+      "lint": "ruff check .",
+      "debug_creds": "poetry run textual run --dev exegol-history.py export creds",
+      "debug_hosts": "poetry run textual run --dev exegol-history.py export hosts"
     }
   }
 }

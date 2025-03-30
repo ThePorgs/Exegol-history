@@ -29,7 +29,7 @@ async def test_edit_credential_only_username_tui(
 
         credentials = get_credentials(kp)
 
-        assert credentials == [(USERNAME_TEST_VALUE, "", "", "")]
+        assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
 
         await pilot.press("f6")
         await select_input_erase_and_enter_text(
@@ -39,7 +39,7 @@ async def test_edit_credential_only_username_tui(
 
         credentials = get_credentials(kp)
 
-        assert credentials == [(USERNAME_TEST_VALUE + "2", "", "", "")]
+        assert credentials == [("1", USERNAME_TEST_VALUE + "2", "", "", "")]
 
 
 @pytest.mark.asyncio
@@ -62,6 +62,7 @@ async def test_edit_credential_full(
 
         assert credentials == [
             (
+                "1",
                 USERNAME_TEST_VALUE,
                 PASSWORD_TEST_VALUE,
                 HASH_TEST_VALUE,
@@ -86,6 +87,7 @@ async def test_edit_credential_full(
 
         assert credentials == [
             (
+                "1",
                 USERNAME_TEST_VALUE + "2",
                 PASSWORD_TEST_VALUE + "2",
                 HASH_TEST_VALUE + "2",
@@ -125,7 +127,7 @@ async def test_edit_credential_issue_3(
 
         credentials = get_credentials(kp)
 
-        assert credentials == [(USERNAME_TEST_VALUE, "", "", "")]
+        assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
 
         await pilot.press("f6")
         await pilot.press("f6")
@@ -136,4 +138,4 @@ async def test_edit_credential_issue_3(
 
         credentials = get_credentials(kp)
 
-        assert credentials == [(USERNAME_TEST_VALUE + "2", "", "", "")]
+        assert credentials == [("1", USERNAME_TEST_VALUE + "2", "", "", "")]

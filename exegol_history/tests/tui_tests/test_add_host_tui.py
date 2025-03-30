@@ -1,5 +1,6 @@
 import pytest
 import os
+import subprocess
 
 from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
 from exegol_history.db_api.hosts import get_hosts
@@ -7,8 +8,10 @@ from common_tui import (
     IP_TEST_VALUE,
     HOSTNAME_TEST_VALUE,
     ROLE_TEST_VALUE,
+    TEST_PROFILE_SH,
     select_input_and_enter_text,
 )
+from exegol_history.db_api.utils import write_host_in_profile
 from pykeepass import PyKeePass
 from typing import Any
 
@@ -133,6 +136,23 @@ async def test_add_host_full_tui(
     hosts = get_hosts(kp)
 
     assert hosts == [(IP_TEST_VALUE, HOSTNAME_TEST_VALUE, ROLE_TEST_VALUE)]
+
+    write_host_in_profile(
+        TEST_PROFILE_SH, IP_TEST_VALUE, HOSTNAME_TEST_VALUE, ROLE_TEST_VALUE
+    )
+    command_output = subprocess.run(
+        [
+            "bash",
+            "-c",
+            f"source {TEST_PROFILE_SH} && echo $IP $TARGET $DC_HOST",
+        ],
+        stdout=subprocess.PIPE,
+    )
+    envs = command_output.stdout.decode("utf8")
+
+    assert IP_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE in envs
+    assert ROLE_TEST_VALUE in envs
 
 
 @pytest.mark.asyncio

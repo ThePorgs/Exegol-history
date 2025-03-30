@@ -12,6 +12,7 @@ DOMAIN_TEST_VALUE = "test.local"
 TEST_ARTIFACTS_PATH = os.path.dirname(os.path.abspath(__file__)) + "/../artifacts/"
 TEST_HOSTS_CSV = TEST_ARTIFACTS_PATH + "hosts.txt"
 TEST_CREDS_CSV = TEST_ARTIFACTS_PATH + "creds.txt"
+TEST_PROFILE_SH = TEST_ARTIFACTS_PATH + "profile.sh"
 
 
 async def select_input_and_enter_text(pilot, input_id, input_text):

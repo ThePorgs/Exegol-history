@@ -16,6 +16,7 @@ exegol-history="exegol_history.__main__:main"
 [tool.poetry.group.dev.dependencies]
 pytest = "8.3.4"
 pytest-asyncio = "0.25.2"
+textual-dev = "1.7.0"
 
 [tool.ruff.lint.extend-per-file-ignores]
 "exegol_history/tests/*" = ["F811"]

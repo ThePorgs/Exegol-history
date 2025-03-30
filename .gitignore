@@ -178,6 +178,7 @@ pyrightconfig.json
 # Test artifacts
 exegol_history/tests/artifacts/test.kdbx
 exegol_history/tests/artifacts/test.key
+exegol_history/tests/artifacts/profile.sh
 
 # Devbox
 devbox.lock

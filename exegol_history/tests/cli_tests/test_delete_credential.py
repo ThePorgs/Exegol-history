@@ -20,9 +20,9 @@ def test_remove_credential(open_keepass: PyKeePass):
     add_credential(kp, USERNAME_TEST_VALUE)
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE, "", "", "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
 
-    delete_credential(kp, USERNAME_TEST_VALUE)
+    delete_credential(kp, "1")
     credentials = get_credentials(kp)
 
     assert len(credentials) == 0
@@ -37,10 +37,16 @@ def test_remove_credential_full(open_keepass: PyKeePass):
     credentials = get_credentials(kp)
 
     assert credentials == [
-        (USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
+        (
+            "1",
+            USERNAME_TEST_VALUE,
+            PASSWORD_TEST_VALUE,
+            HASH_TEST_VALUE,
+            DOMAIN_TEST_VALUE,
+        )
     ]
 
-    delete_credential(kp, USERNAME_TEST_VALUE)
+    delete_credential(kp, "1")
     credentials = get_credentials(kp)
 
     assert len(credentials) == 0
@@ -50,7 +56,7 @@ def test_remove_credential_not_exist(open_keepass: PyKeePass):
     kp = open_keepass
 
     with pytest.raises(RuntimeError):
-        delete_credential(kp, "NonExistUsername")
+        delete_credential(kp, "534534")
 
     credentials = get_credentials(kp)
 

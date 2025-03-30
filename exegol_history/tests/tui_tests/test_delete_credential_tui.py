@@ -25,7 +25,7 @@ async def test_delete_credential_tui(open_keepass: PyKeePass, load_mock_config):
 
         credentials = get_credentials(kp)
 
-        assert credentials == [(USERNAME_TEST_VALUE, "", "", "")]
+        assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
 
         await pilot.press("f5")
         await pilot.click("#confirm")
@@ -53,6 +53,7 @@ async def test_delete_credential_full_tui(open_keepass: PyKeePass, load_mock_con
 
         assert credentials == [
             (
+                "1",
                 USERNAME_TEST_VALUE,
                 PASSWORD_TEST_VALUE,
                 HASH_TEST_VALUE,

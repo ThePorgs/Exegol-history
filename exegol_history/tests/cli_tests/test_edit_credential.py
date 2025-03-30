@@ -14,12 +14,12 @@ def test_edit_credential_only_username(open_keepass: PyKeePass):
     add_credential(kp, USERNAME_TEST_VALUE)
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE, "", "", "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
 
-    edit_credential(kp, USERNAME_TEST_VALUE, USERNAME_TEST_VALUE + "2")
+    edit_credential(kp, "1", USERNAME_TEST_VALUE + "2")
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE + "2", "", "", "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE + "2", "", "", "")]
 
 
 def test_edit_credential_full(open_keepass: PyKeePass):
@@ -28,11 +28,11 @@ def test_edit_credential_full(open_keepass: PyKeePass):
     add_credential(kp, USERNAME_TEST_VALUE)
     credentials = get_credentials(kp)
 
-    assert credentials == [(USERNAME_TEST_VALUE, "", "", "")]
+    assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
 
     edit_credential(
         kp,
-        USERNAME_TEST_VALUE,
+        "1",
         USERNAME_TEST_VALUE + "2",
         PASSWORD_TEST_VALUE,
         HASH_TEST_VALUE,
@@ -42,6 +42,7 @@ def test_edit_credential_full(open_keepass: PyKeePass):
 
     assert credentials == [
         (
+            "1",
             USERNAME_TEST_VALUE + "2",
             PASSWORD_TEST_VALUE,
             HASH_TEST_VALUE,

@@ -12,25 +12,35 @@ def add_credential(
         raise ValueError("Username cannot be empty")
 
     group = kp.find_groups(name=GROUP_NAME_CREDENTIALS, first=True)
+    credentials = get_credentials(kp)
 
-    try:
-        entry = kp.add_entry(group, username, username, password)
+    if credentials:
+        id = str(int(credentials[-1][0]) + 1)  # The next id is the last used id + 1
+    else:
+        id = "1"
+
+    entry = kp.find_entries(
+        username=username, string={EXEGOL_DB_DOMAIN_PROPERTY: domain}, group=group
+    )
+
+    if len(entry) == 1:
+        edit_credential(kp, entry[0].title, username, password, hash, domain)
+    else:
+        entry = kp.add_entry(group, id, username, password)
         entry.set_custom_property(EXEGOL_DB_HASH_PROPERTY, hash, protect=True)
         entry.set_custom_property(EXEGOL_DB_DOMAIN_PROPERTY, domain, protect=True)
-    except Exception:
-        entry = kp.find_entries(title=username, first=True, group=group)
-        edit_credential(kp, entry.title, username, password, hash, domain)
 
     kp.save()
 
 
 def get_credentials(
     kp: PyKeePass, searched_username: str = "", redacted: bool = False
-) -> [(str, str, str, str)]:
+) -> [(str, str, str, str, str)]:
     array = []
     group = kp.find_groups(name=GROUP_NAME_CREDENTIALS, first=True)
 
     for entry in group.entries:
+        id = entry.title
         username = entry.username
         password = entry.password
         hash = entry.get_custom_property(EXEGOL_DB_HASH_PROPERTY)
@@ -53,17 +63,17 @@ def get_credentials(
             domain = ""
 
         if searched_username == username:
-            array.append((username, password, hash, domain))
+            array.append((id, username, password, hash, domain))
             return array
         elif not searched_username:
-            array.append((username, password, hash, domain))
+            array.append((id, username, password, hash, domain))
 
     return array
 
 
-def delete_credential(kp: PyKeePass, username: str):
+def delete_credential(kp: PyKeePass, id: str):
     group = kp.find_groups(name=GROUP_NAME_CREDENTIALS, first=True)
-    entry = kp.find_entries(title=username, first=True, group=group)
+    entry = kp.find_entries(title=id, first=True, group=group)
 
     if entry:
         kp.delete_entry(entry)
@@ -74,7 +84,7 @@ def delete_credential(kp: PyKeePass, username: str):
 
 def edit_credential(
     kp: PyKeePass,
-    old_username: str,
+    id: str,
     username: str,
     password: str = "",
     hash: str = "",
@@ -86,8 +96,7 @@ def edit_credential(
     group = kp.find_groups(name=GROUP_NAME_CREDENTIALS, first=True)
 
     try:
-        entry = kp.find_entries(title=old_username, first=True, group=group)
-        entry.title = username
+        entry = kp.find_entries(title=id, first=True, group=group)
         entry.username = username
         entry.password = password
         entry.set_custom_property(EXEGOL_DB_HASH_PROPERTY, hash, protect=True)

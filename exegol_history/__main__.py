@@ -35,11 +35,13 @@ from exegol_history.db_api.parsing import (
     CredsFileType,
     HostsFileType,
 )
-from exegol_history.db_api.utils import write_in_profile
+from exegol_history.db_api.utils import (
+    write_host_in_profile,
+    write_credential_in_profile,
+)
 
 exegol_history_HOME_FOLDER_NAME = ".exegol_history"
-CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
-HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP"]
+PROFILE_SH_PATH = "/opt/tools/Exegol-history/profile.sh"
 
 console = Console(soft_wrap=True)
 
@@ -310,7 +312,8 @@ def main():
             elif args.json or (not args.csv and not args.txt):
                 console.print_json(
                     format_into_json(
-                        creds, field_names=["username", "password", "hash", "domain"]
+                        creds,
+                        field_names=["id", "username", "password", "hash", "domain"],
                     )
                 )
 
@@ -350,16 +353,10 @@ def main():
             app = DbCredsApp(config, kp)
 
             try:
-                username, password, nt_hash, domain = app.run()
-                variables_correspondance = {
-                    CREDS_VARIABLES[0]: username,
-                    CREDS_VARIABLES[1]: password,
-                    CREDS_VARIABLES[2]: nt_hash,
-                    CREDS_VARIABLES[3]: domain,
-                }
-
-                write_in_profile(variables_correspondance)
-
+                username, password, hash, domain = app.run()
+                write_credential_in_profile(
+                    PROFILE_SH_PATH, username, password, hash, domain
+                )
             except Exception as e:
                 console.print(
                     f"[[bold red]![/bold red]] There was an error writing to profile.sh: {e}"
@@ -370,17 +367,7 @@ def main():
 
             try:
                 ip, hostname, role = app.run()
-                variables_correspondance = {
-                    HOSTS_VARIABLES[0]: ip,
-                    HOSTS_VARIABLES[1]: ip,
-                    HOSTS_VARIABLES[2]: hostname,
-                }
-
-                if role == "DC":
-                    variables_correspondance[HOSTS_VARIABLES[3]] = hostname
-                    variables_correspondance[HOSTS_VARIABLES[4]] = ip
-
-                write_in_profile(variables_correspondance)
+                write_host_in_profile(PROFILE_SH_PATH, ip, hostname, role)
             except Exception as e:
                 console.print(
                     f"[[bold red]![/bold red]] There was an error writing to profile.sh: {e}"
