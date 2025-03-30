@@ -1,6 +1,7 @@
 import pytest
 import os
 import subprocess
+import sys
 
 from exegol_history.tui.db_creds.db_creds import DbCredsApp
 from exegol_history.db_api.utils import write_credential_in_profile
@@ -136,6 +137,38 @@ async def test_add_credential_half_tui(
 
 @pytest.mark.asyncio
 async def test_add_credential_full_tui(
+    open_keepass: PyKeePass,
+    load_mock_config: dict[str, Any],
+    create_mock_profile_sh: None,
+):
+    config = load_mock_config
+    kp = open_keepass
+    app = DbCredsApp(config, kp)
+
+    async with app.run_test() as pilot:
+        await pilot.press("f4")
+        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
+        await select_input_and_enter_text(pilot, "#password", PASSWORD_TEST_VALUE)
+        await select_input_and_enter_text(pilot, "#hash", HASH_TEST_VALUE)
+        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE)
+        await pilot.click("#confirm_add")
+
+    credentials = get_credentials(kp)
+
+    assert credentials == [
+        (
+            "1",
+            USERNAME_TEST_VALUE,
+            PASSWORD_TEST_VALUE,
+            HASH_TEST_VALUE,
+            DOMAIN_TEST_VALUE,
+        )
+    ]
+
+
+@pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
+@pytest.mark.asyncio
+async def test_add_and_set_credential_full_tui(
     open_keepass: PyKeePass,
     load_mock_config: dict[str, Any],
     create_mock_profile_sh: None,
