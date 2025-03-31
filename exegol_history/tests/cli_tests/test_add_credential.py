@@ -39,30 +39,42 @@ def test_add_credential_search(open_keepass: PyKeePass):
     kp = open_keepass
 
     add_credential(kp, USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
-    add_credential(kp, USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
-    add_credential(kp, USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE + "2")
+    add_credential(
+        kp, USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE
+    )
+    add_credential(
+        kp, USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE + "2"
+    )
 
     credentials = get_credentials(kp, searched_username=USERNAME_TEST_VALUE + "2")
 
     assert credentials == [
         ("2", USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE),
-        ("3", USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE + "2")
+        ("3", USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE + "2"),
     ]
 
     credentials = get_credentials(kp, searched_domain=DOMAIN_TEST_VALUE)
 
     assert credentials == [
         ("1", USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE),
-        ("2", USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
+        ("2", USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE),
     ]
 
-    credentials = get_credentials(kp, searched_username=USERNAME_TEST_VALUE + "2", searched_domain=DOMAIN_TEST_VALUE)
+    credentials = get_credentials(
+        kp,
+        searched_username=USERNAME_TEST_VALUE + "2",
+        searched_domain=DOMAIN_TEST_VALUE,
+    )
 
     assert credentials == [
         ("2", USERNAME_TEST_VALUE + "2", "", HASH_TEST_VALUE, DOMAIN_TEST_VALUE)
     ]
 
-    credentials = get_credentials(kp, searched_password=PASSWORD_TEST_VALUE + "2", searched_domain=DOMAIN_TEST_VALUE)
+    credentials = get_credentials(
+        kp,
+        searched_password=PASSWORD_TEST_VALUE + "2",
+        searched_domain=DOMAIN_TEST_VALUE,
+    )
 
     assert len(credentials) == 0
 
