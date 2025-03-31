@@ -90,142 +90,181 @@ def parse_arguments() -> None:
     parser = argparse.ArgumentParser(
         prog="exegol_history",
         description="""
-			This program can be used to easily manage credentials 
-			and assets found during an engagement.
-		""",
+            Exegol-history: A tool to easily manage credentials and assets
+            discovered during security engagements.
+        """,
     )
 
     subparsers = parser.add_subparsers(
         dest="command",
         required=True,
-        help="Operation to execute (adding, deleting, TUI).",
+        help="Command to execute (add, export, rm, apply, show).",
     )
     add_parser = subparsers.add_parser(
-        "add", help="Add an object (credentials, hosts, ...)."
+        "add", help="Add new credentials or hosts to the database."
     )
     get_parser = subparsers.add_parser(
-        "get", help="Get an object (credentials, hosts, ...)."
+        "export",
+        help="Export credentials or hosts from the database in various formats.",
     )
     delete_parser = subparsers.add_parser(
-        "del", help="Delete an object (credentials, hosts, ...)."
+        "rm", help="Remove existing credentials or hosts from the database."
     )
     tui_parser = subparsers.add_parser(
-        "export",
-        help="""
-			Launch the TUI to manage an object (credentials, hosts, ...).
-		""",
+        "apply",
+        help="Select credentials or assets and apply them in the current shell to use with the preset history commands.",
     )
     subparsers.add_parser(
-        "env",
-        help="""
-			Display environment variables related to Exegol-history.
-		""",
+        "show",
+        help="Display exegol history values currently set in the shell (i.e., environment variables).",
     )
 
     add_subparsers = add_parser.add_subparsers(
         dest="subcommand",
         required=True,
-        help="Choose which kind of object to add / edit (credential, host, ...).",
+        help="Type of object to add (creds, hosts).",
     )
     get_subparsers = get_parser.add_subparsers(
         dest="subcommand",
         required=True,
-        help="Choose which kind of object to get (credential, host, ...).",
+        help="Type of object to export (creds, hosts).",
     )
     delete_subparsers = delete_parser.add_subparsers(
         dest="subcommand",
         required=True,
-        help="Choose which kind of object to delete (credential, host, ...).",
+        help="Type of object to remove (creds, hosts).",
     )
     tui_subparsers = tui_parser.add_subparsers(
         dest="subcommand",
         required=True,
-        help="""
-			Choose which kind of object to manage in the TUI (credential, host, ...).
-		""",
+        help="Type of object to manage in the TUI (creds, hosts).",
     )
 
     # Credentials
     # Add / edit
     credential_add_parser = add_subparsers.add_parser(
-        "creds", help="Add / edit an object (credentials, hosts, ...)."
+        "creds", help="Add or update credentials in the database."
     )
-    credential_add_parser.add_argument("-u", "--username", help="Credential username.")
-    credential_add_parser.add_argument("-p", "--password", help="Credential password.")
-    credential_add_parser.add_argument("-H", "--hash", help="Credential hash.")
-    credential_add_parser.add_argument("-d", "--domain", help="Credential domain.")
     credential_add_parser.add_argument(
-        "-f", "--file", help="Import credentials from file."
+        "-u", "--username", help="Username for the credential entry."
+    )
+    credential_add_parser.add_argument(
+        "-p", "--password", help="Password for the credential entry."
+    )
+    credential_add_parser.add_argument(
+        "-H",
+        "--hash",
+        help="Password hash (such as NTLM, MD5, etc.) for the credential entry.",
+    )
+    credential_add_parser.add_argument(
+        "-d", "--domain", help="Domain associated with the credential entry."
+    )
+    credential_add_parser.add_argument(
+        "-f", "--file", help="Import multiple credentials from a file."
     )
     credential_add_parser.add_argument(
         "--file-type",
         choices=[cred_type.name for cred_type in CredsFileType],
-        help="Imported file type (csv, nxc, pypykatz, ...).",
+        help="Type of file being imported (csv, nxc, pypykatz, etc.) - required when using --file.",
     )
 
     # Get
     credential_get_parser = get_subparsers.add_parser(
-        "creds", help="Get an object (credentials, hosts, ...)."
+        "creds", help="Export credential information from the database."
     )
     credential_get_parser.add_argument(
-        "--json", action="store_true", help="Output in JSON format."
+        "--json",
+        action="store_true",
+        help="Export data in JSON format (default if no format specified).",
     )
     credential_get_parser.add_argument(
-        "--csv", action="store_true", help="Output in CSV format."
+        "--csv", action="store_true", help="Export data in CSV format."
     )
     credential_get_parser.add_argument(
-        "--txt", action="store_true", help="Output in TXT format."
+        "--txt", action="store_true", help="Export data in plain text format."
     )
     credential_get_parser.add_argument(
-        "-u", "--username", help="Specific username to get credential of."
+        "-u",
+        "--username",
+        help="Filter export to only show credentials with this specific username.",
     )
     credential_get_parser.add_argument(
-        "-r", "--redacted", action="store_true", help="Hide sensitive credentials"
+        "-r",
+        "--redacted",
+        action="store_true",
+        help="Mask sensitive information like passwords and hashes in the output.",
     )
 
     # Delete
     credential_delete_parser = delete_subparsers.add_parser(
-        "creds", help="Delete an object (credentials, hosts, ...)."
+        "creds", help="Delete credentials from the database."
     )
     credential_delete_parser.add_argument(
-        "-u", "--username", required=True, help="Credential username."
+        "-u",
+        "--username",
+        required=True,
+        help="Username of the credential entry to delete.",
     )
 
     # Hosts
     # Add / edit
-    hosts_add_parser = add_subparsers.add_parser("hosts", help="Add a host")
-    hosts_add_parser.add_argument("--ip", help="Host IP.")
-    hosts_add_parser.add_argument(
-        "-r", "--role", help="Host role (SCCM, ADCS, DC, WKS, ...)."
+    hosts_add_parser = add_subparsers.add_parser(
+        "hosts", help="Add or update host information in the database."
     )
-    hosts_add_parser.add_argument("-n", "--hostname", help="Hostname.")
-    hosts_add_parser.add_argument("-f", "--file", help="Import hosts from file.")
+    hosts_add_parser.add_argument("--ip", help="IP address of the host.")
+    hosts_add_parser.add_argument(
+        "-r",
+        "--role",
+        help="Role of the host in the environment (e.g., SCCM, ADCS, DC, WKS).",
+    )
+    hosts_add_parser.add_argument(
+        "-n", "--hostname", help="Hostname or NetBIOS name of the host."
+    )
+    hosts_add_parser.add_argument(
+        "-f", "--file", help="Import multiple hosts from a file."
+    )
     hosts_add_parser.add_argument(
         "--file-type",
         choices=[host_type.name for host_type in HostsFileType],
-        help="Imported file type (csv, nxc, ...).",
+        help="Type of file being imported (csv, nxc, etc.) - required when using --file.",
     )
 
     # Get
-    hosts_get_parser = get_subparsers.add_parser("hosts", help="Get hosts.")
-    hosts_get_parser.add_argument(
-        "--json", action="store_true", help="Output in JSON format."
+    hosts_get_parser = get_subparsers.add_parser(
+        "hosts", help="Export host information from the database."
     )
     hosts_get_parser.add_argument(
-        "--csv", action="store_true", help="Output in CSV format."
+        "--json",
+        action="store_true",
+        help="Export data in JSON format (default if no format specified).",
     )
     hosts_get_parser.add_argument(
-        "--txt", action="store_true", help="Output in TXT format."
+        "--csv", action="store_true", help="Export data in CSV format."
     )
-    hosts_get_parser.add_argument("--ip", help="Specific IP to search.")
+    hosts_get_parser.add_argument(
+        "--txt", action="store_true", help="Export data in plain text format."
+    )
+    hosts_get_parser.add_argument(
+        "--ip", help="Filter export to only show hosts with this specific IP address."
+    )
 
     # Delete
-    hosts_delete_parser = delete_subparsers.add_parser("hosts", help="Delete a host.")
-    hosts_delete_parser.add_argument("--ip", required=True, help="Host IP.")
+    hosts_delete_parser = delete_subparsers.add_parser(
+        "hosts", help="Delete host information from the database."
+    )
+    hosts_delete_parser.add_argument(
+        "--ip", required=True, help="IP address of the host to delete."
+    )
 
     # TUI
-    tui_parser = tui_subparsers.add_parser("creds", help="Manage credentials.")
-    tui_parser = tui_subparsers.add_parser("hosts", help="Manage hosts.")
+    tui_parser = tui_subparsers.add_parser(
+        "creds",
+        help="Manage credentials using the TUI and set related environment variables.",
+    )
+    tui_parser = tui_subparsers.add_parser(
+        "hosts",
+        help="Manage hosts using the TUI and set related environment variables.",
+    )
 
     return parser.parse_args()
 
@@ -299,7 +338,7 @@ def main():
                 app = DbHostsApp(config, kp, show_add_screen=True)
                 app.run()
 
-    if args.command == "get":
+    if args.command == "export":
         if args.subcommand == "creds":
             creds = get_credentials(kp, args.username, args.redacted)
 
@@ -331,7 +370,7 @@ def main():
                     format_into_json(hosts, field_names=["ip", "hostname", "role"])
                 )
 
-    if args.command == "del":
+    if args.command == "rm":
         if args.subcommand == "creds":
             try:
                 delete_credential(kp, args.username)
@@ -348,7 +387,7 @@ def main():
                 )
 
     # TUI mode
-    if args.command == "export":
+    if args.command == "apply":
         if args.subcommand == "creds":
             app = DbCredsApp(config, kp)
 
@@ -374,7 +413,7 @@ def main():
                 )
                 sys.exit(1)
 
-    if args.command == "env":
+    if args.command == "show":
         env_vars = [
             "USER",
             "PASSWORD",
