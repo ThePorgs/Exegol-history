@@ -98,7 +98,7 @@ def parse_arguments() -> None:
     subparsers = parser.add_subparsers(
         dest="command",
         required=True,
-        help="Command to execute (add, export, rm, apply, show).",
+        help="Command to execute (add, export, rm, set, show).",
     )
     add_parser = subparsers.add_parser(
         "add", help="Add new credentials or hosts to the database."
@@ -111,12 +111,16 @@ def parse_arguments() -> None:
         "rm", help="Remove existing credentials or hosts from the database."
     )
     tui_parser = subparsers.add_parser(
-        "apply",
-        help="Select credentials or assets and apply them in the current shell to use with the preset history commands.",
+        "set",
+        help="Select credentials or assets and set them in the current shell to use with the preset history commands.",
     )
     subparsers.add_parser(
         "show",
         help="Display exegol history values currently set in the shell (i.e., environment variables).",
+    )
+    subparsers.add_parser(
+        "unset",
+        help="Unset the currently selected credential.",
     )
 
     add_subparsers = add_parser.add_subparsers(
@@ -187,6 +191,26 @@ def parse_arguments() -> None:
         "-u",
         "--username",
         help="Filter export to only show credentials with this specific username.",
+    )
+    credential_get_parser.add_argument(
+        "-d",
+        "--domain",
+        help="Filter export to only show credentials with this specific domain.",
+    )
+    credential_get_parser.add_argument(
+        "-p",
+        "--password",
+        help="Filter export to only show credentials with this specific password.",
+    )
+    credential_get_parser.add_argument(
+        "-H",
+        "--hash",
+        help="Filter export to only show credentials with this specific hash.",
+    )
+    credential_get_parser.add_argument(
+        "-i",
+        "--id",
+        help="Filter export to only show credentials with this specific id.",
     )
     credential_get_parser.add_argument(
         "-r",
@@ -340,7 +364,15 @@ def main():
 
     if args.command == "export":
         if args.subcommand == "creds":
-            creds = get_credentials(kp, args.username, args.redacted)
+            creds = get_credentials(
+                kp,
+                args.id,
+                args.username,
+                args.password,
+                args.hash,
+                args.domain,
+                args.redacted,
+            )
 
             if args.csv:
                 console.print(format_into_csv(creds))
@@ -387,19 +419,21 @@ def main():
                 )
 
     # TUI mode
-    if args.command == "apply":
+    if args.command == "set":
         if args.subcommand == "creds":
             app = DbCredsApp(config, kp)
 
             try:
-                username, password, hash, domain = app.run()
+                _id, username, password, hash, domain = app.run()
                 write_credential_in_profile(
                     PROFILE_SH_PATH, username, password, hash, domain
                 )
-            except Exception as e:
-                console.print(
-                    f"[[bold red]![/bold red]] There was an error writing to profile.sh: {e}"
-                )
+            except (
+                TypeError
+            ):  # It means the user left the TUI without choosing anything
+                sys.exit(0)
+            except Exception:
+                console.print_exception(show_locals=True)
                 sys.exit(1)
         elif args.subcommand == "hosts":
             app = DbHostsApp(config, kp)
@@ -407,11 +441,21 @@ def main():
             try:
                 ip, hostname, role = app.run()
                 write_host_in_profile(PROFILE_SH_PATH, ip, hostname, role)
-            except Exception as e:
-                console.print(
-                    f"[[bold red]![/bold red]] There was an error writing to profile.sh: {e}"
-                )
+            except (
+                TypeError
+            ):  # It means the user left the TUI without choosing anything
+                sys.exit(0)
+            except Exception:
+                console.print_exception(show_locals=True)
                 sys.exit(1)
+
+    if args.command == "unset":
+        try:
+            write_credential_in_profile(PROFILE_SH_PATH, "", "", "", "")
+            sys.exit(0)
+        except Exception:
+            console.print_exception(show_locals=True)
+            sys.exit(1)
 
     if args.command == "show":
         env_vars = [

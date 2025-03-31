@@ -3,6 +3,7 @@ from pykeepass import PyKeePass
 GROUP_NAME_CREDENTIALS = "Credentials"
 EXEGOL_DB_HASH_PROPERTY = "hash"
 EXEGOL_DB_DOMAIN_PROPERTY = "domain"
+REDACT_SEPARATOR = "*"
 
 
 def add_credential(
@@ -34,24 +35,39 @@ def add_credential(
 
 
 def get_credentials(
-    kp: PyKeePass, searched_username: str = "", redacted: bool = False
+    kp: PyKeePass,
+    searched_id: str = None,
+    searched_username: str = None,
+    searched_password: str = None,
+    searched_hash: str = None,
+    searched_domain: str = None,
+    redacted: bool = False,
 ) -> [(str, str, str, str, str)]:
     array = []
-    group = kp.find_groups(name=GROUP_NAME_CREDENTIALS, first=True)
+    custom_properties = {}
 
-    for entry in group.entries:
-        id = entry.title
-        username = entry.username
+    if searched_domain:
+        custom_properties[EXEGOL_DB_DOMAIN_PROPERTY] = searched_domain
+
+    if searched_hash:
+        custom_properties[EXEGOL_DB_HASH_PROPERTY] = searched_hash
+
+    group = kp.find_groups(name=GROUP_NAME_CREDENTIALS, first=True)
+    entries = kp.find_entries(
+        title=searched_id,
+        username=searched_username,
+        password=searched_password,
+        string=custom_properties,
+        group=group,
+    )
+
+    for entry in entries:
         password = entry.password
         hash = entry.get_custom_property(EXEGOL_DB_HASH_PROPERTY)
         domain = entry.get_custom_property(EXEGOL_DB_DOMAIN_PROPERTY)
 
         if redacted:
-            password = "**********"
-            hash = "**********"
-
-        if not username:
-            username = ""
+            hash = password = REDACT_SEPARATOR * 10
 
         if not password:
             password = ""
@@ -62,11 +78,7 @@ def get_credentials(
         if not domain:
             domain = ""
 
-        if searched_username == username:
-            array.append((id, username, password, hash, domain))
-            return array
-        elif not searched_username:
-            array.append((id, username, password, hash, domain))
+        array.append((entry.title, entry.username, password, hash, domain))
 
     return array
 
