@@ -9,7 +9,7 @@ python = "^3.10"
 rich  = "^13.9.2"
 textual = "^2.1.2"
 pykeepass = "^4.1.0.post1"
-psycopg = "^3.2.6"
+psycopg = { version = "^3.2.6", extras = ["binary", "pool"] }
 pyyaml = "^6.0.2"
 
 [tool.poetry.scripts]
