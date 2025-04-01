@@ -1,0 +1,9 @@
+creds add user:'sccm-account-da' password:'SCCM_D@-ftw_' realm:sccm.lab
+creds add password:'password' -> # Impossible case, this should be skipped, Exegol-history cannot handle credential without a username
+creds add user:test ntlm:31D6CFE0D16AE931B73C59D7E0C089C0:B4B9B02E6F09A9BD760F388B67351E2B
+creds add ntlm:31D6CFE0D16AE931B73C59D7E0C089C0:B4B9B02E6F09A9BD760F388B67351E2B -> # Impossible case, this should be skipped, Exegol-history cannot handle credential without a username
+creds add user:postgres postgres:md58743b52063cd84097a65d1633f5c74f5
+creds add user:test pkcs12:test.pfx
+creds add user:'ssh-test' ssh-key:id_rsa
+creds add user:'md5-test' hash:8743b52063cd84097a65d1633f5c74f5 jtr:md5
+creds add hash:8743b52063cd84097a65d1633f5c74f5 -> # Impossible case

@@ -10,6 +10,11 @@ from rich.traceback import install
 from pykeepass import PyKeePass, create_database
 from typing import Any
 
+import exegol_history.connectors.msf
+import exegol_history.connectors.msf.extractors
+import exegol_history.connectors.msf.extractors.credentials
+import exegol_history.connectors.msf.extractors.hosts
+import exegol_history.connectors.msf.utils
 from exegol_history.db_api.creds import (
     add_credential,
     get_credentials,
@@ -103,6 +108,9 @@ def parse_arguments() -> None:
     add_parser = subparsers.add_parser(
         "add", help="Add new credentials or hosts to the database."
     )
+    sync_parser = subparsers.add_parser(
+        "sync", help="Synchronize credentials and hosts to the database."
+    )
     get_parser = subparsers.add_parser(
         "export",
         help="Export credentials or hosts from the database in various formats.",
@@ -127,6 +135,11 @@ def parse_arguments() -> None:
         dest="subcommand",
         required=True,
         help="Type of object to add (creds, hosts).",
+    )
+    sync_subparsers = sync_parser.add_subparsers(
+        dest="subcommand",
+        required=True,
+        help="Type of synchronization to do (nxc, msf).",
     )
     get_subparsers = get_parser.add_subparsers(
         dest="subcommand",
@@ -290,6 +303,12 @@ def parse_arguments() -> None:
         help="Manage hosts using the TUI and set related environment variables.",
     )
 
+    # Sync
+    msf_parser = sync_subparsers.add_parser(
+        "msf",
+        help="Synchronize MSF (Metasploit Framework) credentials and hosts database.",
+    )
+
     return parser.parse_args()
 
 
@@ -361,6 +380,12 @@ def main():
             if len(sys.argv) <= 3:
                 app = DbHostsApp(config, kp, show_add_screen=True)
                 app.run()
+
+    if args.command == "sync":
+        if args.subcommand == "msf":
+            (database, port, username, password) = exegol_history.connectors.msf.utils.get_msf_postgres_db_infos(exegol_history.connectors.msf.utils.MSF_DB_CONFIG_PATH)
+            exegol_history.connectors.msf.extractors.credentials.sync_credentials(kp, msf_db_name=database, msf_db_port=port, msf_db_username=username, msf_db_password=password)
+            exegol_history.connectors.msf.extractors.hosts.sync_hosts(kp, msf_db_name=database, msf_db_port=port, msf_db_username=username, msf_db_password=password)
 
     if args.command == "export":
         if args.subcommand == "creds":

@@ -9,6 +9,8 @@ python = "^3.10"
 rich  = "^13.9.2"
 textual = "^2.1.2"
 pykeepass = "^4.1.0.post1"
+psycopg = "^3.2.6"
+pyyaml = "^6.0.2"
 
 [tool.poetry.scripts]
 exegol-history="exegol_history.__main__:main"
