@@ -304,7 +304,7 @@ def parse_arguments() -> None:
     )
 
     # Sync
-    msf_parser = sync_subparsers.add_parser(
+    sync_subparsers.add_parser(
         "msf",
         help="Synchronize MSF (Metasploit Framework) credentials and hosts database.",
     )
@@ -383,9 +383,25 @@ def main():
 
     if args.command == "sync":
         if args.subcommand == "msf":
-            (database, port, username, password) = exegol_history.connectors.msf.utils.get_msf_postgres_db_infos(exegol_history.connectors.msf.utils.MSF_DB_CONFIG_PATH)
-            exegol_history.connectors.msf.extractors.credentials.sync_credentials(kp, msf_db_name=database, msf_db_port=port, msf_db_username=username, msf_db_password=password)
-            exegol_history.connectors.msf.extractors.hosts.sync_hosts(kp, msf_db_name=database, msf_db_port=port, msf_db_username=username, msf_db_password=password)
+            (database, port, username, password) = (
+                exegol_history.connectors.msf.utils.get_msf_postgres_db_infos(
+                    exegol_history.connectors.msf.utils.MSF_DB_CONFIG_PATH
+                )
+            )
+            exegol_history.connectors.msf.extractors.credentials.sync_credentials(
+                kp,
+                msf_db_name=database,
+                msf_db_port=port,
+                msf_db_username=username,
+                msf_db_password=password,
+            )
+            exegol_history.connectors.msf.extractors.hosts.sync_hosts(
+                kp,
+                msf_db_name=database,
+                msf_db_port=port,
+                msf_db_username=username,
+                msf_db_password=password,
+            )
 
     if args.command == "export":
         if args.subcommand == "creds":

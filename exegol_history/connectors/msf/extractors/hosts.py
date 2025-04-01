@@ -5,11 +5,20 @@ from pykeepass import PyKeePass
 from rich.console import Console
 from exegol_history.connectors.msf.utils import MSF_DB_HOST_QUERY
 
-def sync_hosts(kp: PyKeePass, msf_db_name: str, msf_db_port: int, msf_db_username: str, msf_db_password: str):
+
+def sync_hosts(
+    kp: PyKeePass,
+    msf_db_name: str,
+    msf_db_port: int,
+    msf_db_username: str,
+    msf_db_password: str,
+):
     console = Console(soft_wrap=True)
     number_of_synchronized = 0
 
-    with psycopg.connect(f"dbname={msf_db_name} user={msf_db_username} port={msf_db_port} password={msf_db_password} host=localhost") as conn:
+    with psycopg.connect(
+        f"dbname={msf_db_name} user={msf_db_username} port={msf_db_port} password={msf_db_password} host=localhost"
+    ) as conn:
         with conn.cursor() as cur:
             cur.execute(MSF_DB_HOST_QUERY)
 
