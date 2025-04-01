@@ -20,16 +20,9 @@ def add_credential(
     else:
         id = "1"
 
-    entry = kp.find_entries(
-        username=username, string={EXEGOL_DB_DOMAIN_PROPERTY: domain}, group=group
-    )
-
-    if len(entry) == 1:
-        edit_credential(kp, entry[0].title, username, password, hash, domain)
-    else:
-        entry = kp.add_entry(group, id, username, password)
-        entry.set_custom_property(EXEGOL_DB_HASH_PROPERTY, hash, protect=True)
-        entry.set_custom_property(EXEGOL_DB_DOMAIN_PROPERTY, domain, protect=True)
+    entry = kp.add_entry(group, id, username, password)
+    entry.set_custom_property(EXEGOL_DB_HASH_PROPERTY, hash, protect=True)
+    entry.set_custom_property(EXEGOL_DB_DOMAIN_PROPERTY, domain, protect=True)
 
     kp.save()
 
