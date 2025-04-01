@@ -126,6 +126,13 @@ def test_add_credential_existing(open_keepass: PyKeePass):
         (
             "1",
             USERNAME_TEST_VALUE,
+            "",
+            "",
+            DOMAIN_TEST_VALUE,
+        ),
+        (
+            "2",
+            USERNAME_TEST_VALUE,
             PASSWORD_TEST_VALUE,
             HASH_TEST_VALUE,
             DOMAIN_TEST_VALUE,
