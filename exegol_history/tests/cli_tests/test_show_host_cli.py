@@ -17,7 +17,7 @@ def test_show_host_only_ip():
     show_objects(console)
 
     assert (
-        f"""{HOSTS_VARIABLES[0]}:{IP_TEST_VALUE}{os.linesep}"""
+        f"""{HOSTS_VARIABLES[0]}:{IP_TEST_VALUE}\n"""
         in console.file.getvalue()
     )
 
@@ -30,7 +30,7 @@ def test_show_host_half():
     show_objects(console)
 
     assert (
-        f"""{HOSTS_VARIABLES[0]}:{IP_TEST_VALUE}{os.linesep}{HOSTS_VARIABLES[1]}:{HOSTNAME_TEST_VALUE}{os.linesep}"""
+        f"""{HOSTS_VARIABLES[0]}:{IP_TEST_VALUE}\n{HOSTS_VARIABLES[1]}:{HOSTNAME_TEST_VALUE}\n"""
         in console.file.getvalue()
     )
 
@@ -44,6 +44,6 @@ def test_show_host_full():
     show_objects(console)
 
     assert (
-        f"""{HOSTS_VARIABLES[0]}:{IP_TEST_VALUE}{os.linesep}{HOSTS_VARIABLES[1]}:{HOSTNAME_TEST_VALUE}{os.linesep}{HOSTS_VARIABLES[2]}:{ROLE_TEST_VALUE}{os.linesep}"""
+        f"""{HOSTS_VARIABLES[0]}:{IP_TEST_VALUE}\n{HOSTS_VARIABLES[1]}:{HOSTNAME_TEST_VALUE}\n{HOSTS_VARIABLES[2]}:{ROLE_TEST_VALUE}\n"""
         in console.file.getvalue()
     )

@@ -18,7 +18,7 @@ def test_show_credential_only_username():
     show_objects(console)
 
     assert (
-        f"""{CREDS_VARIABLES[0]}:{USERNAME_TEST_VALUE}{os.linesep}"""
+        f"""{CREDS_VARIABLES[0]}:{USERNAME_TEST_VALUE}\n"""
         in console.file.getvalue()
     )
 
@@ -31,7 +31,7 @@ def test_show_credential_half():
     show_objects(console)
 
     assert (
-        f"""{CREDS_VARIABLES[0]}:{USERNAME_TEST_VALUE}{os.linesep}{CREDS_VARIABLES[1]}:{PASSWORD_TEST_VALUE}{os.linesep}"""
+        f"""{CREDS_VARIABLES[0]}:{USERNAME_TEST_VALUE}\n{CREDS_VARIABLES[1]}:{PASSWORD_TEST_VALUE}\n"""
         in console.file.getvalue()
     )
 
@@ -46,6 +46,6 @@ def test_show_credential_full():
     show_objects(console)
 
     assert (
-        f"""{CREDS_VARIABLES[0]}:{USERNAME_TEST_VALUE}{os.linesep}{CREDS_VARIABLES[1]}:{PASSWORD_TEST_VALUE}{os.linesep}{CREDS_VARIABLES[2]}:{HASH_TEST_VALUE}{os.linesep}{CREDS_VARIABLES[3]}:{DOMAIN_TEST_VALUE}{os.linesep}"""
+        f"""{CREDS_VARIABLES[0]}:{USERNAME_TEST_VALUE}\n{CREDS_VARIABLES[1]}:{PASSWORD_TEST_VALUE}\n{CREDS_VARIABLES[2]}:{HASH_TEST_VALUE}\n{CREDS_VARIABLES[3]}:{DOMAIN_TEST_VALUE}\n"""
         in console.file.getvalue()
     )
