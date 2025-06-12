@@ -1,79 +1,123 @@
 import sys
-
-from textual.app import App, ComposeResult
+import importlib
+from textual.app import App, ComposeResult, SystemCommand
+from textual.keys import Keys
+from textual.screen import Screen
+from textual.widgets.data_table import RowDoesNotExist
 from textual.widgets import Footer, Header, DataTable, Input, Rule
 from textual.binding import Binding
-from textual.containers import Vertical
 from textual import events
 from pykeepass import PyKeePass
 from typing import Any
-
 from exegol_history.db_api.creds import (
-    add_credential,
-    get_credentials,
+    Credential,
+    add_credentials,
     delete_credential,
-    edit_credential,
+    edit_credentials,
+    get_credentials,
 )
+from exegol_history.db_api.exporting import export_objects
 from exegol_history.db_api.utils import copy_in_clipboard
 from exegol_history.tui.db_creds.add_credential import AddCredentialScreen
 from exegol_history.tui.db_creds.edit_credential import EditCredentialScreen
 from exegol_history.tui.db_creds.delete_credential import (
     DeleteCredentialConfirmationScreen,
 )
-
-CREDS_COLUMNS = ["ID", "Username", "Password", "Hash", "Domain"]
+from exegol_history.tui.db_creds.export_credential import ExportCredentialScreen
 
 """
 This is the main application displaying the credentials table and a search bar
 """
 
+TOOLTIP_COPY_USERNAME = "Copy the username to the clipboard"
+TOOLTIP_COPY_PASSWORD = "Copy the password to the clipboard"
+TOOLTIP_COPY_HASH = "Copy the password to the clipboard"
+TOOLTIP_ADD_CREDENTIAL = "Add a new credential"
+TOOLTIP_DELETE_CREDENTIAL = "Delete the selected credential or multiple credentials"
+TOOLTIP_EDIT_CREDENTIAL = "Edit the selected credential"
+TOOLTIP_EXPORT_CREDENTIAL = "Export credentials"
+
 
 class DbCredsApp(App):
+    CSS_PATH = "../css/general.tcss"
+    TITLE = f"Exegol-history v{importlib.metadata.version('exegol-history')}"
     BINDINGS = [
         Binding(
             "f1",
             "copy_username_clipboard",
             " username",
             id="copy_username_clipboard",
-            tooltip="Copy the username to the clipboard.",
+            tooltip=TOOLTIP_COPY_USERNAME,
         ),
         Binding(
             "f2",
             "copy_password_clipboard",
             " password",
             id="copy_password_clipboard",
-            tooltip="Copy the password to the clipboard.",
+            tooltip=TOOLTIP_COPY_PASSWORD,
         ),
         Binding(
             "f3",
             "copy_hash_clipboard",
             " hash",
             id="copy_hash_clipboard",
-            tooltip="Copy the hash to the clipboard.",
+            tooltip=TOOLTIP_COPY_HASH,
         ),
         Binding(
             "f4",
             "add_credential",
             "+ credential",
             id="add_credential",
-            tooltip="Add a credential.",
+            tooltip=TOOLTIP_ADD_CREDENTIAL,
         ),
         Binding(
             "f5",
             "delete_credential",
             " credential",
             id="delete_credential",
-            tooltip="Delete a credential.",
+            tooltip=TOOLTIP_DELETE_CREDENTIAL,
         ),
         Binding(
             "f6",
             "edit_credential",
             " credential",
             id="edit_credential",
-            tooltip="Edit a credential.",
+            tooltip=TOOLTIP_EDIT_CREDENTIAL,
         ),
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
+        Binding(
+            "f7",
+            "export_credential",
+            " credential",
+            id="export_credential",
+            tooltip=TOOLTIP_EXPORT_CREDENTIAL,
+        ),
+        Binding(Keys.ControlC, "quit", "Quit", show=False, priority=True),
     ]
+
+    def get_system_commands(self, screen: Screen):
+        yield SystemCommand(
+            "Copy username", TOOLTIP_COPY_USERNAME, self.action_copy_username_clipboard
+        )
+        yield SystemCommand(
+            "Copy password", TOOLTIP_COPY_PASSWORD, self.action_copy_password_clipboard
+        )
+        yield SystemCommand(
+            "Copy hash", TOOLTIP_COPY_HASH, self.action_copy_hash_clipboard
+        )
+        yield SystemCommand(
+            "Add credential", TOOLTIP_ADD_CREDENTIAL, self.action_add_credential
+        )
+        yield SystemCommand(
+            "Delete credential",
+            TOOLTIP_DELETE_CREDENTIAL,
+            self.action_delete_credential,
+        )
+        yield SystemCommand(
+            "Edit credential", TOOLTIP_EDIT_CREDENTIAL, self.action_edit_credential
+        )
+        yield SystemCommand(
+            "Export credentials", TOOLTIP_EDIT_CREDENTIAL, self.action_export_credential
+        )
 
     def update_table(self) -> None:
         # Refresh the table
@@ -93,13 +137,19 @@ class DbCredsApp(App):
         self.show_add_screen = show_add_screen
 
     def compose(self) -> ComposeResult:
-        yield self.main_view()
+        yield Header()
+        yield DataTable()
+        yield Rule(line_style="heavy")
+        yield Input(placeholder="Search...", id="search-bar")
+        yield Footer()
 
     def on_mount(self) -> None:
         tmp = get_credentials(self.kp)
 
+        _tmp = Credential()
+
         table = self.query_one(DataTable)
-        table.add_columns(*CREDS_COLUMNS)
+        table.add_columns(*_tmp.__dict__.keys())
         table.add_rows(tmp)
         table.zebra_stripes = True
         table.cursor_type = "row"
@@ -111,13 +161,14 @@ class DbCredsApp(App):
         if self.show_add_screen:
             self.push_screen(AddCredentialScreen(), self.check_added_creds)
 
-    def on_key(self, event: events.Key) -> None:
-        if event.key == "enter":
+    def on_key(self, event: events.Key) -> Credential:
+        if event.key == Keys.Enter:
             try:
                 table = self.query_one(DataTable)
                 selected_row = table.cursor_row
                 row_data = table.get_row_at(selected_row)
-                self.exit(row_data)
+                select_credential = get_credentials(self.kp, id=row_data[0])[0]
+                self.exit(select_credential)
             except Exception:
                 pass
 
@@ -149,7 +200,7 @@ class DbCredsApp(App):
 
         try:
             row_data = table.get_row_at(selected_row)
-            username = row_data[0]
+            username = row_data[1]
             copy_in_clipboard(username)
         except Exception:
             pass
@@ -161,7 +212,7 @@ class DbCredsApp(App):
         selected_row = table.cursor_row
         try:
             row_data = table.get_row_at(selected_row)
-            password = row_data[1]
+            password = row_data[2]
             copy_in_clipboard(password)
         except Exception:
             pass
@@ -180,10 +231,8 @@ class DbCredsApp(App):
 
         sys.exit(0)
 
-    def check_added_creds(self, parsed_creds: []) -> None:
-        for cred in parsed_creds:
-            add_credential(self.kp, cred[0], cred[1], cred[2], cred[3])
-
+    def check_added_creds(self, parsed_creds: list[Credential]) -> None:
+        add_credentials(self.kp, parsed_creds)
         self.update_table()
 
         if self.show_add_screen:
@@ -192,24 +241,54 @@ class DbCredsApp(App):
     def action_add_credential(self) -> None:
         self.push_screen(AddCredentialScreen(), self.check_added_creds)
 
-    def action_delete_credential(self) -> None:
-        def check_delete(delete: bool) -> None:
-            if delete:
-                table = self.query_one(DataTable)
-                selected_row = table.cursor_row
+    def check_export_credential(self, result: tuple) -> None:
+        if result:
+            format = result[0]
+            export_path = result[1]
 
+            if export_path:
                 try:
-                    row_data = table.get_row_at(selected_row)
-                    delete_credential(self.kp, row_data[0])
-                    self.update_table()
-                except Exception:
-                    pass
+                    exported = export_objects(format, get_credentials(self.kp))
 
-        self.push_screen(DeleteCredentialConfirmationScreen(), check_delete)
+                    with open(export_path, "w") as f:
+                        f.write(exported)
+
+                    self.notify(
+                        "Credentials successfully exported !", severity="information"
+                    )
+                except Exception as e:
+                    self.notify(
+                        f"There was an error while exporting: {e}", severity="error"
+                    )
+
+    def action_export_credential(self) -> None:
+        self.push_screen(ExportCredentialScreen(), self.check_export_credential)
+
+    def action_delete_credential(self) -> None:
+        def check_delete(result: list[int]) -> None:
+            for id in result:
+                try:
+                    delete_credential(self.kp, id)
+                except RuntimeError:
+                    continue
+
+            self.kp.save()
+            self.update_table()
+
+        table = self.query_one(DataTable)
+        selected_row = table.cursor_row
+
+        try:
+            self.push_screen(
+                DeleteCredentialConfirmationScreen([table.get_row_at(selected_row)[0]]),
+                check_delete,
+            )
+        except RowDoesNotExist:
+            pass
 
     def action_edit_credential(self) -> None:
-        def check_edit_creds(creds: (str, str, str, str, str)) -> None:
-            edit_credential(self.kp, creds[0], creds[1], creds[2], creds[3], creds[4])
+        def check_edit_creds(credentials: list[Credential]) -> None:
+            edit_credentials(self.kp, credentials)
 
             self.update_table()
 
@@ -218,21 +297,10 @@ class DbCredsApp(App):
 
         try:
             row_data = table.get_row_at(selected_row)
+            credential = get_credentials(self.kp, id=row_data[0])[0]
             self.push_screen(
-                EditCredentialScreen(
-                    row_data[0], row_data[1], row_data[2], row_data[3], row_data[4]
-                ),
+                EditCredentialScreen(credential),
                 check_edit_creds,
             )
         except Exception:
             pass
-
-    def main_view(self) -> Vertical:
-        """Return the main view layout."""
-        return Vertical(
-            Header(),
-            DataTable(),
-            Rule(line_style="heavy"),
-            Input(placeholder="Search...", id="search-bar"),
-            Footer(),
-        )

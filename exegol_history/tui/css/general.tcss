@@ -1,0 +1,161 @@
+/* General */
+Input {
+    margin: 1;
+}
+
+Select {
+    margin: 1;
+}
+
+TextArea {
+    margin: 1;
+    min-height: 10;
+}
+
+Button {
+    margin: 1;
+}
+/* General end */
+
+#question {
+    text-align: center;
+}
+
+#browse_horizontal {
+    width: 50;
+}
+
+#browse_button {
+    width: 30%;
+}
+
+#path_input {
+    width: 70%;
+}
+
+/* Button bottom bar (confirm, cancel, ...) */
+#actions_horizontal {
+    align: center bottom;
+    height: auto;
+    overflow: auto auto;
+}
+/* Button bottom bar (confirm, cancel, ...) end */
+
+/* KDBX keyfile import */
+#kdbx_keyfile_horizontal {
+    margin: 1;
+    height: auto;
+}
+
+#kdbx_keyfile_button {
+    margin: 0;
+    margin-right: 1;
+    width: 40%;
+}
+
+#kdbx_keyfile_input {
+    height: auto;
+    width: 60%;
+    margin: 0;
+}
+/* KDBX keyfile import end */
+
+/* Modal */
+ModalScreen {
+    align: center middle;
+}
+
+/* DeleteObjects modal */
+#delete_modal_title {
+    align: center middle;
+    background: $background;
+    max-width: 55;
+    text-align: center;
+    text-style: bold;
+}
+
+DeleteObjects {
+    padding: 0 1;
+    overflow: auto auto;
+    height: auto;
+    width: auto;
+    min-width: 30;
+    max-width: 55;
+    border: thick $background 80%;
+    background: $surface;
+}
+
+DeleteObjects > TabbedContent {
+    height: auto;
+    width: auto;
+}
+/* DeleteObjects modal end */
+
+/* Add / edit modal */
+#add_modal_title {
+    align: center middle;
+    background: $background;
+    max-width: 55;
+    text-align: center;
+    text-style: bold;
+}
+
+#add_modal {
+    overflow: auto auto;
+    height: auto;
+    width: auto;
+    max-height: 40;
+    max-width: 55;
+    border: thick $background 80%;
+    background: $surface;
+}
+
+#modal {
+    padding: 0 1;
+    border: thick $background 80%;
+    background: $surface;
+    max-width: 55;
+}
+
+CredentialForm {
+    overflow: auto auto;
+    height: auto;
+}
+
+HostForm {
+    overflow: auto auto;
+    height: auto;
+}
+
+ImportFile {
+    overflow: auto auto;
+    height: auto;
+    width: auto;
+}
+
+ExportObjects {
+    overflow: auto auto;
+    height: auto;
+    width: auto;
+}
+/* Add/edit modal end */
+
+/* Export modal */
+#export_modal {
+    padding: 0 1;
+    border: thick $background 80%;
+    background: $surface;
+    max-width: 55;
+    max-height: 16;
+}
+/* Export modal end */
+
+/* OpenFile modal */
+#open_file_modal {
+    padding: 0 1;
+    border: thick $background 80%;
+    background: $surface;
+    max-width: 80;
+    max-height: 25;
+}
+/* Modal end */

@@ -1,20 +1,36 @@
 import sys
-
-from textual.app import App, ComposeResult
+import importlib
+from textual.app import App, ComposeResult, SystemCommand
+from textual.keys import Keys
+from textual.screen import Screen
+from textual.widgets.data_table import RowDoesNotExist
 from textual.widgets import Footer, Header, DataTable, Input, Rule
 from textual.binding import Binding
 from textual.containers import Vertical
 from textual import events
 from pykeepass import PyKeePass
 from typing import Any
-
-from exegol_history.db_api.hosts import add_host, get_hosts, delete_host, edit_host
+from exegol_history.db_api.exporting import export_objects
+from exegol_history.db_api.hosts import (
+    Host,
+    add_hosts,
+    delete_host,
+    edit_hosts,
+    get_hosts,
+)
 from exegol_history.db_api.utils import copy_in_clipboard
 from exegol_history.tui.db_hosts.add_host import AddHostScreen
 from exegol_history.tui.db_hosts.edit_host import EditHostScreen
 from exegol_history.tui.db_hosts.delete_host import DeleteHostConfirmationScreen
+from exegol_history.tui.db_hosts.export_host import ExportHostScreen
 
-HOSTS_COLUMNS = ["IP", "Hostname", "Role"]
+TOOLTIP_COPY_IP = "Copy the IP to the clipboard"
+TOOLTIP_COPY_HOSTNAME = "Copy the hostname to the clipboard"
+TOOLTIP_ADD_HOST = "Add a new host"
+TOOLTIP_DELETE_HOST = "Delete the selected host or multiple hosts"
+TOOLTIP_EDIT_HOST = "Edit the selected host"
+TOOLTIP_EXPORT_HOST = "Export hosts"
+
 
 """
 This is the main application displaying the hosts table and a search bar
@@ -22,6 +38,8 @@ This is the main application displaying the hosts table and a search bar
 
 
 class DbHostsApp(App):
+    CSS_PATH = "../css/general.tcss"
+    TITLE = f"Exegol-history v{importlib.metadata.version('exegol-history')}"
     BINDINGS = [
         Binding(
             "f1",
@@ -42,8 +60,27 @@ class DbHostsApp(App):
             "f4", "delete_host", " host", id="delete_host", tooltip="Delete a host."
         ),
         Binding("f5", "edit_host", " host", id="edit_host", tooltip="Edit a host."),
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
+        Binding(
+            "f6",
+            "export_host",
+            " host",
+            id="export_host",
+            tooltip=TOOLTIP_EXPORT_HOST,
+        ),
+        Binding(Keys.ControlC, "quit", "Quit", show=False, priority=True),
     ]
+
+    def get_system_commands(self, screen: Screen):
+        yield SystemCommand("Copy IP", TOOLTIP_COPY_IP, self.action_copy_ip_clipboard)
+        yield SystemCommand(
+            "Copy hostname", TOOLTIP_COPY_HOSTNAME, self.action_copy_hostname_clipboard
+        )
+        yield SystemCommand("Add host", TOOLTIP_ADD_HOST, self.action_add_host)
+        yield SystemCommand("Delete host", TOOLTIP_DELETE_HOST, self.action_delete_host)
+        yield SystemCommand("Edit host", TOOLTIP_EDIT_HOST, self.action_edit_host)
+        yield SystemCommand(
+            "Export hosts", TOOLTIP_EXPORT_HOST, self.action_export_host
+        )
 
     def update_table(self) -> None:
         # Refresh the table
@@ -63,13 +100,21 @@ class DbHostsApp(App):
         self.show_add_screen = show_add_screen
 
     def compose(self) -> ComposeResult:
-        yield self.main_view()
+        yield Vertical(
+            Header(),
+            DataTable(),
+            Rule(line_style="heavy"),
+            Input(placeholder="Search...", id="search-bar"),
+            Footer(),
+        )
 
     def on_mount(self) -> None:
         tmp = get_hosts(self.kp)
 
+        _tmp = Host()
+
         table = self.query_one(DataTable)
-        table.add_columns(*HOSTS_COLUMNS)
+        table.add_columns(*_tmp.__dict__.keys())
         table.add_rows(tmp)
         table.zebra_stripes = True
         table.cursor_type = "row"
@@ -81,13 +126,13 @@ class DbHostsApp(App):
         if self.show_add_screen:
             self.push_screen(AddHostScreen(), self.check_added_host)
 
-    def on_key(self, event: events.Key) -> None:
-        if event.key == "enter":
+    def on_key(self, event: events.Key) -> Host:
+        if event.key == Keys.Enter:
             try:
                 table = self.query_one(DataTable)
                 selected_row = table.cursor_row
                 row_data = table.get_row_at(selected_row)
-                self.exit(row_data)
+                self.exit(Host(row_data[0], row_data[1], row_data[2], row_data[3]))
             except Exception:
                 pass
 
@@ -117,7 +162,7 @@ class DbHostsApp(App):
         selected_row = table.cursor_row
         try:
             row_data = table.get_row_at(selected_row)
-            ip = row_data[0]
+            ip = row_data[1]
             copy_in_clipboard(ip)
         except Exception:
             pass
@@ -130,64 +175,82 @@ class DbHostsApp(App):
 
         try:
             row_data = table.get_row_at(selected_row)
-            hostname = row_data[1]
+            hostname = row_data[2]
             copy_in_clipboard(hostname)
         except Exception:
             pass
 
         sys.exit(0)
 
-    def check_added_host(self, parsed_hosts: []) -> None:
-        for host in parsed_hosts:
-            add_host(self.kp, host[0], host[1], host[2])
+    def check_added_host(self, parsed_hosts: list[Host]) -> None:
+        add_hosts(self.kp, parsed_hosts)
 
         self.update_table()
 
         if self.show_add_screen:
             sys.exit(0)
 
+    def check_export_host(self, result: tuple) -> None:
+        if result:
+            format = result[0]
+            export_path = result[1]
+
+            if export_path:
+                try:
+                    exported = export_objects(format, get_hosts(self.kp))
+
+                    with open(export_path, "w") as f:
+                        f.write(exported)
+
+                    self.notify("Hosts successfully exported !", severity="information")
+                except Exception as e:
+                    self.notify(
+                        f"There was an error while exporting: {e}", severity="error"
+                    )
+
+    def action_export_host(self) -> None:
+        self.push_screen(ExportHostScreen(), self.check_export_host)
+
     def action_add_host(self) -> None:
         self.push_screen(AddHostScreen(), self.check_added_host)
 
     def action_delete_host(self) -> None:
-        def check_delete(delete: bool) -> None:
-            if delete:
-                table = self.query_one(DataTable)
-                selected_row = table.cursor_row
-
+        def check_delete(result: list[int]) -> None:
+            for id in result:
                 try:
-                    row_data = table.get_row_at(selected_row)
-                    delete_host(self.kp, row_data[0])
-                except Exception:
+                    delete_host(self.kp, id)
+                except RuntimeError:
                     pass
 
-                self.update_table()
+            self.kp.save()
+            self.update_table()
 
-        self.push_screen(DeleteHostConfirmationScreen(), check_delete)
+        table = self.query_one(DataTable)
+        selected_row = table.cursor_row
+
+        try:
+            self.push_screen(
+                DeleteHostConfirmationScreen([table.get_row_at(selected_row)[0]]),
+                check_delete,
+            )
+        except RowDoesNotExist:
+            pass
 
     def action_edit_host(self) -> None:
-        def check_edit_host(host: (str, str, str, str)) -> None:
-            edit_host(self.kp, host[0], host[1], host[2], host[3])
+        def check_edit_host(hosts: list[Host]) -> None:
+            edit_hosts(self.kp, hosts)
 
             self.update_table()
 
         table = self.query_one(DataTable)
+        selected_row = table.cursor_row
 
         try:
-            selected_row = table.cursor_row
             row_data = table.get_row_at(selected_row)
+            host = get_hosts(self.kp, id=row_data[0])[0]
             self.push_screen(
-                EditHostScreen(row_data[0], row_data[1], row_data[2]), check_edit_host
+                EditHostScreen(host),
+                check_edit_host,
             )
         except Exception:
             pass
-
-    def main_view(self) -> Vertical:
-        """Return the main view layout."""
-        return Vertical(
-            Header(),
-            DataTable(),
-            Rule(line_style="heavy"),
-            Input(placeholder="Search...", id="search-bar"),
-            Footer(),
-        )
