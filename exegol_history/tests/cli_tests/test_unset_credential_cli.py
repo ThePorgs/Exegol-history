@@ -1,4 +1,5 @@
 import subprocess
+import sys
 import pytest
 from typing import Any
 from exegol_history.cli.functions import unset_objects
@@ -12,6 +13,7 @@ from exegol_history.tests.common import (
 )
 
 
+@pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
 def test_unset_credential(load_mock_config: dict[str, Any]):
     credential = Credential(
         "1",
