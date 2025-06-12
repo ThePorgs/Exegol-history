@@ -199,7 +199,7 @@ class DbHostsApp(App):
                 try:
                     exported = export_objects(format, get_hosts(self.kp))
 
-                    with open(export_path, "w") as f:
+                    with open(export_path, "w", newline="") as f:
                         f.write(exported)
 
                     self.notify("Hosts successfully exported !", severity="information")
