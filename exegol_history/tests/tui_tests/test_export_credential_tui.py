@@ -29,7 +29,7 @@ async def test_export_credential_csv(
     kp = open_keepass
     app = DbCredsApp(load_mock_config, kp)
     export_credential_keybind = load_mock_config["keybindings"]["export_credential"]
-    temp_export_csv = tempfile.NamedTemporaryFile()
+    temp_export_csv = tempfile.NamedTemporaryFile(delete=False)
     add_credentials(kp, [CREDENTIAL1, CREDENTIAL2])
 
     async with app.run_test(size=(400, 400)) as pilot:
@@ -54,7 +54,7 @@ async def test_export_credential_json(
     kp = open_keepass
     app = DbCredsApp(load_mock_config, kp)
     export_credential_keybind = load_mock_config["keybindings"]["export_credential"]
-    temp_export_json = tempfile.NamedTemporaryFile()
+    temp_export_json = tempfile.NamedTemporaryFile(delete=False)
     add_credentials(kp, CREDENTIALS_TEST_VALUE)
 
     async with app.run_test(size=(400, 400)) as pilot:

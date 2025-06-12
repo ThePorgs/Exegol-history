@@ -130,7 +130,7 @@ def test_export_import_credential_csv(open_keepass: PyKeePass):
     exported_csv = console.file.getvalue()
 
     # Write the exported CSV into a file
-    temp_csv = tempfile.NamedTemporaryFile("w")
+    temp_csv = tempfile.NamedTemporaryFile("w", delete=False)
     temp_csv.write(exported_csv)
     temp_csv.seek(0)
 
@@ -161,7 +161,7 @@ def test_export_import_credential_json(open_keepass: PyKeePass):
     exported_csv = console.file.getvalue()
 
     # Write the exported CSV into a file
-    temp_csv = tempfile.NamedTemporaryFile("w")
+    temp_csv = tempfile.NamedTemporaryFile("w", delete=False)
     temp_csv.write(exported_csv)
     temp_csv.seek(0)
 

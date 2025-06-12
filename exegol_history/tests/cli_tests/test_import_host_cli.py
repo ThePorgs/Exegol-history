@@ -55,7 +55,7 @@ def test_import_host_bad_format(open_keepass: PyKeePass):
     kp = open_keepass
 
     # Write the exported CSV into a file
-    temp_csv = tempfile.NamedTemporaryFile("w")
+    temp_csv = tempfile.NamedTemporaryFile("w", delete=False)
     temp_csv.write("test,test2,test3\ntest")
     temp_csv.seek(0)
 
