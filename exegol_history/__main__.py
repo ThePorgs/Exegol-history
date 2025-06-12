@@ -38,7 +38,7 @@ def main():
     db_key_path = EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_key_name"]
 
     if not Path(db_path).is_file():
-        Path(db_path).mkdir(exist_ok=True)
+        Path(db_path).touch(exist_ok=True)
         setup_db(db_path, db_key_path)
 
     args = parse_arguments().parse_args()
