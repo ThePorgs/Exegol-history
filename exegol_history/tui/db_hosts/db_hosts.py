@@ -199,6 +199,7 @@ class DbHostsApp(App):
                 try:
                     exported = export_objects(format, get_hosts(self.kp))
 
+                    # Reference: https://docs.python.org/3/library/csv.html#id4
                     with open(export_path, "w", newline="") as f:
                         f.write(exported)
 

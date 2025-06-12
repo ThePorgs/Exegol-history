@@ -32,7 +32,7 @@ async def test_export_credential_csv(
     temp_export_csv = tempfile.NamedTemporaryFile(delete=False)
     add_credentials(kp, [CREDENTIAL1, CREDENTIAL2])
 
-    async with app.run_test(size=(400, 400)) as pilot:
+    async with app.run_test(size=(1200, 1200)) as pilot:
         await pilot.press(export_credential_keybind)
 
         await pilot.click(f"#{ID_BROWSE_BUTTON}")
