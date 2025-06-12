@@ -38,7 +38,7 @@ class Credential:
 
         if redacted:
             hash = Credential.REDACT_SEPARATOR * 8
-        elif entry.password:
+        elif entry.get_custom_property(Credential.EXEGOL_DB_HASH_PROPERTY):
             hash = entry.get_custom_property(Credential.EXEGOL_DB_HASH_PROPERTY)
         else:
             hash = ""
