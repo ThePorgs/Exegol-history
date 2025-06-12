@@ -36,13 +36,18 @@ class Credential:
         else:
             password = ""
 
+        if redacted:
+            hash = Credential.REDACT_SEPARATOR * 8
+        elif entry.password:
+            hash = entry.get_custom_property(Credential.EXEGOL_DB_HASH_PROPERTY)
+        else:
+            hash = ""
+
         return Credential(
             entry.title if entry.title else "",
             entry.username if entry.username else "",
             password,
-            entry.get_custom_property(Credential.EXEGOL_DB_HASH_PROPERTY)
-            if entry.get_custom_property(Credential.EXEGOL_DB_HASH_PROPERTY)
-            else "",
+            hash,
             entry.get_custom_property(Credential.EXEGOL_DB_DOMAIN_PROPERTY)
             if entry.get_custom_property(Credential.EXEGOL_DB_DOMAIN_PROPERTY)
             else "",

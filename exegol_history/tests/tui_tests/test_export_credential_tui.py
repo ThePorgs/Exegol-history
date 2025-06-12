@@ -21,6 +21,7 @@ from exegol_history.tui.widgets.export_objects import (
 )
 from exegol_history.tui.widgets.open_file import ID_PATH_INPUT
 
+
 @pytest.mark.asyncio
 async def test_export_credential_csv(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
