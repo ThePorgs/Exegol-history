@@ -18,8 +18,7 @@ def test_show_credential_only_username():
     show_objects(console)
 
     assert (
-        f"""{CREDS_VARIABLES[0]}:{USERNAME_TEST_VALUE}\n"""
-        in console.file.getvalue()
+        f"""{CREDS_VARIABLES[0]}:{USERNAME_TEST_VALUE}\n""" in console.file.getvalue()
     )
 
 

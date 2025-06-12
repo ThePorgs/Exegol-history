@@ -16,10 +16,7 @@ def test_show_host_only_ip():
     console = Console(file=io.StringIO())
     show_objects(console)
 
-    assert (
-        f"""{HOSTS_VARIABLES[0]}:{IP_TEST_VALUE}\n"""
-        in console.file.getvalue()
-    )
+    assert f"""{HOSTS_VARIABLES[0]}:{IP_TEST_VALUE}\n""" in console.file.getvalue()
 
 
 def test_show_host_half():
