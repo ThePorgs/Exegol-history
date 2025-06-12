@@ -47,7 +47,7 @@ def export_objects_csv(objects: list[Any], delimiter: str = None):
     if not objects:
         return
 
-    csv_string = io.StringIO()
+    csv_string = io.StringIO(newline='')
     csv_writer = csv.DictWriter(
         csv_string,
         fieldnames=list(objects[0].__dict__.keys())[1:],
