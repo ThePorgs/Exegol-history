@@ -1,0 +1,44 @@
+[
+  {
+    "username": "username7",
+    "password": "",
+    "hash": "",
+    "domain": ""
+  },
+  {
+    "username": "username",
+    "password": "password",
+    "hash": "hash",
+    "domain": "test.local"
+  },
+  {
+    "username": "username2",
+    "password": "password2",
+    "hash": "",
+    "domain": ""
+  },
+  {
+    "username": "username3",
+    "password": "password",
+    "hash": "hash",
+    "domain": ""
+  },
+  {
+    "username": "username4",
+    "password": "",
+    "hash": "",
+    "domain": ""
+  },
+  {
+    "username": "username",
+    "password": "",
+    "hash": "",
+    "domain": ""
+  },
+  {
+    "username": "username6",
+    "password": "password6",
+    "hash": "hash6",
+    "domain": "test.local6"
+  }
+]

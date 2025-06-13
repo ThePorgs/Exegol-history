@@ -1,0 +1,715 @@
+{
+    "lsass.DMP": {
+        "errors": [],
+        "logon_sessions": {
+            "996": {
+                "authentication_id": 996,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "SCCMLAB",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "aes128": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "aes256": "8c01b98d972f8f3175cf74f000798f9eb1a6069f985151825fd3a65c133f3f46",
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "sccm.lab",
+                        "luid": 996,
+                        "password": "03b79d18cbb2d639d39f40e84ba714e70594b1fad3b23dd298ab97be1f8a326aa463ea485cd532ce6f19ae3b9a63c1db516237c5cb3f6075d026497fd71d6f7e924713479de21c65cf6ec4694f387937d55b962cdaadc5a19c967bdcc08f1d3c77fd51e6ba82ffd75f694ec0241cc3200a151c395cdf5913ab320b6f5e9d31895337f2c2d3c7c097b40e2a4ecafd6cf60f3901a8b87e4db3f753b5a7073ceb731c659c03cd6f414939155b3edee344157e6596246a77a76ebd75ac117ffce96199be7d88ed31c4c4feb4736e70c9e3f2f8262d026e64da5f3e2b8d49f2dffec9f25916be3bfdc7188cc6b8d5854084c7",
+                        "password_raw": "03b79d18cbb2d639d39f40e84ba714e70594b1fad3b23dd298ab97be1f8a326aa463ea485cd532ce6f19ae3b9a63c1db516237c5cb3f6075d026497fd71d6f7e924713479de21c65cf6ec4694f387937d55b962cdaadc5a19c967bdcc08f1d3c77fd51e6ba82ffd75f694ec0241cc3200a151c395cdf5913ab320b6f5e9d31895337f2c2d3c7c097b40e2a4ecafd6cf60f3901a8b87e4db3f753b5a7073ceb731c659c03cd6f414939155b3edee344157e6596246a77a76ebd75ac117ffce96199be7d88ed31c4c4feb4736e70c9e3f2f8262d026e64da5f3e2b8d49f2dffec9f25916be3bfdc7188cc6b8d5854084c7",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": [],
+                        "username": "dc$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:03:36.079078+00:00",
+                "luid": 996,
+                "msv_creds": [
+                    {
+                        "DPAPI": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "LMHash": null,
+                        "NThash": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "SHAHash": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "domainname": "SCCMLAB",
+                        "username": "DC$"
+                    }
+                ],
+                "session_id": 0,
+                "sid": "S-1-5-20",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "DC$",
+                "wdigest_creds": [
+                    {
+                        "credtype": "wdigest",
+                        "domainname": "SCCMLAB",
+                        "luid": 996,
+                        "password": null,
+                        "password_raw": "",
+                        "username": "DC$"
+                    }
+                ]
+            },
+            "997": {
+                "authentication_id": 997,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "NT AUTHORITY",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "",
+                        "luid": 997,
+                        "password": null,
+                        "password_raw": "",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": [],
+                        "username": ""
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:03:36.282206+00:00",
+                "luid": 997,
+                "msv_creds": [],
+                "session_id": 0,
+                "sid": "S-1-5-19",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "LOCAL SERVICE",
+                "wdigest_creds": []
+            },
+            "999": {
+                "authentication_id": 999,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "SCCMLAB",
+                "dpapi_creds": [
+                    {
+                        "credtype": "dpapi",
+                        "key_guid": "931dc8c7-73a4-4d43-89b5-6ffe17566f02",
+                        "luid": 999,
+                        "masterkey": "7ad8b800df4a9c82f467bba367825826efc059274b90f4678423d701a47064d9dc88872ee3ad545c35cdc539084720177ba27004eb83c848ae755e109999ad74",
+                        "sha1_masterkey": "c0336e97009f93f082ea6c2d7491b8947e76080e"
+                    },
+                    {
+                        "credtype": "dpapi",
+                        "key_guid": "68b6e97b-eee8-4cb6-83c1-5d9eefb5bf17",
+                        "luid": 999,
+                        "masterkey": "a428e46a996eb66ba919b714330d81cef5db266f3cecc05f1888cbbedc17a577cfe4d80d61e38637412549e8cd2df8c74a8d9771e78bbacbee8da29e92fff40c",
+                        "sha1_masterkey": "ce4659f8c4894b9785d3ab6b0700f3cf387ad98f"
+                    },
+                    {
+                        "credtype": "dpapi",
+                        "key_guid": "2382fa16-25f0-4809-bc21-96042c0daf20",
+                        "luid": 999,
+                        "masterkey": "8483484a93191760fac72478f88eaa98374fe6adfc8172d3b69280e89105ddc43c9239bd388df82f2e339dedab24da3afc48a31b6788ce83bd8f6b44115830c4",
+                        "sha1_masterkey": "a06ab765f323e8a9043d871480058e2d692fc1ef"
+                    },
+                    {
+                        "credtype": "dpapi",
+                        "key_guid": "d356c080-1c21-41cf-a576-5807fae937af",
+                        "luid": 999,
+                        "masterkey": "443d49aab2fd7cf5e8ed44c3c4947034c78d13fd5f60d3687a6fb3a81dedab4c4647a69e15764d9f7fab3e8ae251bd6ec84cf4b3bf74c27e84681c36ef87ca90",
+                        "sha1_masterkey": "b3db96961c7012914ec01f9fe7a79c5339123620"
+                    },
+                    {
+                        "credtype": "dpapi",
+                        "key_guid": "57123ad9-5848-4f1f-bb12-d22e32f55232",
+                        "luid": 999,
+                        "masterkey": "224efa340effc24a6e640819da92c038cd4e027a1fe2da379257a7e13a574e10cc01ad069ed6c05d5a103a75f0a8c33e7bf77bfbc528a144c2498f905982b399",
+                        "sha1_masterkey": "0664dc08d7ee2e75f4c23f5ed90e8dec47d944eb"
+                    }
+                ],
+                "kerberos_creds": [
+                    {
+                        "aes128": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "aes256": "8c01b98d972f8f3175cf74f000798f9eb1a6069f985151825fd3a65c133f3f46",
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "SCCM.LAB",
+                        "luid": 999,
+                        "password": null,
+                        "password_raw": "",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": {
+                            "AltTargetDomainName": "SCCM.LAB",
+                            "DomainName": "SCCM.LAB",
+                            "EClientName": [
+                                "DC$"
+                            ],
+                            "ETargetName": [
+                                "krbtgt",
+                                "SCCM.LAB"
+                            ],
+                            "EndTime": "2025-05-02T09:04:16+00:00",
+                            "Key": "24f777ba61172b18a26d828898dbd76aab4832e75824ec40f373c49780238302",
+                            "KeyType": 18,
+                            "RenewUntil": "2025-05-08T23:04:16+00:00",
+                            "ServiceName": [
+                                "krbtgt",
+                                "SCCM.LAB"
+                            ],
+                            "StartTime": "2025-05-01T23:04:16+00:00",
+                            "TargetDomainName": "SCCM.LAB",
+                            "type": 1
+                        },
+                        "username": "dc$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:03:35.063453+00:00",
+                "luid": 999,
+                "msv_creds": [],
+                "session_id": 0,
+                "sid": "S-1-5-18",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "DC$",
+                "wdigest_creds": [
+                    {
+                        "credtype": "wdigest",
+                        "domainname": "SCCMLAB",
+                        "luid": 999,
+                        "password": null,
+                        "password_raw": "",
+                        "username": "DC$"
+                    }
+                ]
+            },
+            "38104": {
+                "authentication_id": 38104,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "",
+                "dpapi_creds": [],
+                "kerberos_creds": [],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:03:35.079080+00:00",
+                "luid": 38104,
+                "msv_creds": [
+                    {
+                        "DPAPI": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "LMHash": null,
+                        "NThash": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "SHAHash": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "domainname": "SCCMLAB",
+                        "username": "DC$"
+                    }
+                ],
+                "session_id": 0,
+                "sid": "None",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "",
+                "wdigest_creds": []
+            },
+            "41250": {
+                "authentication_id": 41250,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "Font Driver Host",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "aes128": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "aes256": "f6b5e7d767da2d57ec151d1d9d0eed699a525bcb071d12a6bb8bd6735d655f5c",
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "sccm.lab",
+                        "luid": 41250,
+                        "password": "03b79d18cbb2d639d39f40e84ba714e70594b1fad3b23dd298ab97be1f8a326aa463ea485cd532ce6f19ae3b9a63c1db516237c5cb3f6075d026497fd71d6f7e924713479de21c65cf6ec4694f387937d55b962cdaadc5a19c967bdcc08f1d3c77fd51e6ba82ffd75f694ec0241cc3200a151c395cdf5913ab320b6f5e9d31895337f2c2d3c7c097b40e2a4ecafd6cf60f3901a8b87e4db3f753b5a7073ceb731c659c03cd6f414939155b3edee344157e6596246a77a76ebd75ac117ffce96199be7d88ed31c4c4feb4736e70c9e3f2f8262d026e64da5f3e2b8d49f2dffec9f25916be3bfdc7188cc6b8d5854084c7",
+                        "password_raw": "03b79d18cbb2d639d39f40e84ba714e70594b1fad3b23dd298ab97be1f8a326aa463ea485cd532ce6f19ae3b9a63c1db516237c5cb3f6075d026497fd71d6f7e924713479de21c65cf6ec4694f387937d55b962cdaadc5a19c967bdcc08f1d3c77fd51e6ba82ffd75f694ec0241cc3200a151c395cdf5913ab320b6f5e9d31895337f2c2d3c7c097b40e2a4ecafd6cf60f3901a8b87e4db3f753b5a7073ceb731c659c03cd6f414939155b3edee344157e6596246a77a76ebd75ac117ffce96199be7d88ed31c4c4feb4736e70c9e3f2f8262d026e64da5f3e2b8d49f2dffec9f25916be3bfdc7188cc6b8d5854084c7",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": [],
+                        "username": "DC$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:03:36.000952+00:00",
+                "luid": 41250,
+                "msv_creds": [
+                    {
+                        "DPAPI": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "LMHash": null,
+                        "NThash": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "SHAHash": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "domainname": "SCCMLAB",
+                        "username": "DC$"
+                    }
+                ],
+                "session_id": 0,
+                "sid": "S-1-5-96-0-0",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "UMFD-0",
+                "wdigest_creds": [
+                    {
+                        "credtype": "wdigest",
+                        "domainname": "SCCMLAB",
+                        "luid": 41250,
+                        "password": null,
+                        "password_raw": "",
+                        "username": "DC$"
+                    }
+                ]
+            },
+            "41278": {
+                "authentication_id": 41278,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "Font Driver Host",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "aes128": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "aes256": "f6b5e7d767da2d57ec151d1d9d0eed699a525bcb071d12a6bb8bd6735d655f5c",
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "sccm.lab",
+                        "luid": 41278,
+                        "password": "03b79d18cbb2d639d39f40e84ba714e70594b1fad3b23dd298ab97be1f8a326aa463ea485cd532ce6f19ae3b9a63c1db516237c5cb3f6075d026497fd71d6f7e924713479de21c65cf6ec4694f387937d55b962cdaadc5a19c967bdcc08f1d3c77fd51e6ba82ffd75f694ec0241cc3200a151c395cdf5913ab320b6f5e9d31895337f2c2d3c7c097b40e2a4ecafd6cf60f3901a8b87e4db3f753b5a7073ceb731c659c03cd6f414939155b3edee344157e6596246a77a76ebd75ac117ffce96199be7d88ed31c4c4feb4736e70c9e3f2f8262d026e64da5f3e2b8d49f2dffec9f25916be3bfdc7188cc6b8d5854084c7",
+                        "password_raw": "03b79d18cbb2d639d39f40e84ba714e70594b1fad3b23dd298ab97be1f8a326aa463ea485cd532ce6f19ae3b9a63c1db516237c5cb3f6075d026497fd71d6f7e924713479de21c65cf6ec4694f387937d55b962cdaadc5a19c967bdcc08f1d3c77fd51e6ba82ffd75f694ec0241cc3200a151c395cdf5913ab320b6f5e9d31895337f2c2d3c7c097b40e2a4ecafd6cf60f3901a8b87e4db3f753b5a7073ceb731c659c03cd6f414939155b3edee344157e6596246a77a76ebd75ac117ffce96199be7d88ed31c4c4feb4736e70c9e3f2f8262d026e64da5f3e2b8d49f2dffec9f25916be3bfdc7188cc6b8d5854084c7",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": [],
+                        "username": "DC$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:03:36.016579+00:00",
+                "luid": 41278,
+                "msv_creds": [
+                    {
+                        "DPAPI": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "LMHash": null,
+                        "NThash": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "SHAHash": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "domainname": "SCCMLAB",
+                        "username": "DC$"
+                    }
+                ],
+                "session_id": 1,
+                "sid": "S-1-5-96-0-1",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "UMFD-1",
+                "wdigest_creds": [
+                    {
+                        "credtype": "wdigest",
+                        "domainname": "SCCMLAB",
+                        "luid": 41278,
+                        "password": null,
+                        "password_raw": "",
+                        "username": "DC$"
+                    }
+                ]
+            },
+            "63364": {
+                "authentication_id": 63364,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "Window Manager",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "aes128": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "aes256": "f6b5e7d767da2d57ec151d1d9d0eed699a525bcb071d12a6bb8bd6735d655f5c",
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "sccm.lab",
+                        "luid": 63364,
+                        "password": "03b79d18cbb2d639d39f40e84ba714e70594b1fad3b23dd298ab97be1f8a326aa463ea485cd532ce6f19ae3b9a63c1db516237c5cb3f6075d026497fd71d6f7e924713479de21c65cf6ec4694f387937d55b962cdaadc5a19c967bdcc08f1d3c77fd51e6ba82ffd75f694ec0241cc3200a151c395cdf5913ab320b6f5e9d31895337f2c2d3c7c097b40e2a4ecafd6cf60f3901a8b87e4db3f753b5a7073ceb731c659c03cd6f414939155b3edee344157e6596246a77a76ebd75ac117ffce96199be7d88ed31c4c4feb4736e70c9e3f2f8262d026e64da5f3e2b8d49f2dffec9f25916be3bfdc7188cc6b8d5854084c7",
+                        "password_raw": "03b79d18cbb2d639d39f40e84ba714e70594b1fad3b23dd298ab97be1f8a326aa463ea485cd532ce6f19ae3b9a63c1db516237c5cb3f6075d026497fd71d6f7e924713479de21c65cf6ec4694f387937d55b962cdaadc5a19c967bdcc08f1d3c77fd51e6ba82ffd75f694ec0241cc3200a151c395cdf5913ab320b6f5e9d31895337f2c2d3c7c097b40e2a4ecafd6cf60f3901a8b87e4db3f753b5a7073ceb731c659c03cd6f414939155b3edee344157e6596246a77a76ebd75ac117ffce96199be7d88ed31c4c4feb4736e70c9e3f2f8262d026e64da5f3e2b8d49f2dffec9f25916be3bfdc7188cc6b8d5854084c7",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": [],
+                        "username": "DC$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:03:36.313454+00:00",
+                "luid": 63364,
+                "msv_creds": [
+                    {
+                        "DPAPI": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "LMHash": null,
+                        "NThash": "0b65cc18dde1c5548f06b8db074a76b3",
+                        "SHAHash": "108f92464fc700cdc133f8ccbc08a04afa5f5b79",
+                        "domainname": "SCCMLAB",
+                        "username": "DC$"
+                    }
+                ],
+                "session_id": 1,
+                "sid": "S-1-5-90-0-1",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "DWM-1",
+                "wdigest_creds": [
+                    {
+                        "credtype": "wdigest",
+                        "domainname": "SCCMLAB",
+                        "luid": 63364,
+                        "password": null,
+                        "password_raw": "",
+                        "username": "DC$"
+                    }
+                ]
+            },
+            "187384": {
+                "authentication_id": 187384,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "SCCMLAB",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "SCCM.LAB",
+                        "luid": 187384,
+                        "password": null,
+                        "password_raw": "",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": {
+                            "AltTargetDomainName": "SCCM.LAB",
+                            "DomainName": "SCCM.LAB",
+                            "EClientName": [
+                                "DC$"
+                            ],
+                            "ETargetName": null,
+                            "EndTime": "2025-05-02T09:04:16+00:00",
+                            "Key": "16ba5b2359d5c567a98b88f17c0758d80f7317eced03c3d693556fc05b76eabf",
+                            "KeyType": 18,
+                            "RenewUntil": "1970-01-01T00:00:00+00:00",
+                            "ServiceName": [
+                                "ldap",
+                                "DC.sccm.lab"
+                            ],
+                            "StartTime": "2025-05-01T23:04:16+00:00",
+                            "TargetDomainName": "SCCM.LAB",
+                            "type": 3
+                        },
+                        "username": "DC$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:04:16.096063+00:00",
+                "luid": 187384,
+                "msv_creds": [],
+                "session_id": 0,
+                "sid": "S-1-5-18",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "DC$",
+                "wdigest_creds": []
+            },
+            "187669": {
+                "authentication_id": 187669,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "SCCMLAB",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "SCCM.LAB",
+                        "luid": 187669,
+                        "password": null,
+                        "password_raw": "",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": {
+                            "AltTargetDomainName": "SCCM.LAB",
+                            "DomainName": "SCCM.LAB",
+                            "EClientName": [
+                                "DC$"
+                            ],
+                            "ETargetName": null,
+                            "EndTime": "2025-05-02T09:04:16+00:00",
+                            "Key": "18073d284957806ee2ca098858780aa4b5623a3d7f963d65b2af1608ab8ed4e7",
+                            "KeyType": 18,
+                            "RenewUntil": "2025-05-08T23:04:16+00:00",
+                            "ServiceName": [
+                                "krbtgt",
+                                "SCCM.LAB"
+                            ],
+                            "StartTime": "2025-05-01T23:04:16+00:00",
+                            "TargetDomainName": "SCCM.LAB",
+                            "type": 1
+                        },
+                        "username": "DC$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:04:16.221138+00:00",
+                "luid": 187669,
+                "msv_creds": [],
+                "session_id": 0,
+                "sid": "S-1-5-18",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "DC$",
+                "wdigest_creds": []
+            },
+            "189613": {
+                "authentication_id": 189613,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "SCCMLAB",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "SCCM.LAB",
+                        "luid": 189613,
+                        "password": null,
+                        "password_raw": "",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": {
+                            "AltTargetDomainName": "SCCM.LAB",
+                            "DomainName": "SCCM.LAB",
+                            "EClientName": [
+                                "DC$"
+                            ],
+                            "ETargetName": null,
+                            "EndTime": "2025-05-02T09:04:16+00:00",
+                            "Key": "54833a32df87d7996dfc0bf7417f2d824da46b75f1ff2162c0e41b226b146b6c",
+                            "KeyType": 18,
+                            "RenewUntil": "1970-01-01T00:00:00+00:00",
+                            "ServiceName": [
+                                "LDAP",
+                                "DC.sccm.lab",
+                                "sccm.lab"
+                            ],
+                            "StartTime": "2025-05-01T23:04:16+00:00",
+                            "TargetDomainName": "SCCM.LAB",
+                            "type": 3
+                        },
+                        "username": "DC$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:04:16.283402+00:00",
+                "luid": 189613,
+                "msv_creds": [],
+                "session_id": 0,
+                "sid": "S-1-5-18",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "DC$",
+                "wdigest_creds": []
+            },
+            "203279": {
+                "authentication_id": 203279,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "SCCMLAB",
+                "dpapi_creds": [
+                    {
+                        "credtype": "dpapi",
+                        "key_guid": "992d14d8-5797-4e5c-82b1-a0ae1007857c",
+                        "luid": 203279,
+                        "masterkey": "1d828dd0a43017fdf685a8ec4b1b286c182bd144077da5ed8eebc9338247829e3fa0aed95f3bf8825aacbd6b712e563444ab54616d5275f1d31ac24016e0b176",
+                        "sha1_masterkey": "64f1860c1f8377da3d13aae8e512c89dffe18092"
+                    },
+                    {
+                        "credtype": "dpapi",
+                        "key_guid": "5343abda-69e5-457c-a81d-c01753a64918",
+                        "luid": 203279,
+                        "masterkey": "aea384e3a7e96b255fed7e692efa60e14239e033a612c1b04fc36adad0890a1b31d299d2cfa8e6544362b340531ed679c95d716c45125b2a2219f58e93c1fea4",
+                        "sha1_masterkey": "9ff8a98b8af2d904b84d8587a49f41b067fefc41"
+                    }
+                ],
+                "kerberos_creds": [
+                    {
+                        "aes128": "8846f7eaee8fb117ad06bdd830b7586c",
+                        "aes256": "08c2f6aeb26c456e140def6ec1fdaa4a9b61cab12171f5609a397f20a27a8d15",
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "SCCM.LAB",
+                        "luid": 203279,
+                        "password": null,
+                        "password_raw": "",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": {
+                            "AltTargetDomainName": "SCCM.LAB",
+                            "DomainName": "SCCM.LAB",
+                            "EClientName": [
+                                "localuser"
+                            ],
+                            "ETargetName": [
+                                "krbtgt",
+                                "SCCMLAB"
+                            ],
+                            "EndTime": "2025-05-02T09:04:18+00:00",
+                            "Key": "263779f1a9ca71eb3f046f111652f7e10c6a90dcb414abaed65c7649fcd05b3d",
+                            "KeyType": 18,
+                            "RenewUntil": "2025-05-08T23:04:18+00:00",
+                            "ServiceName": [
+                                "krbtgt",
+                                "SCCM.LAB"
+                            ],
+                            "StartTime": "2025-05-01T23:04:18+00:00",
+                            "TargetDomainName": "SCCM.LAB",
+                            "type": 1
+                        },
+                        "username": "localuser"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "DC",
+                "logon_time": "2025-05-01T23:04:18.220901+00:00",
+                "luid": 203279,
+                "msv_creds": [
+                    {
+                        "DPAPI": "ac34806154c5ab233ee72e075110859500000000",
+                        "LMHash": null,
+                        "NThash": "8846f7eaee8fb117ad06bdd830b7586c",
+                        "SHAHash": "e8f97fba9104d1ea5047948e6dfb67facd9f5b73",
+                        "domainname": "SCCMLAB",
+                        "username": "localuser"
+                    }
+                ],
+                "session_id": 1,
+                "sid": "S-1-5-21-2373706721-4161540891-2025947326-1000",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "localuser",
+                "wdigest_creds": [
+                    {
+                        "credtype": "wdigest",
+                        "domainname": "SCCMLAB",
+                        "luid": 203279,
+                        "password": "password",
+                        "password_raw": "",
+                        "username": "localuser"
+                    }
+                ]
+            },
+            "440841": {
+                "authentication_id": 440841,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "SCCMLAB",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "SCCM.LAB",
+                        "luid": 440841,
+                        "password": null,
+                        "password_raw": "",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": {
+                            "AltTargetDomainName": "SCCM.LAB",
+                            "DomainName": "SCCM.LAB",
+                            "EClientName": [
+                                "DC$"
+                            ],
+                            "ETargetName": null,
+                            "EndTime": "2025-05-02T09:04:16+00:00",
+                            "Key": "16ba5b2359d5c567a98b88f17c0758d80f7317eced03c3d693556fc05b76eabf",
+                            "KeyType": 18,
+                            "RenewUntil": "1970-01-01T00:00:00+00:00",
+                            "ServiceName": [
+                                "ldap",
+                                "DC.sccm.lab"
+                            ],
+                            "StartTime": "2025-05-01T23:04:16+00:00",
+                            "TargetDomainName": "SCCM.LAB",
+                            "type": 3
+                        },
+                        "username": "DC$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:05:05.096069+00:00",
+                "luid": 440841,
+                "msv_creds": [],
+                "session_id": 0,
+                "sid": "S-1-5-18",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "DC$",
+                "wdigest_creds": []
+            },
+            "441073": {
+                "authentication_id": 441073,
+                "cloudap_creds": [],
+                "credman_creds": [],
+                "domainname": "SCCMLAB",
+                "dpapi_creds": [],
+                "kerberos_creds": [
+                    {
+                        "cardinfo": null,
+                        "credtype": "kerberos",
+                        "domainname": "SCCM.LAB",
+                        "luid": 441073,
+                        "password": null,
+                        "password_raw": "",
+                        "pin": null,
+                        "pin_raw": null,
+                        "tickets": {
+                            "AltTargetDomainName": "SCCM.LAB",
+                            "DomainName": "SCCM.LAB",
+                            "EClientName": [
+                                "DC$"
+                            ],
+                            "ETargetName": null,
+                            "EndTime": "2025-05-02T09:04:16+00:00",
+                            "Key": "16ba5b2359d5c567a98b88f17c0758d80f7317eced03c3d693556fc05b76eabf",
+                            "KeyType": 18,
+                            "RenewUntil": "1970-01-01T00:00:00+00:00",
+                            "ServiceName": [
+                                "ldap",
+                                "DC.sccm.lab"
+                            ],
+                            "StartTime": "2025-05-01T23:04:16+00:00",
+                            "TargetDomainName": "SCCM.LAB",
+                            "type": 3
+                        },
+                        "username": "DC$"
+                    }
+                ],
+                "livessp_creds": [],
+                "logon_server": "",
+                "logon_time": "2025-05-01T23:05:05.314842+00:00",
+                "luid": 441073,
+                "msv_creds": [],
+                "session_id": 0,
+                "sid": "S-1-5-18",
+                "ssp_creds": [],
+                "tspkg_creds": [],
+                "username": "DC$",
+                "wdigest_creds": []
+            }
+        },
+        "orphaned_creds": []
+    }
+}
