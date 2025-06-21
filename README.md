@@ -20,28 +20,99 @@ A typical workflow with `Exegol-history`:
 ![](screenshots/screenshot04.png)
 
 ## ⚙️ Install
-`Exegol-history` is already installed in an Exegol container, however you can install it manually:
-```sh
-# Using `pipx`
-pipx install git+https://github.com/ThePorgs/exegol-history
+`Exegol-history` is already installed in an Exegol container, however you can install it manually.
 
-# Using `uv`
+### 1. Install the package
+<details>
+<summary>Uv</summary>
+
+```sh
 uv tool install git+https://github.com/ThePorgs/Exegol-history
 ```
+</details>
 
-Then you can create a function to run `Exegol-history` and add it to your `.zshrc` file:
+<details>
+<summary>Pipx</summary>
+
 ```sh
-echo 'function exh { exegol-history "$@" && exec zsh }' >> ~/.zshrc
+pipx install git+https://github.com/ThePorgs/exegol-history
 ```
+</details>
+
+### 2. Set up your shell to use `exh`
+
+<details>
+<summary>Zsh</summary>
+
+Add this to your `.zrshrc`:
+```sh
+function exh { 
+    exegol-history "$@" && exec zsh 
+}
+source /opt/tools/Exegol-history/profile.sh
+```
+</details>
+
+<details>
+<summary>PowerShell</summary>
+
+Add this to your Powershell `$PROFILE`:
+```powershell
+function exh {
+    exegol-history $Args; if($?) { . $profile }
+}
+. C:\Program Files\Exegol-history\profile.ps1
+```
+</details>
+
+### 3. Set up your prompt to display variables (optional)
+To see which user you are currently using, you can add the `USER` and `DOMAIN` environnment variable to your prompt.
+
+<details>
+<summary>Starship</summary>
+
+Add this to your `Starship` config:
+```toml
+[env_var]
+variable = "USER"
+default = ''
+style = "fg:bold red bg:#477069"
+format = '[  $env_value ]($style)'
+```
+</details>
+
+<details>
+<summary>Zsh</summary>
+
+Add this to your `.zshrc`:
+```sh
+update_prompt() {
+    DB_PROMPT=""
+
+    if [[ ! -z "${USER}" ]]; then
+      DB_PROMPT="%{$fg[white]%}[%{$fg[yellow]%}${USER}%{$fg[white]%}]%{$reset_color%}"
+    fi
+
+    if [[ ! -z "${DOMAIN}" && ! -z "${USER}" ]]; then
+      DB_PROMPT="%{$fg[white]%}[%{$fg[yellow]%}${USER}@${DOMAIN}%{$fg[white]%}]%{$reset_color%}"
+    fi
+
+    PROMPT="$DB_PROMPT$(prompt_char) "
+  }
+
+add-zsh-hook precmd update_prompt
+```
+</details>
 
 ## 📝 Configuration
-A small configuration file `config.toml` can be used to customise the database name and keybinds for the TUI:
+A small configuration file `config.toml` can be used to customise the database name,keybinds and theme for the TUI:
 ```toml
 [paths]
 db_name = "DB.kdbx"
 db_key_name = "db.key"
 profile_sh_path = "/opt/tools/Exegol-history/profile.sh"
 
+# Keybinds list: https://github.com/Textualize/textual/blob/8f85ece761031a756a1ecfa345b519c9c915e04b/src/textual/keys.py#L9
 [keybindings]
 copy_username_clipboard = "f1"
 copy_password_clipboard = "f2"
@@ -57,22 +128,29 @@ delete_host = "f4"
 edit_host = "f5"
 export_host = "f6"
 quit = "ctrl+c"
+
+[theme]
+primary = "#0178D4"
+secondary = "#004578"
+accent = "#ffa62b"
+foreground = "#e0e0e0"
+# background = ""
+success = "#4EBF71"
+warning = "#ffa62b"
+error = "#ba3c5b"
+# surface = ""
+# panel = ""
+dark = true
+clipboard_icon = "📋"
+add_icon = "➕"
+delete_icon = "🗑️"
+edit_icon = "📝"
+export_icon = "📤"
 ```
 
 **The configuration file must be in the home folder, in a `.exegol-history` folder.**
 
 ## 💡 Tips & tricks
-### 🗨️ Prompt
-To see which user you are currently using, you can add the `USER` environnment variable in your prompt, for example with [Starship](https://github.com/starship/starship):
-```toml
-[env_var]
-variable = "USER"
-default = ''
-style = "fg:bold red bg:#477069"
-format = '[  $env_value ]($style)'
-```
-
-if you are inside an `Exegol` container, the prompt should already be configured. 
 
 ### ⌨️ Keybind
 You can add a keybind that will automatically type the command to launch the **Exegol-history** TUI, for example using the [Kitty](https://github.com/kovidgoyal/kitty) terminal, you can add a keybind like this:
@@ -164,7 +242,16 @@ exh rm hosts --id 1
 | DonPAPI  | ❌  |
 | Hashcat  | ❌  |
 
+## Development
 ### Running tests
 ```sh
 poetry run pytest
+```
+
+### Installing
+It is recommended to use `poetry` to install `exegol-history` in development mode:
+```sh
+git clone https://github.com/ThePorgs/Exegol-history.git
+poetry install --all-groups
+poetry run python exegol-history.py
 ```

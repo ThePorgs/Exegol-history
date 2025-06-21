@@ -1,7 +1,7 @@
 import tempfile
 import pytest
 from exegol_history.db_api.importing import CredsImportFileType
-from exegol_history.tui.db_creds.db_creds import DbCredsApp
+from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.db_api.creds import add_credentials
 from common import (
     CREDENTIAL1,
@@ -13,13 +13,12 @@ from common import (
 )
 from pykeepass import PyKeePass
 from typing import Any
-from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
-from exegol_history.tui.widgets.export_objects import (
+from exegol_history.tui.screens.export_object import (
     ID_BROWSE_BUTTON,
     ID_EXPORT_TYPE_SELECT,
-    ID_PATH_INPUT,
 )
-from exegol_history.tui.widgets.open_file import ID_PATH_INPUT
+from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
+from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 
 
 @pytest.mark.asyncio
@@ -36,7 +35,7 @@ async def test_export_credential_csv(
         await pilot.press(export_credential_keybind)
 
         await pilot.click(f"#{ID_BROWSE_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = temp_export_csv.name
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = temp_export_csv.name
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
@@ -64,7 +63,7 @@ async def test_export_credential_json(
             pilot, f"#{ID_EXPORT_TYPE_SELECT}", CredsImportFileType.JSON.value
         )
         await pilot.click(f"#{ID_BROWSE_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = temp_export_json.name
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = temp_export_json.name
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 

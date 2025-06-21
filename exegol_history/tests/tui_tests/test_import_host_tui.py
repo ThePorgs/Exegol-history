@@ -1,7 +1,7 @@
 from textual.keys import Keys
 import pytest
 from exegol_history.db_api.importing import HostsImportFileType
-from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
+from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.db_api.hosts import Host, get_hosts
 from common import (
     HOSTS_TEST_VALUE,
@@ -21,7 +21,7 @@ from exegol_history.tui.widgets.import_file import (
     ID_FILE_TYPE_SELECT,
     ID_IMPORT_BUTTON,
 )
-from exegol_history.tui.widgets.open_file import ID_PATH_INPUT
+from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 
 
 @pytest.mark.asyncio
@@ -72,7 +72,9 @@ async def test_import_host_csv_file(
         await pilot.press(Keys.Right)
 
         await pilot.click(f"#{ID_IMPORT_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = str(TEST_HOSTS_CSV_COMMA)
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(
+            TEST_HOSTS_CSV_COMMA
+        )
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
         # Choose CSV file type

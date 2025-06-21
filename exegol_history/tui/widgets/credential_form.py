@@ -51,10 +51,10 @@ class CredentialForm(Container):
         if event.button.id == ID_CONFIRM_BUTTON:
             self.credential = Credential(
                 id=self.credential.id if self.credential else "",
-                username=self.query_one(f"#{ID_USERNAME_INPUT}", Input).value,
-                password=self.query_one(f"#{ID_PASSWORD_INPUT}", Input).value,
-                hash=self.query_one(f"#{ID_HASH_INPUT}", Input).value,
-                domain=self.query_one(f"#{ID_DOMAIN_INPUT}", Input).value,
+                username=self.screen.query_one(f"#{ID_USERNAME_INPUT}", Input).value,
+                password=self.screen.query_one(f"#{ID_PASSWORD_INPUT}", Input).value,
+                hash=self.screen.query_one(f"#{ID_HASH_INPUT}", Input).value,
+                domain=self.screen.query_one(f"#{ID_DOMAIN_INPUT}", Input).value,
             )
 
             self.screen.dismiss([self.credential])

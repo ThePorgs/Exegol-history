@@ -31,8 +31,8 @@ from exegol_history.db_api.importing import (
     import_objects,
 )
 from exegol_history.db_api.utils import parse_ids
-from exegol_history.tui.db_creds.db_creds import DbCredsApp
-from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
+from exegol_history.tui.db_creds import DbCredsApp
+from exegol_history.tui.db_hosts import DbHostsApp
 from rich.console import Console
 import importlib.metadata
 
@@ -152,11 +152,9 @@ def set_objects(
     if args.subcommand == CREDS_SUBCOMMAND:
         try:
             app = DbCredsApp(config, kp)
-            credential = app.run()
-            write_credential_in_profile(credential, config)
-        except (
-            AttributeError
-        ):  # It means the user left the TUI without choosing anything
+            row_data = app.run()
+            write_credential_in_profile(Credential(*row_data), config)
+        except TypeError:  # It means the user left the TUI without choosing anything
             sys.exit(0)
         except Exception:
             console.print_exception(show_locals=True)
@@ -165,11 +163,9 @@ def set_objects(
         app = DbHostsApp(config, kp)
 
         try:
-            host = app.run()
-            write_host_in_profile(host, config)
-        except (
-            AttributeError
-        ):  # It means the user left the TUI without choosing anything
+            row_data = app.run()
+            write_host_in_profile(Host(*row_data), config)
+        except TypeError:  # It means the user left the TUI without choosing anything
             sys.exit(0)
         except Exception:
             console.print_exception(show_locals=True)

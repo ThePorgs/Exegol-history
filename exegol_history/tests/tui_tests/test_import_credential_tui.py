@@ -1,7 +1,7 @@
 from textual.keys import Keys
 import pytest
 from exegol_history.db_api.importing import CredsImportFileType
-from exegol_history.tui.db_creds.db_creds import DbCredsApp
+from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.db_api.creds import Credential, get_credentials
 from common import (
     CREDENTIALS_TEST_VALUE,
@@ -31,7 +31,7 @@ from exegol_history.tui.widgets.import_file import (
     ID_KDBX_KEYFILE_BUTTON,
     ID_KDBX_PASSWORD_INPUT,
 )
-from exegol_history.tui.widgets.open_file import ID_PATH_INPUT
+from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 
 
 @pytest.mark.asyncio
@@ -87,7 +87,9 @@ async def test_import_credential_import_csv_file(
         await pilot.press(Keys.Right)
 
         await pilot.click(f"#{ID_IMPORT_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = str(TEST_CREDS_CSV_COMMA)
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(
+            TEST_CREDS_CSV_COMMA
+        )
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
         await select_select_index(
@@ -151,7 +153,7 @@ async def test_import_credential_import_json_file(
         await pilot.press(Keys.Right)
 
         await pilot.click(f"#{ID_IMPORT_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = str(TEST_CREDS_JSON)
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(TEST_CREDS_JSON)
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
         await select_select_index(
@@ -178,7 +180,9 @@ async def test_import_credential_pypykatz_json(
         await pilot.press(Keys.Right)
 
         await pilot.click(f"#{ID_IMPORT_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = str(TEST_CREDS_PYPYKATZ_JSON)
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(
+            TEST_CREDS_PYPYKATZ_JSON
+        )
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
         await select_select_index(
@@ -208,7 +212,7 @@ async def test_import_credential_kdbx(
         )
 
         await pilot.click(f"#{ID_IMPORT_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = str(TEST_CREDS_KDBX)
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(TEST_CREDS_KDBX)
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
         await select_input_and_enter_text(
@@ -216,7 +220,9 @@ async def test_import_credential_kdbx(
         )
 
         await pilot.click(f"#{ID_KDBX_KEYFILE_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = str(TEST_CREDS_KDBX_KEYFILE)
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(
+            TEST_CREDS_KDBX_KEYFILE
+        )
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
         await pilot.click(f"#{ID_CONFIRM_IMPORT_BUTTON}")

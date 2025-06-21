@@ -1,7 +1,7 @@
 import tempfile
 import pytest
 from exegol_history.db_api.importing import HostsImportFileType
-from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
+from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.db_api.hosts import add_hosts
 from common import (
     HOSTS_TEST_VALUE,
@@ -10,12 +10,12 @@ from common import (
 )
 from pykeepass import PyKeePass
 from typing import Any
-from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
-from exegol_history.tui.widgets.export_objects import (
+from exegol_history.tui.screens.export_object import (
     ID_BROWSE_BUTTON,
     ID_EXPORT_TYPE_SELECT,
 )
-from exegol_history.tui.widgets.open_file import ID_PATH_INPUT
+from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
+from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 
 
 @pytest.mark.asyncio
@@ -32,7 +32,7 @@ async def test_export_host_csv(
         await pilot.press(export_host_keybind)
 
         await pilot.click(f"#{ID_BROWSE_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = temp_export_csv.name
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = temp_export_csv.name
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
@@ -60,7 +60,7 @@ async def test_export_host_json(
             pilot, f"#{ID_EXPORT_TYPE_SELECT}", HostsImportFileType.JSON.value
         )
         await pilot.click(f"#{ID_BROWSE_BUTTON}")
-        pilot.app.query_one(f"#{ID_PATH_INPUT}").value = temp_export_json.name
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = temp_export_json.name
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 

@@ -17,27 +17,10 @@ Button {
 }
 /* General end */
 
-#question {
-    text-align: center;
-}
-
-#browse_horizontal {
-    width: 50;
-}
-
-#browse_button {
-    width: 30%;
-}
-
-#path_input {
-    width: 70%;
-}
-
 /* Button bottom bar (confirm, cancel, ...) */
 #actions_horizontal {
     align: center bottom;
     height: auto;
-    overflow: auto auto;
 }
 /* Button bottom bar (confirm, cancel, ...) end */
 
@@ -60,102 +43,60 @@ Button {
 }
 /* KDBX keyfile import end */
 
+/* Export horizontal browse */
+#browse_horizontal {
+    width: 50;
+}
+
+#browse_button {
+    width: 30%;
+}
+
+#path_input {
+    width: 70%;
+}
+/* Export horizontal browse end */
+
 /* Modal */
 ModalScreen {
     align: center middle;
+    overflow: auto auto;
 }
 
-/* DeleteObjects modal */
-#delete_modal_title {
-    align: center middle;
-    background: $background;
-    max-width: 55;
-    text-align: center;
-    text-style: bold;
-}
-
-DeleteObjects {
+ModalScreen > Container {
     padding: 0 1;
     overflow: auto auto;
     height: auto;
     width: auto;
-    min-width: 30;
-    max-width: 55;
-    border: thick $background 80%;
+    border: inner $background;
     background: $surface;
+    border-title-align: center;
+    border-title-style: bold;
+    border-title-color: white;
 }
 
-DeleteObjects > TabbedContent {
-    height: auto;
-    width: auto;
-}
-/* DeleteObjects modal end */
-
-/* Add / edit modal */
-#add_modal_title {
-    align: center middle;
-    background: $background;
-    max-width: 55;
-    text-align: center;
-    text-style: bold;
+AddObjectScreen > Container {
+    height: 35;
+    width: 60;
 }
 
-#add_modal {
-    overflow: auto auto;
-    height: auto;
-    width: auto;
-    max-height: 40;
-    max-width: 55;
-    border: thick $background 80%;
-    background: $surface;
+EditObjectScreen > Container {
+    height: 25;
+    width: 50;
 }
 
-#modal {
-    padding: 0 1;
-    border: thick $background 80%;
-    background: $surface;
-    max-width: 55;
+DeleteObjectScreen > Container {
+    height: 18;
+    width: 40;
 }
 
-CredentialForm {
-    overflow: auto auto;
-    height: auto;
+ExportObjectScreen > Container {
+    height: 16;
+    width: 55;
 }
 
-HostForm {
-    overflow: auto auto;
-    height: auto;
-}
-
-ImportFile {
-    overflow: auto auto;
-    height: auto;
-    width: auto;
-}
-
-ExportObjects {
-    overflow: auto auto;
-    height: auto;
-    width: auto;
-}
-/* Add/edit modal end */
-
-/* Export modal */
-#export_modal {
-    padding: 0 1;
-    border: thick $background 80%;
-    background: $surface;
-    max-width: 55;
-    max-height: 16;
-}
-/* Export modal end */
-
-/* OpenFile modal */
-#open_file_modal {
-    padding: 0 1;
-    border: thick $background 80%;
-    background: $surface;
-    max-width: 80;
-    max-height: 25;
+OpenFileScreen > Container {
+    height: 25;
+    width: 80;
 }
 /* Modal end */

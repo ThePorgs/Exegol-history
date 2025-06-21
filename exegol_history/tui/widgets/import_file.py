@@ -8,7 +8,7 @@ from exegol_history.db_api.importing import (
     HostsImportFileType,
     import_objects,
 )
-from exegol_history.tui.widgets.open_file import OpenFileScreen
+from exegol_history.tui.screens.open_file import OpenFileScreen
 from rich.markdown import Markdown
 
 TOOLTIP_CSV = Markdown("""
@@ -131,21 +131,21 @@ class ImportFile(Container):
                 with open(path, "rb") as f:
                     self.file_content = f.read()
 
-                self.query_one(TextArea).text = (
+                self.screen.query_one(TextArea).text = (
                     self.file_content.decode("utf-8")
                     if not self.is_kdbx_format()
                     else ""
                 )
 
-            self.app.push_screen(OpenFileScreen(), check_import)
+            self.app.push_screen(OpenFileScreen("Choose an import path:"), check_import)
         elif event.button.id == ID_CONFIRM_IMPORT_BUTTON:
-            delimiter_input = self.query_one(f"#{ID_KDBX_PASSWORD_INPUT}", Input)
+            delimiter_input = self.screen.query_one(f"#{ID_KDBX_PASSWORD_INPUT}", Input)
             kdbx_password = delimiter_input.value
 
             try:
                 tmp = (
-                    self.query_one(TextArea).text.encode("utf-8")
-                    if self.query_one(TextArea).text
+                    self.screen.query_one(TextArea).text.encode("utf-8")
+                    if self.screen.query_one(TextArea).text
                     else self.file_content
                 )
 
@@ -169,9 +169,11 @@ class ImportFile(Container):
 
             def check_import(path: str):
                 self.kdbx_keyfile_path = path
-                self.query_one(f"#{ID_KDBX_KEYFILE_INPUT}", Input).value = path
+                self.screen.query_one(f"#{ID_KDBX_KEYFILE_INPUT}", Input).value = path
 
-            self.app.push_screen(OpenFileScreen(), check_import)
+            self.app.push_screen(
+                OpenFileScreen("Choose the KDBX keyfile location:"), check_import
+            )
         elif event.button.id == ID_CANCEL_BUTTON:
             self.app.pop_screen()
 
@@ -186,7 +188,7 @@ class ImportFile(Container):
             else:
                 self.selected_format = HostsImportFileType(event.value)
 
-            file_text_area = self.query_one(TextArea)
+            file_text_area = self.screen.query_one(TextArea)
             if self.selected_format in (
                 CredsImportFileType.JSON,
                 HostsImportFileType.JSON,
@@ -200,8 +202,10 @@ class ImportFile(Container):
             else:
                 file_text_area.tooltip = None
 
-            kdbx_password_input = self.query_one(f"#{ID_KDBX_PASSWORD_INPUT}", Input)
-            kdbx_keyfile_horizontal = self.query_one(
+            kdbx_password_input = self.screen.query_one(
+                f"#{ID_KDBX_PASSWORD_INPUT}", Input
+            )
+            kdbx_keyfile_horizontal = self.screen.query_one(
                 f"#{ID_KDBX_KEYFILE_HORIZONTAL}", Horizontal
             )
             kdbx_password_input.visible = kdbx_keyfile_horizontal.visible = (

@@ -2,7 +2,7 @@ import pytest
 import subprocess
 import sys
 from exegol_history.cli.utils import write_credential_in_profile
-from exegol_history.tui.db_creds.db_creds import DbCredsApp
+from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.db_api.creds import Credential, get_credentials
 from common import (
     USERNAME_TEST_VALUE,

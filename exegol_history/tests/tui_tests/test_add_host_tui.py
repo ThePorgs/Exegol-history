@@ -2,7 +2,7 @@ import pytest
 import subprocess
 import sys
 from exegol_history.cli.utils import write_host_in_profile
-from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
+from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.db_api.hosts import Host, get_hosts
 from common import (
     IP_TEST_VALUE,

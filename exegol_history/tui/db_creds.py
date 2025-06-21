@@ -4,11 +4,12 @@ from textual.app import App, ComposeResult, SystemCommand
 from textual.keys import Keys
 from textual.screen import Screen
 from textual.widgets.data_table import RowDoesNotExist
-from textual.widgets import Footer, Header, DataTable, Input, Rule
+from textual.widgets import Footer, Header, Input, Rule
 from textual.binding import Binding
 from textual import events
 from pykeepass import PyKeePass
 from typing import Any
+from exegol_history.config.config import load_config
 from exegol_history.db_api.creds import (
     Credential,
     add_credentials,
@@ -18,12 +19,12 @@ from exegol_history.db_api.creds import (
 )
 from exegol_history.db_api.exporting import export_objects
 from exegol_history.db_api.utils import copy_in_clipboard
-from exegol_history.tui.db_creds.add_credential import AddCredentialScreen
-from exegol_history.tui.db_creds.edit_credential import EditCredentialScreen
-from exegol_history.tui.db_creds.delete_credential import (
-    DeleteCredentialConfirmationScreen,
-)
-from exegol_history.tui.db_creds.export_credential import ExportCredentialScreen
+from exegol_history.tui.screens.add_object import AddObjectScreen
+from exegol_history.tui.screens.delete_object import DeleteObjectScreen
+from exegol_history.tui.screens.edit_object import EditObjectScreen
+from exegol_history.tui.screens.export_object import ExportObjectScreen
+from exegol_history.tui.widgets.import_file import AssetsType
+from exegol_history.tui.widgets.object_datatable import ObjectsDataTable
 
 """
 This is the main application displaying the credentials table and a search bar
@@ -39,55 +40,56 @@ TOOLTIP_EXPORT_CREDENTIAL = "Export credentials"
 
 
 class DbCredsApp(App):
-    CSS_PATH = "../css/general.tcss"
-    TITLE = f"Exegol-history v{importlib.metadata.version('exegol-history')}"
+    # We can't reuse the config passed in the constructor
+    # because Textualize doesn't support fully dynamic bindings
+    config = load_config()
     BINDINGS = [
         Binding(
-            "f1",
+            Keys.F1,
             "copy_username_clipboard",
-            " username",
+            f"{config['theme']['clipboard_icon']} username",
             id="copy_username_clipboard",
             tooltip=TOOLTIP_COPY_USERNAME,
         ),
         Binding(
-            "f2",
+            Keys.F2,
             "copy_password_clipboard",
-            " password",
+            f"{config['theme']['clipboard_icon']} password",
             id="copy_password_clipboard",
             tooltip=TOOLTIP_COPY_PASSWORD,
         ),
         Binding(
-            "f3",
+            Keys.F3,
             "copy_hash_clipboard",
-            " hash",
+            f"{config['theme']['clipboard_icon']} hash",
             id="copy_hash_clipboard",
             tooltip=TOOLTIP_COPY_HASH,
         ),
         Binding(
-            "f4",
+            Keys.F4,
             "add_credential",
-            "+ credential",
+            f"{config['theme']['add_icon']} credential",
             id="add_credential",
             tooltip=TOOLTIP_ADD_CREDENTIAL,
         ),
         Binding(
-            "f5",
+            Keys.F5,
             "delete_credential",
-            " credential",
+            f"{config['theme']['delete_icon']} credential",
             id="delete_credential",
             tooltip=TOOLTIP_DELETE_CREDENTIAL,
         ),
         Binding(
-            "f6",
+            Keys.F6,
             "edit_credential",
-            " credential",
+            f"{config['theme']['edit_icon']} credential",
             id="edit_credential",
             tooltip=TOOLTIP_EDIT_CREDENTIAL,
         ),
         Binding(
-            "f7",
+            Keys.F7,
             "export_credential",
-            " credential",
+            f"{config['theme']['export_icon']} credential",
             id="export_credential",
             tooltip=TOOLTIP_EXPORT_CREDENTIAL,
         ),
@@ -123,7 +125,7 @@ class DbCredsApp(App):
         # Refresh the table
         tmp = get_credentials(self.kp)
 
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         table.clear()
         table.add_rows(tmp)
         self.original_data = tmp
@@ -131,14 +133,18 @@ class DbCredsApp(App):
     def __init__(
         self, config: dict[str, Any], kp: PyKeePass, show_add_screen: bool = False
     ):
+        self.CSS_PATH = "css/general.tcss"
+        self.TITLE = f"Exegol-history v{importlib.metadata.version('exegol-history')}"
         super().__init__()
+
         self.config = config
+        self.refresh_bindings()
         self.kp = kp
         self.show_add_screen = show_add_screen
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield DataTable()
+        yield ObjectsDataTable()
         yield Rule(line_style="heavy")
         yield Input(placeholder="Search...", id="search-bar")
         yield Footer()
@@ -148,7 +154,7 @@ class DbCredsApp(App):
 
         _tmp = Credential()
 
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         table.add_columns(*_tmp.__dict__.keys())
         table.add_rows(tmp)
         table.zebra_stripes = True
@@ -159,12 +165,12 @@ class DbCredsApp(App):
         self.set_keymap(self.config["keybindings"])
 
         if self.show_add_screen:
-            self.push_screen(AddCredentialScreen(), self.check_added_creds)
+            self.push_screen(AddObjectScreen(), self.check_added_creds)
 
     def on_key(self, event: events.Key) -> Credential:
         if event.key == Keys.Enter:
             try:
-                table = self.query_one(DataTable)
+                table = self.screen.query_one(ObjectsDataTable)
                 selected_row = table.cursor_row
                 row_data = table.get_row_at(selected_row)
                 select_credential = get_credentials(self.kp, id=row_data[0])[0]
@@ -176,7 +182,7 @@ class DbCredsApp(App):
         try:
             """Filter the DataTable when the search bar input changes."""
             search_query = event.value.lower()  # Case-insensitive search
-            data_table = self.query_one(DataTable)
+            data_table = self.screen.query_one(ObjectsDataTable)
 
             # Clear current rows
             data_table.clear()
@@ -195,7 +201,7 @@ class DbCredsApp(App):
             pass
 
     def action_copy_username_clipboard(self) -> None:
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
 
         try:
@@ -208,7 +214,7 @@ class DbCredsApp(App):
         sys.exit(0)
 
     def action_copy_password_clipboard(self) -> None:
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
         try:
             row_data = table.get_row_at(selected_row)
@@ -220,7 +226,7 @@ class DbCredsApp(App):
         sys.exit(0)
 
     def action_copy_hash_clipboard(self) -> None:
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
         try:
             row_data = table.get_row_at(selected_row)
@@ -239,7 +245,7 @@ class DbCredsApp(App):
             sys.exit(0)
 
     def action_add_credential(self) -> None:
-        self.push_screen(AddCredentialScreen(), self.check_added_creds)
+        self.push_screen(AddObjectScreen(), self.check_added_creds)
 
     def check_export_credential(self, result: tuple) -> None:
         if result:
@@ -263,7 +269,7 @@ class DbCredsApp(App):
                     )
 
     def action_export_credential(self) -> None:
-        self.push_screen(ExportCredentialScreen(), self.check_export_credential)
+        self.push_screen(ExportObjectScreen(), self.check_export_credential)
 
     def action_delete_credential(self) -> None:
         def check_delete(result: list[int]) -> None:
@@ -276,12 +282,12 @@ class DbCredsApp(App):
             self.kp.save()
             self.update_table()
 
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
 
         try:
             self.push_screen(
-                DeleteCredentialConfirmationScreen([table.get_row_at(selected_row)[0]]),
+                DeleteObjectScreen([table.get_row_at(selected_row)[0]]),
                 check_delete,
             )
         except RowDoesNotExist:
@@ -293,14 +299,14 @@ class DbCredsApp(App):
 
             self.update_table()
 
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
 
         try:
             row_data = table.get_row_at(selected_row)
             credential = get_credentials(self.kp, id=row_data[0])[0]
             self.push_screen(
-                EditCredentialScreen(credential),
+                EditObjectScreen(AssetsType.Credentials, credential),
                 check_edit_creds,
             )
         except Exception:

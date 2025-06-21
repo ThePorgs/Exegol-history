@@ -3,6 +3,7 @@ db_name = "DB.kdbx"
 db_key_name = "db.key"
 profile_sh_path = "/opt/tools/Exegol-history/profile.sh"
 
+# Keybinds list: https://github.com/Textualize/textual/blob/8f85ece761031a756a1ecfa345b519c9c915e04b/src/textual/keys.py#L9
 [keybindings]
 copy_username_clipboard = "f1"
 copy_password_clipboard = "f2"
@@ -18,3 +19,21 @@ delete_host = "f4"
 edit_host = "f5"
 export_host = "f6"
 quit = "ctrl+c"
+
+[theme]
+primary = "#0178D4"
+secondary = "#004578"
+accent = "#ffa62b"
+foreground = "#e0e0e0"
+# background = ""
+success = "#4EBF71"
+warning = "#ffa62b"
+error = "#ba3c5b"
+# surface = ""
+# panel = ""
+dark = true
+clipboard_icon = "📋"
+add_icon = "➕"
+delete_icon = "🗑️"
+edit_icon = "📝"
+export_icon = "📤"

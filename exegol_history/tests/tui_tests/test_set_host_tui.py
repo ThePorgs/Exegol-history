@@ -14,7 +14,8 @@ from common import (
     ROLE_TEST_VALUE,
     select_input_and_enter_text,
 )
-from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
+from exegol_history.db_api.hosts import Host
+from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.tui.widgets.credential_form import (
     ID_CONFIRM_BUTTON,
 )
@@ -34,9 +35,9 @@ async def test_set_host_without_selecting(
     app = DbHostsApp(load_mock_config, kp)
 
     async with app.run_test() as pilot:
-        with pytest.raises(AttributeError):
+        with pytest.raises(TypeError):
             host = await pilot.exit(0)
-            write_host_in_profile(host, load_mock_config)
+            write_host_in_profile(Host(*host), load_mock_config)
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
@@ -54,8 +55,7 @@ async def test_set_host_only_username(
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.press(Keys.Enter)
 
-        host = pilot.app.return_value
-        write_host_in_profile(host, load_mock_config)
+        write_host_in_profile(Host(*pilot.app.return_value), load_mock_config)
 
     command_output = subprocess.run(
         [
@@ -98,8 +98,7 @@ async def test_set_host_half(open_keepass: PyKeePass, load_mock_config: dict[str
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.press(Keys.Enter)
 
-        host = pilot.app.return_value
-        write_host_in_profile(host, load_mock_config)
+        write_host_in_profile(Host(*pilot.app.return_value), load_mock_config)
 
     command_output = subprocess.run(
         [
@@ -132,8 +131,7 @@ async def test_set_host_full(open_keepass: PyKeePass, load_mock_config: dict[str
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.press(Keys.Enter)
 
-        host = pilot.app.return_value
-        write_host_in_profile(host, load_mock_config)
+        write_host_in_profile(Host(*pilot.app.return_value), load_mock_config)
 
     command_output = subprocess.run(
         [
@@ -181,8 +179,7 @@ async def test_set_host_dc(open_keepass: PyKeePass, load_mock_config: dict[str, 
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.press(Keys.Enter)
 
-        host = pilot.app.return_value
-        write_host_in_profile(host, load_mock_config)
+        write_host_in_profile(Host(*pilot.app.return_value), load_mock_config)
 
     command_output = subprocess.run(
         [
@@ -210,8 +207,7 @@ async def test_set_host_dc(open_keepass: PyKeePass, load_mock_config: dict[str, 
         await pilot.press(Keys.Down)
         await pilot.press(Keys.Enter)
 
-        host = pilot.app.return_value
-        write_host_in_profile(host, load_mock_config)
+        write_host_in_profile(Host(*pilot.app.return_value), load_mock_config)
 
     command_output = subprocess.run(
         [

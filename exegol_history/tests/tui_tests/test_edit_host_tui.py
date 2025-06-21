@@ -1,5 +1,5 @@
 import pytest
-from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
+from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.db_api.hosts import Host, get_hosts
 from common import (
     IP_TEST_VALUE,

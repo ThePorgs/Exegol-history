@@ -2,14 +2,15 @@ import sys
 import importlib
 from textual.app import App, ComposeResult, SystemCommand
 from textual.keys import Keys
+from textual.theme import Theme
 from textual.screen import Screen
 from textual.widgets.data_table import RowDoesNotExist
 from textual.widgets import Footer, Header, DataTable, Input, Rule
 from textual.binding import Binding
 from textual.containers import Vertical
-from textual import events
 from pykeepass import PyKeePass
 from typing import Any
+from exegol_history.config.config import load_config
 from exegol_history.db_api.exporting import export_objects
 from exegol_history.db_api.hosts import (
     Host,
@@ -19,10 +20,12 @@ from exegol_history.db_api.hosts import (
     get_hosts,
 )
 from exegol_history.db_api.utils import copy_in_clipboard
-from exegol_history.tui.db_hosts.add_host import AddHostScreen
-from exegol_history.tui.db_hosts.edit_host import EditHostScreen
-from exegol_history.tui.db_hosts.delete_host import DeleteHostConfirmationScreen
-from exegol_history.tui.db_hosts.export_host import ExportHostScreen
+from exegol_history.tui.screens.add_object import AddObjectScreen
+from exegol_history.tui.screens.delete_object import DeleteObjectScreen
+from exegol_history.tui.screens.edit_object import EditObjectScreen
+from exegol_history.tui.screens.export_object import ExportObjectScreen
+from exegol_history.tui.widgets.import_file import AssetsType
+from exegol_history.tui.widgets.object_datatable import ObjectsDataTable
 
 TOOLTIP_COPY_IP = "Copy the IP to the clipboard"
 TOOLTIP_COPY_HOSTNAME = "Copy the hostname to the clipboard"
@@ -38,32 +41,49 @@ This is the main application displaying the hosts table and a search bar
 
 
 class DbHostsApp(App):
-    CSS_PATH = "../css/general.tcss"
-    TITLE = f"Exegol-history v{importlib.metadata.version('exegol-history')}"
+    # We can't reuse the config passed in the constructor
+    # because Textualize doesn't support fully dynamic bindings
+    config = load_config()
     BINDINGS = [
         Binding(
-            "f1",
+            Keys.F1,
             "copy_ip_clipboard",
-            " IP",
+            f"{config['theme']['clipboard_icon']} IP",
             id="copy_ip_clipboard",
             tooltip="Copy the IP to the clipboard.",
         ),
         Binding(
-            "f2",
+            Keys.F2,
             "copy_hostname_clipboard",
-            " hostname",
+            f"{config['theme']['clipboard_icon']} hostname",
             id="copy_hostname_clipboard",
             tooltip="Copy the hostname to the clipboard.",
         ),
-        Binding("f3", "add_host", "+ host", id="add_host", tooltip="Add a host."),
         Binding(
-            "f4", "delete_host", " host", id="delete_host", tooltip="Delete a host."
+            Keys.F3,
+            "add_host",
+            f"{config['theme']['add_icon']} host",
+            id="add_host",
+            tooltip="Add a host.",
         ),
-        Binding("f5", "edit_host", " host", id="edit_host", tooltip="Edit a host."),
         Binding(
-            "f6",
+            Keys.F4,
+            "delete_host",
+            f"{config['theme']['delete_icon']} host",
+            id="delete_host",
+            tooltip="Delete a host.",
+        ),
+        Binding(
+            Keys.F5,
+            "edit_host",
+            f"{config['theme']['edit_icon']} host",
+            id="edit_host",
+            tooltip="Edit a host.",
+        ),
+        Binding(
+            Keys.F6,
             "export_host",
-            " host",
+            f"{config['theme']['export_icon']} host",
             id="export_host",
             tooltip=TOOLTIP_EXPORT_HOST,
         ),
@@ -86,7 +106,7 @@ class DbHostsApp(App):
         # Refresh the table
         tmp = get_hosts(self.kp)
 
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(DataTable)
         table.clear()
         table.add_rows(tmp)
         self.original_data = tmp
@@ -94,26 +114,44 @@ class DbHostsApp(App):
     def __init__(
         self, config: dict[str, Any], kp: PyKeePass, show_add_screen: bool = False
     ):
+        self.CSS_PATH = "css/general.tcss"
+        self.TITLE = f"Exegol-history v{importlib.metadata.version('exegol-history')}"
         super().__init__()
         self.config = config
         self.kp = kp
+        self.custom_theme = Theme(
+            name="custom",
+            primary=config["theme"].get("primary"),
+            secondary=config["theme"].get("secondary"),
+            accent=config["theme"].get("accent"),
+            foreground=config["theme"].get("foreground"),
+            background=config["theme"].get("background"),
+            success=config["theme"].get("success"),
+            warning=config["theme"].get("warning"),
+            error=config["theme"].get("error"),
+            surface=config["theme"].get("surface"),
+            panel=config["theme"].get("panel"),
+            dark=config["theme"].get("dark"),
+        )
         self.show_add_screen = show_add_screen
 
     def compose(self) -> ComposeResult:
         yield Vertical(
             Header(),
-            DataTable(),
+            ObjectsDataTable(),
             Rule(line_style="heavy"),
             Input(placeholder="Search...", id="search-bar"),
             Footer(),
         )
 
     def on_mount(self) -> None:
+        self.register_theme(self.custom_theme)
+        self.theme = "custom"
         tmp = get_hosts(self.kp)
 
         _tmp = Host()
 
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         table.add_columns(*_tmp.__dict__.keys())
         table.add_rows(tmp)
         table.zebra_stripes = True
@@ -124,22 +162,12 @@ class DbHostsApp(App):
         self.set_keymap(self.config["keybindings"])
 
         if self.show_add_screen:
-            self.push_screen(AddHostScreen(), self.check_added_host)
-
-    def on_key(self, event: events.Key) -> Host:
-        if event.key == Keys.Enter:
-            try:
-                table = self.query_one(DataTable)
-                selected_row = table.cursor_row
-                row_data = table.get_row_at(selected_row)
-                self.exit(Host(row_data[0], row_data[1], row_data[2], row_data[3]))
-            except Exception:
-                pass
+            self.push_screen(AddObjectScreen(AssetsType.Hosts), self.check_added_host)
 
     def on_input_changed(self, event: Input.Changed) -> None:
         try:
             search_query = event.value.lower()
-            data_table = self.query_one(DataTable)
+            data_table = self.screen.query_one(ObjectsDataTable)
 
             # Clear current rows
             data_table.clear()
@@ -158,7 +186,7 @@ class DbHostsApp(App):
             pass
 
     def action_copy_ip_clipboard(self) -> None:
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
         try:
             row_data = table.get_row_at(selected_row)
@@ -170,7 +198,7 @@ class DbHostsApp(App):
         sys.exit(0)
 
     def action_copy_hostname_clipboard(self) -> None:
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
 
         try:
@@ -210,10 +238,10 @@ class DbHostsApp(App):
                     )
 
     def action_export_host(self) -> None:
-        self.push_screen(ExportHostScreen(), self.check_export_host)
+        self.push_screen(ExportObjectScreen(), self.check_export_host)
 
     def action_add_host(self) -> None:
-        self.push_screen(AddHostScreen(), self.check_added_host)
+        self.push_screen(AddObjectScreen(AssetsType.Hosts), self.check_added_host)
 
     def action_delete_host(self) -> None:
         def check_delete(result: list[int]) -> None:
@@ -226,12 +254,12 @@ class DbHostsApp(App):
             self.kp.save()
             self.update_table()
 
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
 
         try:
             self.push_screen(
-                DeleteHostConfirmationScreen([table.get_row_at(selected_row)[0]]),
+                DeleteObjectScreen([table.get_row_at(selected_row)[0]]),
                 check_delete,
             )
         except RowDoesNotExist:
@@ -243,14 +271,14 @@ class DbHostsApp(App):
 
             self.update_table()
 
-        table = self.query_one(DataTable)
+        table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
 
         try:
             row_data = table.get_row_at(selected_row)
             host = get_hosts(self.kp, id=row_data[0])[0]
             self.push_screen(
-                EditHostScreen(host),
+                EditObjectScreen(AssetsType.Hosts, host),
                 check_edit_host,
             )
         except Exception:

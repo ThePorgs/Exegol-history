@@ -1,5 +1,5 @@
 import pytest
-from exegol_history.tui.db_hosts.db_hosts import DbHostsApp
+from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.db_api.hosts import Host, add_host, add_hosts, get_hosts
 from common import (
     HOSTS_TEST_VALUE,
@@ -12,7 +12,7 @@ from pykeepass import PyKeePass
 from typing import Any
 
 from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
-from exegol_history.tui.widgets.delete_objects import (
+from exegol_history.tui.screens.delete_object import (
     ID_CONFIRM_RANGE_BUTTON,
     ID_IDS_INPUT,
 )

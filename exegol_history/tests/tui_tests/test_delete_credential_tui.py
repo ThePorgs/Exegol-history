@@ -1,5 +1,5 @@
 import pytest
-from exegol_history.tui.db_creds.db_creds import DbCredsApp
+from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.db_api.creds import (
     Credential,
     add_credential,
@@ -23,7 +23,7 @@ from exegol_history.tui.widgets.credential_form import (
     ID_USERNAME_INPUT,
 )
 from textual.keys import Keys
-from exegol_history.tui.widgets.delete_objects import (
+from exegol_history.tui.screens.delete_object import (
     ID_CONFIRM_RANGE_BUTTON,
     ID_IDS_INPUT,
 )

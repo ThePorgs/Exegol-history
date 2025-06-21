@@ -5,7 +5,8 @@ import pytest
 import subprocess
 import sys
 from exegol_history.cli.utils import CREDS_VARIABLES, write_credential_in_profile
-from exegol_history.tui.db_creds.db_creds import DbCredsApp
+from exegol_history.db_api.creds import Credential
+from exegol_history.tui.db_creds import DbCredsApp
 from common import (
     USERNAME_TEST_VALUE,
     PASSWORD_TEST_VALUE,
@@ -31,9 +32,9 @@ async def test_set_credential_without_selecting(
     app = DbCredsApp(load_mock_config, kp)
 
     async with app.run_test() as pilot:
-        with pytest.raises(AttributeError):
+        with pytest.raises(TypeError):
             credential = await pilot.exit(0)
-            write_credential_in_profile(credential, load_mock_config)
+            write_credential_in_profile(Credential(*credential), load_mock_config)
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
@@ -53,8 +54,9 @@ async def test_set_credential_only_username(
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.press(Keys.Enter)
 
-        credential = pilot.app.return_value
-        write_credential_in_profile(credential, load_mock_config)
+        write_credential_in_profile(
+            Credential(*pilot.app.return_value), load_mock_config
+        )
 
     command_output = subprocess.run(
         [
@@ -101,8 +103,9 @@ async def test_set_credential_half(
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.press(Keys.Enter)
 
-        credential = pilot.app.return_value
-        write_credential_in_profile(credential, load_mock_config)
+        write_credential_in_profile(
+            Credential(*pilot.app.return_value), load_mock_config
+        )
 
     command_output = subprocess.run(
         [
@@ -154,8 +157,9 @@ async def test_set_credential_full(
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.press(Keys.Enter)
 
-        credential = pilot.app.return_value
-        write_credential_in_profile(credential, load_mock_config)
+        write_credential_in_profile(
+            Credential(*pilot.app.return_value), load_mock_config
+        )
 
     command_output = subprocess.run(
         [

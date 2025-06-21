@@ -45,9 +45,9 @@ class HostForm(Container):
         if event.button.id == ID_CONFIRM_BUTTON:
             self.host = Host(
                 self.host.id if self.host else "",
-                self.query_one(f"#{ID_IP_INPUT}", Input).value,
-                self.query_one(f"#{ID_HOSTNAME_INPUT}", Input).value,
-                self.query_one(f"#{ID_ROLE_INPUT}", Input).value,
+                self.screen.query_one(f"#{ID_IP_INPUT}", Input).value,
+                self.screen.query_one(f"#{ID_HOSTNAME_INPUT}", Input).value,
+                self.screen.query_one(f"#{ID_ROLE_INPUT}", Input).value,
             )
 
             self.screen.dismiss([self.host])
