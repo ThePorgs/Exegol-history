@@ -118,9 +118,9 @@ class ImportFile(Container):
         yield kdbx_password_input
         yield kdbx_keyfile_horizontal
         yield Horizontal(
-            Button.success(" Confirm", id=ID_CONFIRM_IMPORT_BUTTON),
-            Button.error(" Cancel", id=ID_CANCEL_BUTTON),
-            Button(" Import", variant="primary", id=ID_IMPORT_BUTTON),
+            Button.success("Confirm", id=ID_CONFIRM_IMPORT_BUTTON),
+            Button.error("Cancel", id=ID_CANCEL_BUTTON),
+            Button("Import", variant="primary", id=ID_IMPORT_BUTTON),
             id=ID_ACTIONS_HORIZONTAL,
         )
 

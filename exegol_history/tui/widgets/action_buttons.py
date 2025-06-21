@@ -19,8 +19,8 @@ class ActionButtons(Static):
 
     def compose(self) -> ComposeResult:
         yield Horizontal(
-            Button.success(" Confirm", id=self.confirm_button_id),
-            Button.error(" Cancel", id=self.cancel_button_id),
+            Button.success("Confirm", id=self.confirm_button_id),
+            Button.error("Cancel", id=self.cancel_button_id),
             id=ID_ACTIONS_HORIZONTAL,
         )
 
