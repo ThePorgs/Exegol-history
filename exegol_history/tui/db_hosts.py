@@ -90,32 +90,11 @@ class DbHostsApp(App):
         Binding(Keys.ControlC, "quit", "Quit", show=False, priority=True),
     ]
 
-    def get_system_commands(self, screen: Screen):
-        yield SystemCommand("Copy IP", TOOLTIP_COPY_IP, self.action_copy_ip_clipboard)
-        yield SystemCommand(
-            "Copy hostname", TOOLTIP_COPY_HOSTNAME, self.action_copy_hostname_clipboard
-        )
-        yield SystemCommand("Add host", TOOLTIP_ADD_HOST, self.action_add_host)
-        yield SystemCommand("Delete host", TOOLTIP_DELETE_HOST, self.action_delete_host)
-        yield SystemCommand("Edit host", TOOLTIP_EDIT_HOST, self.action_edit_host)
-        yield SystemCommand(
-            "Export hosts", TOOLTIP_EXPORT_HOST, self.action_export_host
-        )
-
-    def update_table(self) -> None:
-        # Refresh the table
-        tmp = get_hosts(self.kp)
-
-        table = self.screen.query_one(DataTable)
-        table.clear()
-        table.add_rows(tmp)
-        self.original_data = tmp
-
     def __init__(
         self, config: dict[str, Any], kp: PyKeePass, show_add_screen: bool = False
     ):
         self.CSS_PATH = "css/general.tcss"
-        self.TITLE = f"Exegol-history v{importlib.metadata.version('exegol-history')}"
+        self.TITLE = f"🔑 Exegol-history v{importlib.metadata.version('exegol-history')}"
         super().__init__()
         self.config = config
         self.kp = kp
@@ -140,7 +119,7 @@ class DbHostsApp(App):
             Header(),
             ObjectsDataTable(),
             Rule(line_style="heavy"),
-            Input(placeholder="Search...", id="search-bar"),
+            Input(placeholder="🔍 Search...", id="search-bar"),
             Footer(),
         )
 
@@ -163,6 +142,27 @@ class DbHostsApp(App):
 
         if self.show_add_screen:
             self.push_screen(AddObjectScreen(AssetsType.Hosts), self.check_added_host)
+
+    def get_system_commands(self, screen: Screen):
+        yield SystemCommand("Copy IP", TOOLTIP_COPY_IP, self.action_copy_ip_clipboard)
+        yield SystemCommand(
+            "Copy hostname", TOOLTIP_COPY_HOSTNAME, self.action_copy_hostname_clipboard
+        )
+        yield SystemCommand("Add host", TOOLTIP_ADD_HOST, self.action_add_host)
+        yield SystemCommand("Delete host", TOOLTIP_DELETE_HOST, self.action_delete_host)
+        yield SystemCommand("Edit host", TOOLTIP_EDIT_HOST, self.action_edit_host)
+        yield SystemCommand(
+            "Export hosts", TOOLTIP_EXPORT_HOST, self.action_export_host
+        )
+
+    def update_table(self) -> None:
+        # Refresh the table
+        tmp = get_hosts(self.kp)
+
+        table = self.screen.query_one(DataTable)
+        table.clear()
+        table.add_rows(tmp)
+        self.original_data = tmp
 
     def on_input_changed(self, event: Input.Changed) -> None:
         try:

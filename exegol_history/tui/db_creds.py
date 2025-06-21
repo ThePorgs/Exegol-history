@@ -96,6 +96,43 @@ class DbCredsApp(App):
         Binding(Keys.ControlC, "quit", "Quit", show=False, priority=True),
     ]
 
+    def __init__(
+        self, config: dict[str, Any], kp: PyKeePass, show_add_screen: bool = False
+    ):
+        self.CSS_PATH = "css/general.tcss"
+        self.TITLE = f"🔑 Exegol-history v{importlib.metadata.version('exegol-history')}"
+        super().__init__()
+
+        self.config = config
+        self.refresh_bindings()
+        self.kp = kp
+        self.show_add_screen = show_add_screen
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield ObjectsDataTable()
+        yield Rule(line_style="heavy")
+        yield Input(placeholder="🔍 Search...", id="search-bar")
+        yield Footer()
+
+    def on_mount(self) -> None:
+        tmp = get_credentials(self.kp)
+
+        _tmp = Credential()
+
+        table = self.screen.query_one(ObjectsDataTable)
+        table.add_columns(*_tmp.__dict__.keys())
+        table.add_rows(tmp)
+        table.zebra_stripes = True
+        table.cursor_type = "row"
+        self.original_data = tmp
+
+        # Apply keybindings from config
+        self.set_keymap(self.config["keybindings"])
+
+        if self.show_add_screen:
+            self.push_screen(AddObjectScreen(), self.check_added_creds)
+
     def get_system_commands(self, screen: Screen):
         yield SystemCommand(
             "Copy username", TOOLTIP_COPY_USERNAME, self.action_copy_username_clipboard
@@ -129,43 +166,6 @@ class DbCredsApp(App):
         table.clear()
         table.add_rows(tmp)
         self.original_data = tmp
-
-    def __init__(
-        self, config: dict[str, Any], kp: PyKeePass, show_add_screen: bool = False
-    ):
-        self.CSS_PATH = "css/general.tcss"
-        self.TITLE = f"Exegol-history v{importlib.metadata.version('exegol-history')}"
-        super().__init__()
-
-        self.config = config
-        self.refresh_bindings()
-        self.kp = kp
-        self.show_add_screen = show_add_screen
-
-    def compose(self) -> ComposeResult:
-        yield Header()
-        yield ObjectsDataTable()
-        yield Rule(line_style="heavy")
-        yield Input(placeholder="Search...", id="search-bar")
-        yield Footer()
-
-    def on_mount(self) -> None:
-        tmp = get_credentials(self.kp)
-
-        _tmp = Credential()
-
-        table = self.screen.query_one(ObjectsDataTable)
-        table.add_columns(*_tmp.__dict__.keys())
-        table.add_rows(tmp)
-        table.zebra_stripes = True
-        table.cursor_type = "row"
-        self.original_data = tmp
-
-        # Apply keybindings from config
-        self.set_keymap(self.config["keybindings"])
-
-        if self.show_add_screen:
-            self.push_screen(AddObjectScreen(), self.check_added_creds)
 
     def on_key(self, event: events.Key) -> Credential:
         if event.key == Keys.Enter:

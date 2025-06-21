@@ -34,6 +34,6 @@ error = "#ba3c5b"
 dark = true
 clipboard_icon = "📋"
 add_icon = "➕"
-delete_icon = "🗑️"
+delete_icon = "➖"
 edit_icon = "📝"
 export_icon = "📤"
