@@ -10,6 +10,7 @@ HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP"]
 VARIABLE_REGEX_UNIX = r"export (.*)='.*?'"
 VARIABLE_REGEX_WINDOWS = r"Set-Variable -Name (.*) -Value '.*?' -Scope Global"
 
+
 def check_delimiter(delimiter: str) -> str:
     if len(delimiter) != 1:
         raise argparse.ArgumentTypeError("Delimiter must be a single character.")

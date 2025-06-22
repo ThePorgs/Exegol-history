@@ -1,4 +1,3 @@
-# import os
 import secrets
 import shutil
 import tomllib
@@ -21,7 +20,7 @@ def setup_db(db_path: str, db_key_path: str) -> None:
 
 def setup_generate_keyfile(db_key_path: str) -> None:
     random_bytes = secrets.token_bytes(256)
-    # Path(db_key_path).touch
+
     if not Path(db_key_path).is_file():
         Path(db_key_path).parent.mkdir(parents=True, exist_ok=True)
         with open(db_key_path, "wb") as key_file:
@@ -38,7 +37,7 @@ def setup_groups(kp: PyKeePass) -> None:
 def setup_profile(profile_path: str):
     if not Path(profile_path).exists():
         Path(profile_path).parent.mkdir(exist_ok=True, parents=True)
-        Path(profile_path).touch()
+        shutil.copy(Path(profile_path), Path(profile_path).parent)
 
 
 def load_config(config_path: str = None) -> dict[str, Any]:

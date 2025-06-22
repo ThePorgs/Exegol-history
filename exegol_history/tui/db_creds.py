@@ -100,7 +100,9 @@ class DbCredsApp(App):
         self, config: dict[str, Any], kp: PyKeePass, show_add_screen: bool = False
     ):
         self.CSS_PATH = "css/general.tcss"
-        self.TITLE = f"🔑 Exegol-history v{importlib.metadata.version('exegol-history')}"
+        self.TITLE = (
+            f"🔑 Exegol-history v{importlib.metadata.version('exegol-history')}"
+        )
         super().__init__()
 
         self.config = config

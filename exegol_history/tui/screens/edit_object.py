@@ -21,7 +21,9 @@ class EditObjectScreen(ModalScreen):
 
     def compose(self) -> ComposeResult:
         container = Container()
-        container.border_title = f"{self.app.config['theme']['edit_icon']} Editing an object"
+        container.border_title = (
+            f"{self.app.config['theme']['edit_icon']} Editing an object"
+        )
         form = (
             CredentialForm(self.object_to_modify)
             if self.asset_type == AssetsType.Credentials
