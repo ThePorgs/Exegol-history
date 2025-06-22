@@ -17,6 +17,7 @@ TEST_CONFIG_PATH = TEST_ARTIFACTS_PATH / CONFIG_FILENAME
 TEST_PROFILE_SH = TEST_ARTIFACTS_PATH / "profile.sh"
 TEST_PROFILE_PS1 = TEST_ARTIFACTS_PATH / "profile.ps1"
 
+
 @pytest.fixture
 def open_keepass() -> PyKeePass:
     # First create a test Keepass DB and key
@@ -30,7 +31,7 @@ def open_keepass() -> PyKeePass:
 def load_mock_config() -> dict[str, Any]:
     mock_config = load_config(TEST_CONFIG_PATH)
 
-    if platform.system() == 'Windows':
+    if platform.system() == "Windows":
         mock_config["paths"]["profile_sh_path"] = TEST_PROFILE_PS1
     else:
         mock_config["paths"]["profile_sh_path"] = TEST_PROFILE_SH
