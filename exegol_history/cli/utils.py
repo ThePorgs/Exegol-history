@@ -8,7 +8,7 @@ from exegol_history.db_api.hosts import Host
 CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
 HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP"]
 VARIABLE_REGEX_UNIX = r"export (.*)='.*?'"
-VARIABLE_REGEX_WINDOWS = r"Set-Variable -Name (.*) -Value '.*?' -Global"
+VARIABLE_REGEX_WINDOWS = r"Set-Variable -Name (.*) -Value '.*?' -Scope Global"
 
 def check_delimiter(delimiter: str) -> str:
     if len(delimiter) != 1:
