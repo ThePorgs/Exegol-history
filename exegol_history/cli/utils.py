@@ -1,13 +1,14 @@
 import argparse
 import re
+import platform
 from typing import Any
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
 
 CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
 HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP"]
-VARIABLE_REGEX = r"export (.*)='.*?'"
-
+VARIABLE_REGEX_UNIX = r"export (.*)='.*?'"
+VARIABLE_REGEX_WINDOWS = r"Set-Variable -Name (.*) -Value '.*?' -Global"
 
 def check_delimiter(delimiter: str) -> str:
     if len(delimiter) != 1:
@@ -32,13 +33,20 @@ def write_host_in_profile(host: Host, config: dict[str, Any]):
         variables = profile.readlines()
 
         for i, line in enumerate(variables):
-            tmp = re.search(VARIABLE_REGEX, line)
+            if platform.system() == "Windows":
+                tmp = re.search(VARIABLE_REGEX_WINDOWS, line)
+            else:
+                tmp = re.search(VARIABLE_REGEX_UNIX, line)
 
             if tmp:
                 variable_name = tmp.group(1)
 
                 if variable_name in variables_correspondance.keys():
-                    line = f"export {variable_name}='{variables_correspondance[variable_name]}'\n"
+                    if platform.system() == "Windows":
+                        line = f"Set-Variable -Name {variable_name} -Value '{variables_correspondance[variable_name]}' -Scope Global\n"
+                    else:
+                        line = f"export {variable_name}='{variables_correspondance[variable_name]}'\n"
+
                     variables[i] = line
 
             with open(profile_sh_path, "w") as profile:
@@ -59,13 +67,20 @@ def write_credential_in_profile(credential: Credential, config: dict[str, Any]):
         variables = profile.readlines()
 
         for i, line in enumerate(variables):
-            tmp = re.search(VARIABLE_REGEX, line)
+            if platform.system() == "Windows":
+                tmp = re.search(VARIABLE_REGEX_WINDOWS, line)
+            else:
+                tmp = re.search(VARIABLE_REGEX_UNIX, line)
 
             if tmp:
                 variable_name = tmp.group(1)
 
                 if variable_name in variables_correspondance.keys():
-                    line = f"export {variable_name}='{variables_correspondance[variable_name]}'\n"
+                    if platform.system() == "Windows":
+                        line = f"Set-Variable -Name {variable_name} -Value '{variables_correspondance[variable_name]}' -Scope Global\n"
+                    else:
+                        line = f"export {variable_name}='{variables_correspondance[variable_name]}'\n"
+
                     variables[i] = line
 
             with open(profile_sh_path, "w") as profile:

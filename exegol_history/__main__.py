@@ -26,6 +26,7 @@ from exegol_history.config.config import (
     EXEGOL_HISTORY_HOME_FOLDER_NAME,
     load_config,
     setup_db,
+    setup_profile,
 )
 
 console = Console(soft_wrap=True)
@@ -40,6 +41,8 @@ def main():
     if not Path(db_path).is_file():
         Path(db_path).touch(exist_ok=True)
         setup_db(db_path, db_key_path)
+
+    setup_profile(config["paths"]["profile_sh_path"])
 
     args = parse_arguments().parse_args()
     kp = PyKeePass(db_path, keyfile=db_key_path)

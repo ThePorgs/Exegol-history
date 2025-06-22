@@ -20,7 +20,7 @@ A typical workflow with `Exegol-history`:
 ![](screenshots/screenshot04.png)
 
 ## ⚙️ Install
-`Exegol-history` is already installed in an Exegol container, however you can install it manually.
+`Exegol-history` is already installed in an Exegol container, however you can install it manually if you want.
 
 ### 1. Install the package
 <details>
@@ -104,6 +104,9 @@ add-zsh-hook precmd update_prompt
 ```
 </details>
 
+### 4. Modify your `exh` config file
+You might need to modify the `profile_sh_path` directive to match with what you put in the step 2.
+
 ## 📝 Configuration
 A small configuration file `config.toml` can be used to customise the database name,keybinds and theme for the TUI:
 ```toml
@@ -159,7 +162,7 @@ map ctrl+u 'remote_control send-text "exh set creds\\n"'
 ```
 pushing the **ctrl+u** key combination should automatically open the TUI without having to type `exh set creds`.
 
-## 💡 Examples
+## 📖 Examples
 ```sh
 # Interactively select a credential
 exh set creds
@@ -242,14 +245,15 @@ exh rm hosts --id 1
 | DonPAPI  | ❌  |
 | Hashcat  | ❌  |
 
-## Development
+## 🛠 Development and contribution
+All pull request must be targeting the `dev` branch, all contributions are welcome, it is recommended to use `poetry` to set up a development environement.
+
 ### Running tests
 ```sh
 poetry run pytest
 ```
 
-### Installing
-It is recommended to use `poetry` to install `exegol-history` in development mode:
+### Installing using `poetry`
 ```sh
 git clone https://github.com/ThePorgs/Exegol-history.git
 poetry install --all-groups

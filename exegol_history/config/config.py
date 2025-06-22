@@ -35,6 +35,12 @@ def setup_groups(kp: PyKeePass) -> None:
     kp.save()
 
 
+def setup_profile(profile_path: str):
+    if not Path(profile_path).exists():
+        Path(profile_path).parent.mkdir(exist_ok=True, parents=True)
+        Path(profile_path).touch()
+
+
 def load_config(config_path: str = None) -> dict[str, Any]:
     config_path = (
         config_path
