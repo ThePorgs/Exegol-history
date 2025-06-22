@@ -14,7 +14,7 @@ class AddObjectScreen(ModalScreen):
 
     def compose(self) -> ComposeResult:
         container = Container()
-        container.border_title = "➕ Adding an object"
+        container.border_title = f"{self.app.config['theme']['add_icon']} Adding an object"
         form = (
             CredentialForm()
             if self.asset_type == AssetsType.Credentials

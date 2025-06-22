@@ -230,7 +230,7 @@ class DbCredsApp(App):
         selected_row = table.cursor_row
         try:
             row_data = table.get_row_at(selected_row)
-            hash = row_data[2]
+            hash = row_data[3]
             copy_in_clipboard(hash)
         except Exception:
             pass

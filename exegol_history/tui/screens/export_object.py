@@ -37,7 +37,7 @@ class ExportObjectScreen(ModalScreen):
 
     def compose(self) -> ComposeResult:
         container = Container()
-        container.border_title = "📤 Exporting objects"
+        container.border_title = f"{self.app.config['theme']['export_icon']} Exporting objects"
         options = [
             (asset_type.name, asset_type.value)
             for asset_type in (

@@ -27,7 +27,7 @@ class DeleteObjectScreen(ModalScreen):
 
     def compose(self) -> ComposeResult:
         container = Container()
-        container.border_title = "🗑️ Deleting objects"
+        container.border_title = f"{self.app.config['theme']['delete_icon']} Deleting objects"
 
         with container:
             with TabbedContent():
@@ -44,10 +44,6 @@ class DeleteObjectScreen(ModalScreen):
                     )
                     yield Input(placeholder="1,2,6-8", id=ID_IDS_INPUT)
                     yield ActionButtons(confirm_button_id=ID_CONFIRM_RANGE_BUTTON)
-
-        # tmp = DeleteObjects(ids=self.ids)
-        # tmp.border_title = "sfdadasdsa"
-        # yield tmp
 
     def on_tabbed_content_tab_activated(self, event: Tabs.TabActivated):
         self.selected_tab = event.tab.id
