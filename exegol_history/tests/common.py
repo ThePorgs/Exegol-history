@@ -86,8 +86,6 @@ HOSTS_TEST_VALUE = [
     Host("4", IP_TEST_VALUE + "3"),
 ]
 
-
-# TEST_ARTIFACTS_PATH = os.path.dirname(os.path.abspath(__file__)) + "/artifacts/"
 TEST_ARTIFACTS_PATH = Path(__file__).parent / "artifacts"
 TEST_HOSTS_CSV_COMMA = TEST_ARTIFACTS_PATH / "hosts_comma.csv"
 TEST_HOSTS_CSV_COLON = TEST_ARTIFACTS_PATH / "hosts_colon.csv"
@@ -124,16 +122,6 @@ async def select_select_index(pilot, input_id, select_index):
         await pilot.press(Keys.Down)
 
     await pilot.press(Keys.Enter)
-
-
-async def scroll_down_to_buttons(pilot):
-    # Here, instead of just pushing the confirm button
-    # we must make the pilot scroll down
-    # otherwise the button might be out of the screen area
-    # To do this we can push the 'Tab' key multiple times
-    # as there does not seems to be an easy way to do that
-    for _i in range(0, 1):
-        await pilot.press(Keys.Tab)
 
 
 def delete_all_entries(kp: PyKeePass):

@@ -14,7 +14,7 @@ TEST_DB_PATH = TEST_ARTIFACTS_PATH / TEST_DB_NAME
 TEST_KEY_PATH = TEST_ARTIFACTS_PATH / TEST_KEY_NAME
 TEST_CONFIG_PATH = TEST_ARTIFACTS_PATH / CONFIG_FILENAME
 TEST_PROFILE_SH = TEST_ARTIFACTS_PATH / "profile.sh"
-
+TEST_PROFILE_PS1 = TEST_ARTIFACTS_PATH / "profile.ps1"
 
 @pytest.fixture
 def open_keepass() -> PyKeePass:
@@ -26,9 +26,13 @@ def open_keepass() -> PyKeePass:
 
 
 @pytest.fixture
-def load_mock_config() -> dict[str, Any]:
+def load_mock_config(is_unix: bool = True) -> dict[str, Any]:
     mock_config = load_config(TEST_CONFIG_PATH)
-    mock_config["paths"]["profile_sh_path"] = TEST_PROFILE_SH
+
+    if is_unix:
+        mock_config["paths"]["profile_sh_path"] = TEST_PROFILE_SH
+    else:
+        mock_config["paths"]["profile_sh_path"] = TEST_PROFILE_PS1
 
     return mock_config
 
