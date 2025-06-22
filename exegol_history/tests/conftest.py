@@ -1,6 +1,7 @@
 import pathlib
 import shutil
 import pytest
+import platform
 from pykeepass import PyKeePass
 from typing import Any
 from pathlib import Path
@@ -26,13 +27,13 @@ def open_keepass() -> PyKeePass:
 
 
 @pytest.fixture
-def load_mock_config(is_unix: bool = True) -> dict[str, Any]:
+def load_mock_config() -> dict[str, Any]:
     mock_config = load_config(TEST_CONFIG_PATH)
 
-    if is_unix:
-        mock_config["paths"]["profile_sh_path"] = TEST_PROFILE_SH
-    else:
+    if platform.system() == 'Windows':
         mock_config["paths"]["profile_sh_path"] = TEST_PROFILE_PS1
+    else:
+        mock_config["paths"]["profile_sh_path"] = TEST_PROFILE_SH
 
     return mock_config
 

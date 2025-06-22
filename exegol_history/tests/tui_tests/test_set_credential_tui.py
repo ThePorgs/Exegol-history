@@ -37,7 +37,6 @@ async def test_set_credential_without_selecting(
             credential = await pilot.exit(0)
             write_credential_in_profile(Credential(*credential), load_mock_config)
 
-
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
 @pytest.mark.asyncio
 async def test_set_credential_only_username_linux(
@@ -83,7 +82,6 @@ async def test_set_credential_only_username_linux(
 
     assert envs.strip() == ""
 
-@pytest.mark.parametrize("load_mock_config", [1], indirect=True)
 @pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
 @pytest.mark.asyncio
 async def test_set_credential_only_username_windows(
