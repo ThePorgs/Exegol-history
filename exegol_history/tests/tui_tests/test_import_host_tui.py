@@ -75,6 +75,7 @@ async def test_import_host_csv_file(
         pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(
             TEST_HOSTS_CSV_COMMA
         )
+        await pilot.pause()
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
         # Choose CSV file type

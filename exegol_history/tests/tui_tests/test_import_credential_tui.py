@@ -90,6 +90,7 @@ async def test_import_credential_import_csv_file(
         pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(
             TEST_CREDS_CSV_COMMA
         )
+        await pilot.pause()
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
         await select_select_index(
@@ -183,6 +184,7 @@ async def test_import_credential_pypykatz_json(
         pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(
             TEST_CREDS_PYPYKATZ_JSON
         )
+        await pilot.pause()
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
         await select_select_index(

@@ -33,6 +33,7 @@ async def test_export_host_csv(
 
         await pilot.click(f"#{ID_BROWSE_BUTTON}")
         pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = temp_export_csv.name
+        await pilot.pause()
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
@@ -61,6 +62,7 @@ async def test_export_host_json(
         )
         await pilot.click(f"#{ID_BROWSE_BUTTON}")
         pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = temp_export_json.name
+        await pilot.pause()
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 

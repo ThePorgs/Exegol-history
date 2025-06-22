@@ -82,15 +82,14 @@ async def test_set_credential_only_username_linux(
 
     assert envs.strip() == ""
 
-@pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
-@pytest.mark.asyncio
-async def test_set_credential_only_username_windows(
-    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
-):
-    kp = open_keepass
-    app = DbCredsApp(load_mock_config, kp)
-    print(load_mock_config)
-    add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
+#@pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
+#@pytest.mark.asyncio
+#async def test_set_credential_only_username_windows(
+#    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
+#):
+#    kp = open_keepass
+    #app = DbCredsApp(load_mock_config, kp)
+    #add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
 
     #async with app.run_test() as pilot:
     #    await pilot.press(add_credential_keybind)
