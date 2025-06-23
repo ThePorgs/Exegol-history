@@ -43,6 +43,7 @@ def load_mock_config() -> dict[str, Any]:
 def clean():
     default_profile_path = (Path(__file__).parent.parent) / "config" / "profile.sh"
     pathlib.Path.unlink(TEST_PROFILE_SH, missing_ok=True)
+    pathlib.Path.unlink(TEST_PROFILE_PS1, missing_ok=True)
     pathlib.Path.unlink(TEST_CONFIG_PATH, missing_ok=True)
     pathlib.Path.unlink(TEST_DB_PATH, missing_ok=True)
     pathlib.Path.unlink(TEST_KEY_PATH, missing_ok=True)
