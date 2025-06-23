@@ -270,7 +270,7 @@ async def test_set_host_only_ip_windows(
         [
             "powershell",
             "-Command",
-            f"source {load_mock_config['paths']['profile_sh_path']} && echo ${HOSTS_VARIABLES[2]}",
+            f". {load_mock_config['paths']['profile_sh_path']}; if ($?) {{ echo ${HOSTS_VARIABLES[2]} }}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -316,7 +316,7 @@ async def test_set_host_half_windows(
         [
             "powershell",
             "-Command",
-            f"source {load_mock_config['paths']['profile_sh_path']} && echo ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]} ${HOSTS_VARIABLES[5]}",
+            f". {load_mock_config['paths']['profile_sh_path']}; if ($?) {{ echo ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]} ${HOSTS_VARIABLES[5]} }}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -364,7 +364,7 @@ async def test_set_host_full_windows(
         [
             "powershell",
             "-Command",
-            f"source {load_mock_config['paths']['profile_sh_path']} && echo ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]}",
+            f". {load_mock_config['paths']['profile_sh_path']}; if ($?) {{ echo ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]} }}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -427,7 +427,7 @@ async def test_set_host_dc_windows(open_keepass: PyKeePass, load_mock_config: di
         [
             "powershell",
             "-Command",
-            f"source {load_mock_config['paths']['profile_sh_path']}; if ($?) {{ ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]} }}",
+            f". {load_mock_config['paths']['profile_sh_path']}; if ($?) {{ echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]} }}",
         ],
         stdout=subprocess.PIPE,
     )
