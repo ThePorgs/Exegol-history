@@ -41,10 +41,12 @@ def load_mock_config() -> dict[str, Any]:
 
 @pytest.fixture(scope="session", autouse=True)
 def clean():
-    default_profile_path = (Path(__file__).parent.parent) / "config" / "profile.sh"
+    default_profile_path_unix = (Path(__file__).parent.parent) / "config" / "profile.sh"
+    default_profile_path_windows = (Path(__file__).parent.parent) / "config" / "profile.ps1"
     pathlib.Path.unlink(TEST_PROFILE_SH, missing_ok=True)
     pathlib.Path.unlink(TEST_PROFILE_PS1, missing_ok=True)
     pathlib.Path.unlink(TEST_CONFIG_PATH, missing_ok=True)
     pathlib.Path.unlink(TEST_DB_PATH, missing_ok=True)
     pathlib.Path.unlink(TEST_KEY_PATH, missing_ok=True)
-    shutil.copy(default_profile_path, TEST_PROFILE_SH)
+    shutil.copy(default_profile_path_unix, TEST_PROFILE_SH)
+    shutil.copy(default_profile_path_windows, TEST_PROFILE_PS1)
