@@ -22,6 +22,7 @@ from exegol_history.tui.widgets.credential_form import (
     ID_USERNAME_INPUT,
 )
 
+
 @pytest.mark.asyncio
 async def test_set_credential_without_selecting(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]

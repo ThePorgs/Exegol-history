@@ -13,6 +13,7 @@ CONFIG_FILENAME = "config.toml"
 PROFILE_SH_FILENAME_UNIX = "profile.sh"
 PROFILE_SH_FILENAME_WINDOWS = "profile.sh"
 
+
 def setup_db(db_path: str, db_key_path: str) -> None:
     setup_generate_keyfile(db_key_path)
     create_database(db_path, keyfile=db_key_path)
@@ -40,7 +41,11 @@ def setup_profile(profile_path: str):
     if not Path(profile_path).exists():
         Path(profile_path).parent.mkdir(exist_ok=True, parents=True)
 
-        default_config_path = Path(__file__).parent / PROFILE_SH_FILENAME_UNIX if platform.system() == "Linux" else PROFILE_SH_FILENAME_WINDOWS
+        default_config_path = (
+            Path(__file__).parent / PROFILE_SH_FILENAME_UNIX
+            if platform.system() == "Linux"
+            else PROFILE_SH_FILENAME_WINDOWS
+        )
         shutil.copy(default_config_path, Path(profile_path))
 
 

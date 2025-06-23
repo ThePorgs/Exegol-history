@@ -83,7 +83,9 @@ async def test_set_host_only_ip_linux(
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
 @pytest.mark.asyncio
-async def test_set_host_half_linux(open_keepass: PyKeePass, load_mock_config: dict[str, Any]):
+async def test_set_host_half_linux(
+    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
+):
     kp = open_keepass
     app = DbHostsApp(load_mock_config, kp)
     add_host_keybind = load_mock_config["keybindings"]["add_host"]
@@ -127,7 +129,9 @@ async def test_set_host_half_linux(open_keepass: PyKeePass, load_mock_config: di
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
 @pytest.mark.asyncio
-async def test_set_host_full_linux(open_keepass: PyKeePass, load_mock_config: dict[str, Any]):
+async def test_set_host_full_linux(
+    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
+):
     kp = open_keepass
     app = DbHostsApp(load_mock_config, kp)
     add_host_keybind = load_mock_config["keybindings"]["add_host"]
@@ -176,7 +180,9 @@ async def test_set_host_full_linux(open_keepass: PyKeePass, load_mock_config: di
 # the DC_HOST and DC_IP variable shouldn't change
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
 @pytest.mark.asyncio
-async def test_set_host_dc_linux(open_keepass: PyKeePass, load_mock_config: dict[str, Any]):
+async def test_set_host_dc_linux(
+    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
+):
     kp = open_keepass
     app = DbHostsApp(load_mock_config, kp)
     add_host_keybind = load_mock_config["keybindings"]["add_host"]
@@ -378,7 +384,9 @@ async def test_set_host_full_windows(
 # the DC_HOST and DC_IP variable shouldn't change
 @pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
 @pytest.mark.asyncio
-async def test_set_host_dc_windows(open_keepass: PyKeePass, load_mock_config: dict[str, Any]):
+async def test_set_host_dc_windows(
+    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
+):
     kp = open_keepass
     app = DbHostsApp(load_mock_config, kp)
     add_host_keybind = load_mock_config["keybindings"]["add_host"]
