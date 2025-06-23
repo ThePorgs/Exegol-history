@@ -5,7 +5,8 @@
 #Set-Variable -Name USER -Value 'someuser' -Scope Global
 #Set-Variable -Name PASSWORD -Value 'somepassword' -Scope Global
 #Set-Variable -Name NT_HASH -Value 'c1c635aa12ae60b7fe39e28456a7bac6' -Scope Global
-#Set-Variable -Name DC_HOST -Value 'DC01.DOMAIN.LOCAL' -Scope Global#export DC_IP='192.168.56.101'
+#Set-Variable -Name DC_IP -Value '192.168.56.101' -Scope Global
+#Set-Variable -Name DC_HOST -Value 'DC01.DOMAIN.LOCAL' -Scope Global
 #Set-Variable -Name DB_HOSTNAME -Value 'DC01.DOMAIN.LOCAL' -Scope Global
 #Set-Variable -Name TARGET -Value '192.168.56.69' -Scope Global
 #Set-Variable -Name IP -Value '192.168.56.69' -Scope Global
