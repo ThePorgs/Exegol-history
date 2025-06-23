@@ -1,6 +1,7 @@
 import secrets
 import shutil
 import tomllib
+import platform
 from typing import Any
 from pathlib import Path
 from pykeepass import PyKeePass, create_database
@@ -9,7 +10,8 @@ from exegol_history.db_api.hosts import Host
 
 EXEGOL_HISTORY_HOME_FOLDER_NAME = Path.home() / ".exegol_history"
 CONFIG_FILENAME = "config.toml"
-
+PROFILE_SH_FILENAME_UNIX = "profile.sh"
+PROFILE_SH_FILENAME_WINDOWS = "profile.sh"
 
 def setup_db(db_path: str, db_key_path: str) -> None:
     setup_generate_keyfile(db_key_path)
@@ -37,7 +39,9 @@ def setup_groups(kp: PyKeePass) -> None:
 def setup_profile(profile_path: str):
     if not Path(profile_path).exists():
         Path(profile_path).parent.mkdir(exist_ok=True, parents=True)
-        shutil.copy(Path(profile_path), Path(profile_path).parent)
+
+        default_config_path = Path(__file__).parent / PROFILE_SH_FILENAME_UNIX if platform.system() == "Linux" else PROFILE_SH_FILENAME_WINDOWS
+        shutil.copy(default_config_path, Path(profile_path))
 
 
 def load_config(config_path: str = None) -> dict[str, Any]:

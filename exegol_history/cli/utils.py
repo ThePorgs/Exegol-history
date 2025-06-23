@@ -6,7 +6,7 @@ from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
 
 CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
-HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP"]
+HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP", "ROLE"]
 VARIABLE_REGEX_UNIX = r"export (.*)='.*?'"
 VARIABLE_REGEX_WINDOWS = r"Set-Variable -Name (.*) -Value '.*?' -Scope Global"
 

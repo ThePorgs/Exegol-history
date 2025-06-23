@@ -41,7 +41,7 @@ def load_mock_config() -> dict[str, Any]:
 
 @pytest.fixture(scope="session", autouse=True)
 def clean():
-    default_profile_path = (Path(__file__).parent.parent.parent) / "profile.sh"
+    default_profile_path = (Path(__file__).parent.parent) / "config" / "profile.sh"
     pathlib.Path.unlink(TEST_PROFILE_SH, missing_ok=True)
     pathlib.Path.unlink(TEST_CONFIG_PATH, missing_ok=True)
     pathlib.Path.unlink(TEST_DB_PATH, missing_ok=True)
