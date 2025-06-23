@@ -108,7 +108,7 @@ async def test_set_credential_only_username_windows(
         [
             "powershell",
             "-Command",
-            f". {load_mock_config['paths']['profile_sh_path']} && echo ${CREDS_VARIABLES[0]}",
+            f". {load_mock_config['paths']['profile_sh_path']}; if ($?) {{ echo ${CREDS_VARIABLES[0]} }}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -120,7 +120,7 @@ async def test_set_credential_only_username_windows(
         [
             "powershell",
             "-Command",
-            f". {load_mock_config['paths']['profile_sh_path']} && echo ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
+            f". {load_mock_config['paths']['profile_sh_path']}; if ($?) {{ echo ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]} }}",
         ],
         stdout=subprocess.PIPE,
     )
