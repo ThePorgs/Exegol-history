@@ -189,9 +189,6 @@ async def test_set_credential_only_username_windows(
         await select_input_and_enter_text(
             pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
         )
-        await select_input_and_enter_text(
-            pilot, f"#{ID_PASSWORD_INPUT}", PASSWORD_TEST_VALUE
-        )
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.press(Keys.Enter)
 
@@ -237,6 +234,9 @@ async def test_set_credential_half_windows(
         await pilot.press(add_credential_keybind)
         await select_input_and_enter_text(
             pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
+        )
+        await select_input_and_enter_text(
+            pilot, f"#{ID_PASSWORD_INPUT}", PASSWORD_TEST_VALUE
         )
         await pilot.click(f"#{ID_CONFIRM_BUTTON}")
         await pilot.press(Keys.Enter)
