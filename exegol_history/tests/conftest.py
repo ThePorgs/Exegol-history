@@ -39,7 +39,7 @@ def load_mock_config() -> dict[str, Any]:
     return mock_config
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="package", autouse=True)
 def clean():
     default_profile_path_unix = (Path(__file__).parent.parent) / "config" / "profile.sh"
     default_profile_path_windows = (
