@@ -176,7 +176,7 @@ async def test_set_credential_full_linux(
     assert DOMAIN_TEST_VALUE in envs
 
 
-@pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
+@pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
 @pytest.mark.asyncio
 async def test_set_credential_only_username_windows(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
@@ -222,7 +222,7 @@ async def test_set_credential_only_username_windows(
     assert envs.strip() == ""
 
 
-@pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
+@pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
 @pytest.mark.asyncio
 async def test_set_credential_half_windows(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
@@ -272,7 +272,7 @@ async def test_set_credential_half_windows(
     assert envs.strip() == ""
 
 
-@pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
+@pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
 @pytest.mark.asyncio
 async def test_set_credential_full_windows(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]

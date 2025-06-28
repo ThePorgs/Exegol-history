@@ -243,7 +243,7 @@ async def test_set_host_dc_linux(
     assert HOSTNAME_TEST_VALUE in envs
 
 
-@pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
+@pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
 @pytest.mark.asyncio
 async def test_set_host_only_ip_windows(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
@@ -285,7 +285,7 @@ async def test_set_host_only_ip_windows(
     assert envs.strip() == ""
 
 
-@pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
+@pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
 @pytest.mark.asyncio
 async def test_set_host_half_windows(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
@@ -331,7 +331,7 @@ async def test_set_host_half_windows(
     assert envs.strip() == ""
 
 
-@pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
+@pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
 @pytest.mark.asyncio
 async def test_set_host_full_windows(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
@@ -382,7 +382,7 @@ async def test_set_host_full_windows(
 
 # Test the special case of a DC host, if we select an host that is not a DC,
 # the DC_HOST and DC_IP variable shouldn't change
-@pytest.mark.skipif(sys.platform.startswith("lin"), reason="require Windows")
+@pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
 @pytest.mark.asyncio
 async def test_set_host_dc_windows(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
