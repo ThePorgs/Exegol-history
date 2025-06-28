@@ -42,9 +42,9 @@ def setup_profile(profile_path: str):
         Path(profile_path).parent.mkdir(exist_ok=True, parents=True)
 
         default_config_path = (
-            Path(__file__).parent / PROFILE_SH_FILENAME_UNIX
-            if platform.system() == "Linux"
-            else PROFILE_SH_FILENAME_WINDOWS
+            Path(__file__).parent / PROFILE_SH_FILENAME_WINDOWS
+            if platform.system() == "Windows"
+            else PROFILE_SH_FILENAME_UNIX
         )
         shutil.copy(default_config_path, Path(profile_path))
 
