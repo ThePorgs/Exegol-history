@@ -44,7 +44,7 @@ def setup_profile(profile_path: str):
         default_config_path = (
             Path(__file__).parent / PROFILE_SH_FILENAME_WINDOWS
             if platform.system() == "Windows"
-            else PROFILE_SH_FILENAME_UNIX
+            else Path(__file__).parent / PROFILE_SH_FILENAME_UNIX
         )
         shutil.copy(default_config_path, Path(profile_path))
 
