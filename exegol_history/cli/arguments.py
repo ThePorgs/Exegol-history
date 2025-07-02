@@ -31,10 +31,6 @@ def parse_arguments() -> argparse.Namespace:
         SHOW_SUBCOMMAND,
         help="Display exegol history values currently set in the shell (i.e., environment variables).",
     )
-    subparsers.add_parser(
-        UNSET_SUBCOMMAND,
-        help="Unset the currently selected credential.",
-    )
 
     unset_subparser(subparsers)
     add_subparser(subparsers)
