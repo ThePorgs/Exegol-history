@@ -171,7 +171,7 @@ def set_objects(
             sys.exit(0)
 
 
-def unset_objects(args: argparse.Namespace, config: dict[str, Any], console: Console):
+def unset_objects(args: argparse.Namespace, config: dict[str, Any]):
     if args.subcommand == CREDS_SUBCOMMAND:
         write_credential_in_profile(Credential(), config)
     elif args.subcommand == HOSTS_SUBCOMMAND:

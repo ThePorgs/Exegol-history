@@ -68,7 +68,7 @@ def main():
         if args.command == SET_SUBCOMMAND:
             set_objects(args, kp, config, console)
         if args.command == UNSET_SUBCOMMAND:
-            unset_objects(config, console)
+            unset_objects(args, config)
         if args.command == SHOW_SUBCOMMAND:
             show_objects(console)
     except Exception as e:
