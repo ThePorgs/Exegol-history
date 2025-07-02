@@ -48,10 +48,22 @@ def unset_subparser(subparsers):
         UNSET_SUBCOMMAND,
         help="Unset the currently selected credential or host.",
     )
-    unset_parser.add_subparsers(
+    unset_subparsers = unset_parser.add_subparsers(
         dest="subcommand",
         required=True,
         help="Type of object to unset (creds, hosts).",
+    )
+
+    # Credentials
+    unset_subparsers.add_parser(
+        CREDS_SUBCOMMAND,
+        help="Unset credentials variables.",
+    )
+
+    # Hosts
+    unset_subparsers.add_parser(
+        HOSTS_SUBCOMMAND,
+        help="Unset hosts variables.",
     )
 
 
