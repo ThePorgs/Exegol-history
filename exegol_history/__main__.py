@@ -1,3 +1,5 @@
+import sys
+
 from rich.console import Console
 from rich.traceback import install
 from pathlib import Path
@@ -47,24 +49,28 @@ def main():
     args = parse_arguments().parse_args()
     kp = PyKeePass(db_path, keyfile=db_key_path)
 
-    # CLI
-    if args.version:
-        show_version(console)
-    if args.command == ADD_SUBCOMMAND:
-        add_object(args, kp, config)
-    if args.command == IMPORT_SUBCOMMAND:
-        cli_import_objects(args, kp)
-    if args.command == EDIT_SUBCOMMAND:
-        edit_object(args, kp, console)
-    if args.command == EXPORT_SUBCOMMAND:
-        cli_export_objects(args, kp, console)
-    if args.command == DELETE_SUBCOMMAND:
-        delete_objects(args, kp, console)
+    try:
+        # CLI
+        if args.version:
+            show_version(console)
+        if args.command == ADD_SUBCOMMAND:
+            add_object(args, kp, config)
+        if args.command == IMPORT_SUBCOMMAND:
+            cli_import_objects(args, kp)
+        if args.command == EDIT_SUBCOMMAND:
+            edit_object(args, kp, console)
+        if args.command == EXPORT_SUBCOMMAND:
+            cli_export_objects(args, kp, console)
+        if args.command == DELETE_SUBCOMMAND:
+            delete_objects(args, kp, console)
 
-    # TUI
-    if args.command == SET_SUBCOMMAND:
-        set_objects(args, kp, config, console)
-    if args.command == UNSET_SUBCOMMAND:
-        unset_objects(console)
-    if args.command == SHOW_SUBCOMMAND:
-        show_objects(console)
+        # TUI
+        if args.command == SET_SUBCOMMAND:
+            set_objects(args, kp, config, console)
+        if args.command == UNSET_SUBCOMMAND:
+            unset_objects(config, console)
+        if args.command == SHOW_SUBCOMMAND:
+            show_objects(console)
+    except Exception as e:
+        console.print_exception(show_locals=True)
+        sys.exit(1)

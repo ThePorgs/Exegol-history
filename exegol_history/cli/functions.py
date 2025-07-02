@@ -44,7 +44,7 @@ IMPORT_SUBCOMMAND = "import"
 EDIT_SUBCOMMAND = "edit"
 EXPORT_SUBCOMMAND = "export"
 SET_SUBCOMMAND = "set"
-UNSET_SUBCOMMAND = "un" + SET_SUBCOMMAND
+UNSET_SUBCOMMAND = "unset"
 SHOW_SUBCOMMAND = "show"
 DELETE_SUBCOMMAND = "rm"
 
@@ -104,19 +104,21 @@ def edit_object(args: argparse.Namespace, kp: PyKeePass, console: Console):
 def cli_export_objects(args: argparse.Namespace, kp: PyKeePass, console: Console):
     if args.subcommand == CREDS_SUBCOMMAND:
         objects = get_credentials(kp, redacted=args.redacted)
-        format = CredsImportFileType[args.format]
+        file_format = CredsImportFileType[args.format]
     elif args.subcommand == HOSTS_SUBCOMMAND:
         objects = get_hosts(kp)
-        format = HostsImportFileType[args.format]
+        file_format = HostsImportFileType[args.format]
+    else:
+        raise NotImplementedError
 
     export_output = export_objects(
-        format=format, objects=objects, delimiter=args.delimiter
+        format=file_format, objects=objects, delimiter=args.delimiter
     )
     if args.file:
         with open(args.file, "w") as f:
             f.write(export_output)
     else:
-        if format in (CredsImportFileType.JSON, HostsImportFileType.JSON):
+        if file_format in (CredsImportFileType.JSON, HostsImportFileType.JSON):
             console.print_json(export_output)
         else:
             console.print(export_output)
@@ -159,9 +161,6 @@ def set_objects(
             write_credential_in_profile(Credential(*row_data), config)
         except TypeError:  # It means the user left the TUI without choosing anything
             sys.exit(0)
-        except Exception:
-            console.print_exception(show_locals=True)
-            sys.exit(1)
     elif args.subcommand == HOSTS_SUBCOMMAND:
         app = DbHostsApp(config, kp)
 
@@ -170,19 +169,16 @@ def set_objects(
             write_host_in_profile(Host(*row_data), config)
         except TypeError:  # It means the user left the TUI without choosing anything
             sys.exit(0)
-        except Exception:
-            console.print_exception(show_locals=True)
-            sys.exit(1)
 
 
-def unset_objects(config: dict[str, Any], console: Console):
-    try:
+def unset_objects(args: argparse.Namespace, config: dict[str, Any], console: Console):
+    if args.subcommand == CREDS_SUBCOMMAND:
         write_credential_in_profile(Credential(), config)
+    elif args.subcommand == HOSTS_SUBCOMMAND:
         write_host_in_profile(Host(), config)
-        sys.exit(0)
-    except Exception:
-        console.print_exception(show_locals=True)
-        sys.exit(1)
+    else:
+        raise NotImplementedError
+    sys.exit(0)
 
 
 def show_objects(console: Console):

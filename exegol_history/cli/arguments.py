@@ -36,6 +36,7 @@ def parse_arguments() -> argparse.Namespace:
         help="Unset the currently selected credential.",
     )
 
+    unset_subparser(subparsers)
     add_subparser(subparsers)
     import_subparser(subparsers)
     edit_subparser(subparsers)
@@ -44,6 +45,18 @@ def parse_arguments() -> argparse.Namespace:
     tui_subparser(subparsers)
 
     return parser
+
+
+def unset_subparser(subparsers):
+    unset_parser = subparsers.add_parser(
+        UNSET_SUBCOMMAND,
+        help="Unset the currently selected credential or host.",
+    )
+    unset_parser.add_subparsers(
+        dest="subcommand",
+        required=True,
+        help="Type of object to unset (creds, hosts).",
+    )
 
 
 def add_subparser(subparsers):
@@ -237,6 +250,7 @@ def export_subparser(subparsers):
         choices=[cred_type.name for cred_type in CredsExportFileType],
         default=CredsExportFileType.CSV.name,
         help="Format of exporting.",
+        required=True
     )
     credential_export_parser.add_argument(
         "--delimiter",
@@ -264,6 +278,7 @@ def export_subparser(subparsers):
         choices=[host_type.name for host_type in HostsExportFileType],
         default=HostsExportFileType.CSV,
         help="Format of exporting.",
+        required=True
     )
     hosts_export_parser.add_argument(
         "--delimiter",
