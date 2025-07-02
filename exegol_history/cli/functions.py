@@ -112,11 +112,14 @@ def cli_export_objects(args: argparse.Namespace, kp: PyKeePass, console: Console
     export_output = export_objects(
         format=format, objects=objects, delimiter=args.delimiter
     )
-
-    if format in (CredsImportFileType.JSON, HostsImportFileType.JSON):
-        console.print_json(export_output)
+    if args.file:
+        with open(args.file, "w") as f:
+            f.write(export_output)
     else:
-        console.print(export_output)
+        if format in (CredsImportFileType.JSON, HostsImportFileType.JSON):
+            console.print_json(export_output)
+        else:
+            console.print(export_output)
 
 
 def cli_import_objects(args: argparse.Namespace, kp: PyKeePass):

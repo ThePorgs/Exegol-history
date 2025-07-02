@@ -249,6 +249,11 @@ def export_subparser(subparsers):
         action="store_true",
         help="Mask sensitive information like passwords and hashes in the output.",
     )
+    credential_export_parser.add_argument(
+        "-f",
+        "--file",
+        help="The file from where to export creds."
+    )
 
     # Hosts
     hosts_export_parser = export_subparsers.add_parser(
@@ -264,6 +269,11 @@ def export_subparser(subparsers):
         "--delimiter",
         type=check_delimiter,
         help="Delimiter used to separate columns.",
+    )
+    hosts_export_parser.add_argument(
+        "-f",
+        "--file",
+        help="The file from where to export hosts."
     )
 
 
