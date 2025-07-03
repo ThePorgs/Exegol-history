@@ -1,4 +1,5 @@
 import argparse
+
 from exegol_history.cli.functions import (
     ADD_SUBCOMMAND,
     CREDS_SUBCOMMAND,
@@ -10,6 +11,7 @@ from exegol_history.cli.functions import (
     SET_SUBCOMMAND,
     SHOW_SUBCOMMAND,
     UNSET_SUBCOMMAND,
+    VERSION_SUBCOMMAND,
 )
 from exegol_history.cli.utils import check_delimiter
 from exegol_history.db_api.exporting import CredsExportFileType, HostsExportFileType
@@ -24,9 +26,12 @@ def parse_arguments() -> argparse.Namespace:
             discovered during security engagements.
         """,
     )
-    parser.add_argument("-v", "--version", help="Show version.", action="store_true")
 
-    subparsers = parser.add_subparsers(dest="command")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    subparsers.add_parser(
+        VERSION_SUBCOMMAND,
+        help="Display exegol history current version.",
+    )
     subparsers.add_parser(
         SHOW_SUBCOMMAND,
         help="Display exegol history values currently set in the shell (i.e., environment variables).",

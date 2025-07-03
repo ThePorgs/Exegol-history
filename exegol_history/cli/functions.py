@@ -39,6 +39,7 @@ import importlib.metadata
 CREDS_SUBCOMMAND = "creds"
 HOSTS_SUBCOMMAND = "hosts"
 
+VERSION_SUBCOMMAND = "version"
 ADD_SUBCOMMAND = "add"
 IMPORT_SUBCOMMAND = "import"
 EDIT_SUBCOMMAND = "edit"

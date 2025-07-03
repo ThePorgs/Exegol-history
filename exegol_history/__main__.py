@@ -23,6 +23,7 @@ from exegol_history.cli.functions import (
     show_objects,
     show_version,
     unset_objects,
+    VERSION_SUBCOMMAND,
 )
 from exegol_history.config.config import (
     EXEGOL_HISTORY_HOME_FOLDER_NAME,
@@ -36,41 +37,59 @@ console = Console(soft_wrap=True)
 
 def main():
     install()
-    config = load_config()
-    db_path = EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_name"]
-    db_key_path = EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_key_name"]
 
-    if not Path(db_path).is_file():
-        Path(db_path).touch(exist_ok=True)
-        setup_db(db_path, db_key_path)
-
-    setup_profile(config["paths"]["profile_sh_path"])
+    need_config = False
+    need_kp = False
+    config = None
+    kp = None
 
     args = parse_arguments().parse_args()
-    kp = PyKeePass(db_path, keyfile=db_key_path)
+
+    # Functions that needs KP database (also need config)
+    if args.command in [ADD_SUBCOMMAND, IMPORT_SUBCOMMAND, EDIT_SUBCOMMAND, EXPORT_SUBCOMMAND, DELETE_SUBCOMMAND, SET_SUBCOMMAND]:
+        need_kp = True
+        need_config = True
+    # Functions that only need config
+    elif args.command in [UNSET_SUBCOMMAND]:
+        need_config = True
+
+    if need_config:
+        config = load_config()
+        db_path = EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_name"]
+        db_key_path = EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_key_name"]
+
+        setup_profile(config["paths"]["profile_sh_path"])
+
+        if need_kp:
+            if not Path(db_path).is_file():
+                Path(db_path).touch(exist_ok=True)
+                setup_db(db_path, db_key_path)
+            kp = PyKeePass(db_path, keyfile=db_key_path)
 
     try:
         # CLI
-        if args.version:
+        if args.command == VERSION_SUBCOMMAND:
             show_version(console)
-        if args.command == ADD_SUBCOMMAND:
+        elif args.command == ADD_SUBCOMMAND:
             add_object(args, kp, config)
-        if args.command == IMPORT_SUBCOMMAND:
+        elif args.command == IMPORT_SUBCOMMAND:
             cli_import_objects(args, kp)
-        if args.command == EDIT_SUBCOMMAND:
+        elif args.command == EDIT_SUBCOMMAND:
             edit_object(args, kp, console)
-        if args.command == EXPORT_SUBCOMMAND:
+        elif args.command == EXPORT_SUBCOMMAND:
             cli_export_objects(args, kp, console)
-        if args.command == DELETE_SUBCOMMAND:
+        elif args.command == DELETE_SUBCOMMAND:
             delete_objects(args, kp, console)
 
         # TUI
-        if args.command == SET_SUBCOMMAND:
+        elif args.command == SET_SUBCOMMAND:
             set_objects(args, kp, config, console)
-        if args.command == UNSET_SUBCOMMAND:
+        elif args.command == UNSET_SUBCOMMAND:
             unset_objects(args, config)
-        if args.command == SHOW_SUBCOMMAND:
+        elif args.command == SHOW_SUBCOMMAND:
             show_objects(console)
-    except Exception as e:
+        else:
+            raise NotImplementedError("This function is not available")
+    except Exception:
         console.print_exception(show_locals=True)
         sys.exit(1)
