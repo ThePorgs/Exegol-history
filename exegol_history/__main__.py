@@ -1,9 +1,10 @@
 import sys
+from pathlib import Path
 
+from pykeepass import PyKeePass
 from rich.console import Console
 from rich.traceback import install
-from pathlib import Path
-from pykeepass import PyKeePass
+
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import (
     ADD_SUBCOMMAND,
@@ -41,7 +42,14 @@ def main():
     args = parse_arguments().parse_args()
 
     # Functions that needs KP database (also need config)
-    if args.command in [ADD_SUBCOMMAND, IMPORT_SUBCOMMAND, EDIT_SUBCOMMAND, EXPORT_SUBCOMMAND, DELETE_SUBCOMMAND, SET_SUBCOMMAND]:
+    if args.command in [
+        ADD_SUBCOMMAND,
+        IMPORT_SUBCOMMAND,
+        EDIT_SUBCOMMAND,
+        EXPORT_SUBCOMMAND,
+        DELETE_SUBCOMMAND,
+        SET_SUBCOMMAND,
+    ]:
         need_kp = True
         need_config = True
     # Functions that only need config
@@ -51,7 +59,9 @@ def main():
     if need_config:
         config = AppConfig.load_config()
         db_path = AppConfig.EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_name"]
-        db_key_path = AppConfig.EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_key_name"]
+        db_key_path = (
+            AppConfig.EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_key_name"]
+        )
 
         AppConfig.setup_profile(config["paths"]["profile_sh_path"])
 

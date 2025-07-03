@@ -263,7 +263,7 @@ def export_subparser(subparsers):
         choices=[cred_type.name for cred_type in CredsExportFileType],
         default=CredsExportFileType.CSV.name,
         help="Format of exporting.",
-        required=True
+        required=True,
     )
     credential_export_parser.add_argument(
         "--delimiter",
@@ -277,9 +277,7 @@ def export_subparser(subparsers):
         help="Mask sensitive information like passwords and hashes in the output.",
     )
     credential_export_parser.add_argument(
-        "-f",
-        "--file",
-        help="The file from where to export creds."
+        "-f", "--file", help="The file from where to export creds."
     )
 
     # Hosts
@@ -291,7 +289,7 @@ def export_subparser(subparsers):
         choices=[host_type.name for host_type in HostsExportFileType],
         default=HostsExportFileType.CSV,
         help="Format of exporting.",
-        required=True
+        required=True,
     )
     hosts_export_parser.add_argument(
         "--delimiter",
@@ -299,9 +297,7 @@ def export_subparser(subparsers):
         help="Delimiter used to separate columns.",
     )
     hosts_export_parser.add_argument(
-        "-f",
-        "--file",
-        help="The file from where to export hosts."
+        "-f", "--file", help="The file from where to export hosts."
     )
 
 

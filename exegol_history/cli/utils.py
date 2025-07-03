@@ -42,7 +42,9 @@ def write_credential_in_profile(credential: Credential, config: dict[str, Any]):
     parse_and_update(profile_sh_path, variables_correspondance)
 
 
-def parse_and_update(profile_sh_path: Union[str, Path], variables_correspondance: Dict[str, str]):
+def parse_and_update(
+    profile_sh_path: Union[str, Path], variables_correspondance: Dict[str, str]
+):
     with open(profile_sh_path, "r") as profile:
         variables = profile.readlines()
 
