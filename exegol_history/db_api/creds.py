@@ -11,13 +11,13 @@ class Credential:
     HEADERS = ["username", "password", "hash", "domain"]
 
     def __init__(
-            self,
-            id: str = "",
-            username: str = "",
-            password: str = "",
-            hash: str = "",
-            domain: str = "",
-            **kwargs
+        self,
+        id: str = "",
+        username: str = "",
+        password: str = "",
+        hash: str = "",
+        domain: str = "",
+        **kwargs,
     ):
         self.id = id
         self.username = username
@@ -58,11 +58,11 @@ class Credential:
 
     def __eq__(self, value):
         return (
-                (self.id == value.id)
-                and (self.username == value.username)
-                and (self.password == value.password)
-                and (self.hash == value.hash)
-                and (self.domain == value.domain)
+            (self.id == value.id)
+            and (self.username == value.username)
+            and (self.password == value.password)
+            and (self.hash == value.hash)
+            and (self.domain == value.domain)
         )
 
 
@@ -94,7 +94,7 @@ def add_credential(kp: PyKeePass, credential: Credential):
 
 
 def get_credentials(
-        kp: PyKeePass, id: str = None, redacted: bool = False
+    kp: PyKeePass, id: str = None, redacted: bool = False
 ) -> list[Credential]:
     group = kp.find_groups(name=Credential.GROUP_NAME, first=True)
     entries = kp.find_entries(title=id, recursive=True, group=group)

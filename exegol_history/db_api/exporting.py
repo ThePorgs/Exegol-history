@@ -26,7 +26,6 @@ def export_objects(
     objects: list[Any],
     delimiter: str = None,
 ) -> str:
-
     match format:
         case CredsImportFileType.CSV:
             export_output = export_objects_csv(objects, delimiter, Credential)
@@ -35,7 +34,9 @@ def export_objects(
         case CredsImportFileType.JSON | HostsImportFileType.JSON:
             export_output = export_objects_json(objects)
         case _:
-            raise NotImplementedError(f"Type {format} is not implemented yet for export")
+            raise NotImplementedError(
+                f"Type {format} is not implemented yet for export"
+            )
 
     return export_output
 
@@ -51,8 +52,11 @@ def export_objects_json(objects: list[Any]):
     return json.dumps(results)
 
 
-def export_objects_csv(objects: list[Union[Credential, Host]], delimiter: str, obj_type: Type[Union[Credential, Host]]):
-
+def export_objects_csv(
+    objects: list[Union[Credential, Host]],
+    delimiter: str,
+    obj_type: Type[Union[Credential, Host]],
+):
     csv_string = io.StringIO()
     csv_writer = csv.DictWriter(
         csv_string,

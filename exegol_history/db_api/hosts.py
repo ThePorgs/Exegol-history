@@ -8,7 +8,9 @@ class Host:
     EXEGOL_DB_HOSTNAME_PROPERTY = "hostname"
     HEADERS = ["ip", "hostname", "role"]
 
-    def __init__(self, id: str = "", ip: str = "", hostname: str = "", role: str = "", **kwargs):
+    def __init__(
+        self, id: str = "", ip: str = "", hostname: str = "", role: str = "", **kwargs
+    ):
         self.id = id
         self.ip = ip
         self.hostname = hostname
