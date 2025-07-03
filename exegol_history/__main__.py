@@ -25,12 +25,7 @@ from exegol_history.cli.functions import (
     unset_objects,
     VERSION_SUBCOMMAND,
 )
-from exegol_history.config.config import (
-    EXEGOL_HISTORY_HOME_FOLDER_NAME,
-    load_config,
-    setup_db,
-    setup_profile,
-)
+from exegol_history.config.config import AppConfig
 
 console = Console(soft_wrap=True)
 
@@ -54,16 +49,16 @@ def main():
         need_config = True
 
     if need_config:
-        config = load_config()
-        db_path = EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_name"]
-        db_key_path = EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_key_name"]
+        config = AppConfig.load_config()
+        db_path = AppConfig.EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_name"]
+        db_key_path = AppConfig.EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_key_name"]
 
-        setup_profile(config["paths"]["profile_sh_path"])
+        AppConfig.setup_profile(config["paths"]["profile_sh_path"])
 
         if need_kp:
             if not Path(db_path).is_file():
                 Path(db_path).touch(exist_ok=True)
-                setup_db(db_path, db_key_path)
+                AppConfig.setup_db(db_path, db_key_path)
             kp = PyKeePass(db_path, keyfile=db_key_path)
 
     try:

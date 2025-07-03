@@ -10,7 +10,7 @@ from textual.binding import Binding
 from textual.containers import Vertical
 from pykeepass import PyKeePass
 from typing import Any
-from exegol_history.config.config import load_config
+from exegol_history.config.config import AppConfig
 from exegol_history.db_api.exporting import export_objects
 from exegol_history.db_api.hosts import (
     Host,
@@ -43,7 +43,7 @@ This is the main application displaying the hosts table and a search bar
 class DbHostsApp(App):
     # We can't reuse the config passed in the constructor
     # because Textualize doesn't support fully dynamic bindings
-    config = load_config()
+    config = AppConfig.load_config()
     BINDINGS = [
         Binding(
             Keys.F1,

@@ -5,7 +5,7 @@ import platform
 from pykeepass import PyKeePass
 from typing import Any
 from pathlib import Path
-from exegol_history.config.config import CONFIG_FILENAME, load_config, setup_db
+from exegol_history.config.config import AppConfig
 
 TEST_DB_NAME = "test.kdbx"
 TEST_KEY_NAME = "test.key"
@@ -13,7 +13,7 @@ TEST_KEY_NAME = "test.key"
 TEST_ARTIFACTS_PATH = Path("exegol_history") / "tests" / "artifacts"
 TEST_DB_PATH = TEST_ARTIFACTS_PATH / TEST_DB_NAME
 TEST_KEY_PATH = TEST_ARTIFACTS_PATH / TEST_KEY_NAME
-TEST_CONFIG_PATH = TEST_ARTIFACTS_PATH / CONFIG_FILENAME
+TEST_CONFIG_PATH = TEST_ARTIFACTS_PATH / AppConfig.CONFIG_FILENAME
 TEST_PROFILE_SH = TEST_ARTIFACTS_PATH / "profile.sh"
 TEST_PROFILE_PS1 = TEST_ARTIFACTS_PATH / "profile.ps1"
 
@@ -21,7 +21,7 @@ TEST_PROFILE_PS1 = TEST_ARTIFACTS_PATH / "profile.ps1"
 @pytest.fixture
 def open_keepass() -> PyKeePass:
     # First create a test Keepass DB and key
-    setup_db(TEST_DB_PATH, TEST_KEY_PATH)
+    AppConfig.setup_db(TEST_DB_PATH, TEST_KEY_PATH)
 
     # Then open it and return the Pykeepass object
     return PyKeePass(TEST_DB_PATH, keyfile=TEST_KEY_PATH)
@@ -29,7 +29,7 @@ def open_keepass() -> PyKeePass:
 
 @pytest.fixture
 def load_mock_config() -> dict[str, Any]:
-    mock_config = load_config(TEST_CONFIG_PATH)
+    mock_config = AppConfig.load_config(TEST_CONFIG_PATH)
 
     if platform.system() == "Windows":
         mock_config["paths"]["profile_sh_path"] = TEST_PROFILE_PS1

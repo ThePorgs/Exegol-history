@@ -9,7 +9,7 @@ from textual.binding import Binding
 from textual import events
 from pykeepass import PyKeePass
 from typing import Any
-from exegol_history.config.config import load_config
+from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import (
     Credential,
     add_credentials,
@@ -42,7 +42,7 @@ TOOLTIP_EXPORT_CREDENTIAL = "Export credentials"
 class DbCredsApp(App):
     # We can't reuse the config passed in the constructor
     # because Textualize doesn't support fully dynamic bindings
-    config = load_config()
+    config = AppConfig.load_config()
     BINDINGS = [
         Binding(
             Keys.F1,
