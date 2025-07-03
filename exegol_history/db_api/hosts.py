@@ -6,12 +6,14 @@ class Host:
     GROUP_NAME = "Hosts"
     EXEGOL_DB_ROLE_PROPERTY = "role"
     EXEGOL_DB_HOSTNAME_PROPERTY = "hostname"
+    HEADERS = ["ip", "hostname", "role"]
 
     def __init__(self, id: str = "", ip: str = "", hostname: str = "", role: str = ""):
         self.id = id
         self.ip = ip
         self.hostname = hostname
         self.role = role
+        # By adding attributes, you must algo update Credential.HEADERS to support import / export CSV operations
 
     def __iter__(self):
         return iter([self.id, self.ip, self.hostname, self.role])

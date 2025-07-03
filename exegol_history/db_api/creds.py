@@ -22,6 +22,7 @@ class Credential:
         self.password = password
         self.hash = hash
         self.domain = domain
+        # By adding attributes, you must algo update Credential.HEADERS to support import / export CSV operations
 
     def __iter__(self):
         return iter([self.id, self.username, self.password, self.hash, self.domain])
