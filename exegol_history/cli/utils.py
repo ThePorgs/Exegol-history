@@ -27,6 +27,10 @@ def write_host_in_profile(host: Host, config: dict[str, Any]):
         HOSTS_VARIABLES[2]: host.hostname,
     }
 
+    if host.role == "DC":
+        variables_correspondance[HOSTS_VARIABLES[3]] = host.hostname
+        variables_correspondance[HOSTS_VARIABLES[4]] = host.ip
+
     parse_and_update(profile_sh_path, variables_correspondance)
 
 

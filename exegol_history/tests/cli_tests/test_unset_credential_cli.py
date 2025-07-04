@@ -1,8 +1,9 @@
 import subprocess
 import sys
 import pytest
+import types
 from typing import Any
-from exegol_history.cli.functions import unset_objects
+from exegol_history.cli.functions import CREDS_SUBCOMMAND, unset_objects
 from exegol_history.cli.utils import CREDS_VARIABLES, write_credential_in_profile
 from exegol_history.db_api.creds import Credential
 from exegol_history.tests.common import (
@@ -34,9 +35,9 @@ def test_unset_credential(load_mock_config: dict[str, Any]):
     )
     envs_set = command_output.stdout.decode("utf8")
 
-    # Reference: https://medium.com/python-pandemonium/testing-sys-exit-with-pytest-10c6e5f7726f
+    # Reference: https://medium.com/python-pandemonium/testing-sys-exit-with-pytest-10c6e5f7726f, https://stackoverflow.com/questions/652276/is-it-possible-to-create-anonymous-objects-in-python
     with pytest.raises(SystemExit) as exit:
-        unset_objects(load_mock_config, {})
+        unset_objects(types.SimpleNamespace(subcommand = CREDS_SUBCOMMAND), load_mock_config)
         assert exit.value.code == 0
 
     command_output = subprocess.run(

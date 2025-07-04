@@ -9,7 +9,7 @@ class Host:
     HEADERS = ["ip", "hostname", "role"]
 
     def __init__(
-        self, id: str = "", ip: str = "", hostname: str = "", role: str = "", **kwargs
+        self, id: str = "", ip: str = "", hostname: str = "", role: str = ""
     ):
         self.id = id
         self.ip = ip

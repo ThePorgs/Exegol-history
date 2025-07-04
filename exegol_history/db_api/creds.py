@@ -17,7 +17,6 @@ class Credential:
         password: str = "",
         hash: str = "",
         domain: str = "",
-        **kwargs,
     ):
         self.id = id
         self.username = username

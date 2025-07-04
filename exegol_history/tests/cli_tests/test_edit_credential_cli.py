@@ -80,5 +80,5 @@ def test_edit_credential_not_exist(open_keepass: PyKeePass):
 
     edit_object(args, kp, console)
 
-    assert MESSAGE_ID_NOT_EXIST in console.file.getvalue()
+    assert MESSAGE_ID_NOT_EXIST in console.file.getvalue().replace('\n', '')
     assert len(get_credentials(kp)) == 0

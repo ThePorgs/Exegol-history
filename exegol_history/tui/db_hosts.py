@@ -240,7 +240,7 @@ class DbHostsApp(App):
                     )
 
     def action_export_host(self) -> None:
-        self.push_screen(ExportObjectScreen(), self.check_export_host)
+        self.push_screen(ExportObjectScreen(AssetsType.Hosts), self.check_export_host)
 
     def action_add_host(self) -> None:
         self.push_screen(AddObjectScreen(AssetsType.Hosts), self.check_added_host)
