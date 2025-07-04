@@ -37,7 +37,9 @@ def test_unset_credential(load_mock_config: dict[str, Any]):
 
     # Reference: https://medium.com/python-pandemonium/testing-sys-exit-with-pytest-10c6e5f7726f, https://stackoverflow.com/questions/652276/is-it-possible-to-create-anonymous-objects-in-python
     with pytest.raises(SystemExit) as exit:
-        unset_objects(types.SimpleNamespace(subcommand = CREDS_SUBCOMMAND), load_mock_config)
+        unset_objects(
+            types.SimpleNamespace(subcommand=CREDS_SUBCOMMAND), load_mock_config
+        )
         assert exit.value.code == 0
 
     command_output = subprocess.run(

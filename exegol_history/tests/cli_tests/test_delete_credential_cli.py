@@ -77,5 +77,5 @@ def test_delete_credential_not_exist(open_keepass: PyKeePass):
 
     delete_objects(args, kp, console)
 
-    assert MESSAGE_ID_NOT_EXIST in console.file.getvalue().replace('\n', '')
+    assert MESSAGE_ID_NOT_EXIST in console.file.getvalue().replace("\n", "")
     assert len(get_credentials(kp)) == 0

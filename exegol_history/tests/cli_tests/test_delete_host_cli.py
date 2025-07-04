@@ -60,5 +60,5 @@ def test_delete_host_not_exist(open_keepass: PyKeePass):
 
     delete_objects(args, kp, console)
 
-    assert MESSAGE_ID_NOT_EXIST in console.file.getvalue().replace('\n', '')
+    assert MESSAGE_ID_NOT_EXIST in console.file.getvalue().replace("\n", "")
     assert len(get_hosts(kp)) == 0
