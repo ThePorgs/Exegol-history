@@ -1,70 +1,112 @@
 from pykeepass import PyKeePass
-
-EXEGOL_DB_ROLE_PROPERTY = "role"
-EXEGOL_DB_HOSTNAME_PROPERTY = "hostname"
-
-GROUP_NAME_HOSTS = "Hosts"
+from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST
 
 
-def get_hosts(kp: PyKeePass, searched_ip: str = "") -> [(str, str, str)]:
-    array = []
-    group = kp.find_groups(name=GROUP_NAME_HOSTS, first=True)
+class Host:
+    GROUP_NAME = "Hosts"
+    EXEGOL_DB_ROLE_PROPERTY = "role"
+    EXEGOL_DB_HOSTNAME_PROPERTY = "hostname"
+    HEADERS = ["ip", "hostname", "role"]
 
-    for entry in group.entries:
-        ip = entry.title
-        hostname = entry.get_custom_property(EXEGOL_DB_HOSTNAME_PROPERTY)
-        role = entry.get_custom_property(EXEGOL_DB_ROLE_PROPERTY)
+    def __init__(self, id: str = "", ip: str = "", hostname: str = "", role: str = ""):
+        self.id = id
+        self.ip = ip
+        self.hostname = hostname
+        self.role = role
+        # By adding attributes, you must algo update Credential.HEADERS to support import / export CSV operations
 
-        if ip == searched_ip:
-            array.append((ip, hostname, role))
-            return array
-        elif not searched_ip:
-            array.append((ip, hostname, role))
+    def __iter__(self):
+        return iter([self.id, self.ip, self.hostname, self.role])
 
-    return array
+    # Convert a Keepass entry into a Host object
+    @staticmethod
+    def host_from_entry(entry):
+        return Host(
+            entry.title if entry.title else "",
+            entry.username if entry.username else "",
+            entry.get_custom_property(Host.EXEGOL_DB_HOSTNAME_PROPERTY)
+            if entry.get_custom_property(Host.EXEGOL_DB_HOSTNAME_PROPERTY)
+            else "",
+            entry.get_custom_property(Host.EXEGOL_DB_ROLE_PROPERTY)
+            if entry.get_custom_property(Host.EXEGOL_DB_ROLE_PROPERTY)
+            else "",
+        )
+
+    def __eq__(self, value):
+        return (
+            (self.id == value.id)
+            and (self.ip == value.ip)
+            and (self.hostname == value.hostname)
+            and (self.role == value.role)
+        )
 
 
-def add_host(kp: PyKeePass, host_ip: str, hostname: str = "", role: str = ""):
-    if not host_ip:
-        raise ValueError("IP cannot be empty")
+def get_hosts(kp: PyKeePass, id: str = None) -> list[Host]:
+    group = kp.find_groups(name=Host.GROUP_NAME, first=True)
+    entries = kp.find_entries(title=id, recursive=True, group=group)
 
-    group = kp.find_groups(name=GROUP_NAME_HOSTS, first=True)
+    return [Host.host_from_entry(entry) for entry in entries]
 
-    try:
-        entry = kp.add_entry(group, host_ip, host_ip, "")
-        entry.set_custom_property(EXEGOL_DB_HOSTNAME_PROPERTY, hostname, protect=True)
-        entry.set_custom_property(EXEGOL_DB_ROLE_PROPERTY, role, protect=True)
-    except Exception:
-        entry = kp.find_entries(title=host_ip, first=True, group=group)
-        edit_host(kp, entry.title, host_ip, hostname, role)
+
+def get_new_host_id(kp: PyKeePass) -> str:
+    hosts = get_hosts(kp)
+
+    return str(int(hosts[-1].id) + 1) if hosts else "1"
+
+
+def add_hosts(kp: PyKeePass, hosts: list[Host]):
+    for host in hosts:
+        add_host(kp, host)
 
     kp.save()
 
 
-def delete_host(kp: PyKeePass, host_ip: str):
-    group = kp.find_groups(name=GROUP_NAME_HOSTS, first=True)
-    entry = kp.find_entries(title=host_ip, first=True, group=group)
+def add_host(kp: PyKeePass, host: Host):
+    id = get_new_host_id(kp)
+    host.id = id
+
+    group = kp.find_groups(name=Host.GROUP_NAME, first=True)
+    entry = kp.add_entry(group, id, host.ip, "")
+    entry.set_custom_property(
+        Host.EXEGOL_DB_HOSTNAME_PROPERTY, host.hostname, protect=True
+    )
+    entry.set_custom_property(Host.EXEGOL_DB_ROLE_PROPERTY, host.role, protect=True)
+
+
+def delete_hosts(kp: PyKeePass, ids: list[str] = list()):
+    for id in ids:
+        delete_host(kp, id)
+
+    kp.save()
+
+
+def delete_host(kp: PyKeePass, id: str):
+    group = kp.find_groups(name=Host.GROUP_NAME, first=True)
+    entry = kp.find_entries(title=id, first=True, group=group)
 
     if entry:
         kp.delete_entry(entry)
-        kp.save()
     else:
-        raise RuntimeError("The provided host_ip does not exist")
+        raise RuntimeError(MESSAGE_ID_NOT_EXIST)
 
 
-def edit_host(kp: PyKeePass, old_ip: str, ip: str, hostname: str = "", role: str = ""):
-    if not ip:
-        raise ValueError("IP cannot be empty")
-
-    group = kp.find_groups(name=GROUP_NAME_HOSTS, first=True)
-
-    try:
-        entry = kp.find_entries(title=old_ip, first=True, group=group)
-        entry.title = ip
-
-        entry.set_custom_property(EXEGOL_DB_HOSTNAME_PROPERTY, hostname, protect=True)
-        entry.set_custom_property(EXEGOL_DB_ROLE_PROPERTY, role, protect=True)
-    except Exception:
-        pass
+def edit_hosts(kp: PyKeePass, hosts: list[Host]):
+    for host in hosts:
+        edit_host(kp, host)
 
     kp.save()
+
+
+def edit_host(kp: PyKeePass, host: Host):
+    group = kp.find_groups(name=Host.GROUP_NAME, first=True)
+    entry = kp.find_entries(title=host.id, first=True, group=group)
+
+    if entry:
+        entry.title = host.id
+        entry.username = host.ip
+        entry.set_custom_property(
+            Host.EXEGOL_DB_HOSTNAME_PROPERTY, host.hostname, protect=True
+        )
+        entry.set_custom_property(Host.EXEGOL_DB_ROLE_PROPERTY, host.role, protect=True)
+    else:
+        raise RuntimeError(MESSAGE_ID_NOT_EXIST)
