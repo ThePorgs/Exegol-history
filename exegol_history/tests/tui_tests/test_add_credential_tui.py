@@ -1,162 +1,94 @@
 import pytest
-import os
 import subprocess
 import sys
-
-from exegol_history.tui.db_creds.db_creds import DbCredsApp
-from exegol_history.db_api.utils import write_credential_in_profile
-from exegol_history.db_api.creds import get_credentials
-from common_tui import (
+from exegol_history.cli.utils import write_credential_in_profile
+from exegol_history.tui.db_creds import DbCredsApp
+from exegol_history.db_api.creds import Credential, get_credentials
+from common import (
     USERNAME_TEST_VALUE,
     PASSWORD_TEST_VALUE,
     HASH_TEST_VALUE,
     DOMAIN_TEST_VALUE,
-    TEST_PROFILE_SH,
     select_input_and_enter_text,
 )
 from pykeepass import PyKeePass
 from typing import Any
+from exegol_history.tui.widgets.credential_form import (
+    ID_CONFIRM_BUTTON,
+    ID_DOMAIN_INPUT,
+    ID_HASH_INPUT,
+    ID_PASSWORD_INPUT,
+    ID_USERNAME_INPUT,
+)
 
 
 @pytest.mark.asyncio
-async def test_add_credential_import_csv_tui(
+async def test_add_credential_only_username(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
 ):
-    config = load_mock_config
     kp = open_keepass
-    app = DbCredsApp(config, kp)
+    app = DbCredsApp(load_mock_config, kp)
+    add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
 
     async with app.run_test() as pilot:
-        await pilot.press("f4")
-
-        # Switch tab
-        await pilot.press("right")
-
+        await pilot.press(add_credential_keybind)
         await select_input_and_enter_text(
-            pilot,
-            "#file_textarea",
-            f"{USERNAME_TEST_VALUE},{PASSWORD_TEST_VALUE},{HASH_TEST_VALUE},{DOMAIN_TEST_VALUE}",
+            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
         )
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
-        await pilot.click("#file_type_select")
-        await pilot.press("down")
-        await pilot.press("down")
-        await pilot.press("enter")
+    credentials = get_credentials(kp)
 
-        await pilot.click("#confirm_import")
+    assert credentials == [Credential("1", USERNAME_TEST_VALUE)]
+
+
+@pytest.mark.asyncio
+async def test_add_credential_half(
+    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
+):
+    kp = open_keepass
+    app = DbCredsApp(load_mock_config, kp)
+    add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
+
+    async with app.run_test() as pilot:
+        await pilot.press(add_credential_keybind)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
+        )
+        await select_input_and_enter_text(pilot, f"#{ID_HASH_INPUT}", HASH_TEST_VALUE)
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
+
+    credentials = get_credentials(kp)
+
+    assert credentials == [Credential("1", USERNAME_TEST_VALUE, hash=HASH_TEST_VALUE)]
+
+
+@pytest.mark.asyncio
+async def test_add_credential_full(
+    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
+):
+    kp = open_keepass
+    app = DbCredsApp(load_mock_config, kp)
+    add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
+
+    async with app.run_test() as pilot:
+        await pilot.press(add_credential_keybind)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
+        )
+        await select_input_and_enter_text(
+            pilot, f"#{ID_PASSWORD_INPUT}", PASSWORD_TEST_VALUE
+        )
+        await select_input_and_enter_text(pilot, f"#{ID_HASH_INPUT}", HASH_TEST_VALUE)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_DOMAIN_INPUT}", DOMAIN_TEST_VALUE
+        )
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
     credentials = get_credentials(kp)
 
     assert credentials == [
-        (
-            "1",
-            USERNAME_TEST_VALUE,
-            PASSWORD_TEST_VALUE,
-            HASH_TEST_VALUE,
-            DOMAIN_TEST_VALUE,
-        )
-    ]
-
-
-@pytest.mark.asyncio
-async def test_add_credential_import_csv_file_tui(
-    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
-):
-    config = load_mock_config
-    kp = open_keepass
-    app = DbCredsApp(config, kp)
-
-    async with app.run_test() as pilot:
-        await pilot.press("f4")
-
-        # Switch tab
-        await pilot.press("right")
-
-        await pilot.click("#import_file")
-        pilot.app.query_one("#label_selected_path").update(
-            os.path.dirname(os.path.abspath(__file__)) + "/../artifacts/creds.txt"
-        )
-        await pilot.click("#select_button")
-
-        await pilot.click("#file_type_select")
-        await pilot.press("down")
-        await pilot.press("down")
-        await pilot.press("enter")
-
-        await pilot.click("#confirm_import")
-
-    credentials = get_credentials(kp)
-
-    assert credentials == [
-        (
-            "1",
-            USERNAME_TEST_VALUE,
-            PASSWORD_TEST_VALUE,
-            HASH_TEST_VALUE,
-            DOMAIN_TEST_VALUE,
-        )
-    ]
-
-
-@pytest.mark.asyncio
-async def test_add_credential_only_username_tui(
-    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
-):
-    config = load_mock_config
-    kp = open_keepass
-    app = DbCredsApp(config, kp)
-
-    async with app.run_test() as pilot:
-        await pilot.press("f4")
-        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await pilot.click("#confirm_add")
-
-    credentials = get_credentials(kp)
-
-    assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
-
-
-@pytest.mark.asyncio
-async def test_add_credential_half_tui(
-    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
-):
-    config = load_mock_config
-    kp = open_keepass
-    app = DbCredsApp(config, kp)
-
-    async with app.run_test() as pilot:
-        await pilot.press("f4")
-        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#hash", HASH_TEST_VALUE)
-        await pilot.click("#confirm_add")
-
-    credentials = get_credentials(kp)
-
-    assert credentials == [("1", USERNAME_TEST_VALUE, "", HASH_TEST_VALUE, "")]
-
-
-@pytest.mark.asyncio
-async def test_add_credential_full_tui(
-    open_keepass: PyKeePass,
-    load_mock_config: dict[str, Any],
-    create_mock_profile_sh: None,
-):
-    config = load_mock_config
-    kp = open_keepass
-    app = DbCredsApp(config, kp)
-
-    async with app.run_test() as pilot:
-        await pilot.press("f4")
-        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#password", PASSWORD_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#hash", HASH_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE)
-        await pilot.click("#confirm_add")
-
-    credentials = get_credentials(kp)
-
-    assert credentials == [
-        (
+        Credential(
             "1",
             USERNAME_TEST_VALUE,
             PASSWORD_TEST_VALUE,
@@ -168,47 +100,43 @@ async def test_add_credential_full_tui(
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
 @pytest.mark.asyncio
-async def test_add_and_set_credential_full_tui(
-    open_keepass: PyKeePass,
-    load_mock_config: dict[str, Any],
-    create_mock_profile_sh: None,
+async def test_add_and_set_credential_full(
+    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
 ):
-    config = load_mock_config
     kp = open_keepass
-    app = DbCredsApp(config, kp)
+    app = DbCredsApp(load_mock_config, kp)
+    add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
 
     async with app.run_test() as pilot:
-        await pilot.press("f4")
-        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#password", PASSWORD_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#hash", HASH_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE)
-        await pilot.click("#confirm_add")
-
-    credentials = get_credentials(kp)
-
-    assert credentials == [
-        (
-            "1",
-            USERNAME_TEST_VALUE,
-            PASSWORD_TEST_VALUE,
-            HASH_TEST_VALUE,
-            DOMAIN_TEST_VALUE,
+        await pilot.press(add_credential_keybind)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
         )
-    ]
+        await select_input_and_enter_text(
+            pilot, f"#{ID_PASSWORD_INPUT}", PASSWORD_TEST_VALUE
+        )
+        await select_input_and_enter_text(pilot, f"#{ID_HASH_INPUT}", HASH_TEST_VALUE)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_DOMAIN_INPUT}", DOMAIN_TEST_VALUE
+        )
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
-    write_credential_in_profile(
-        TEST_PROFILE_SH,
+    credential = Credential(
+        "1",
         USERNAME_TEST_VALUE,
         PASSWORD_TEST_VALUE,
         HASH_TEST_VALUE,
         DOMAIN_TEST_VALUE,
     )
+
+    assert get_credentials(kp) == [credential]
+
+    write_credential_in_profile(credential, load_mock_config)
     command_output = subprocess.run(
         [
             "bash",
             "-c",
-            f"source {TEST_PROFILE_SH} && echo $PASSWORD $USER $NT_HASH $DOMAIN",
+            f"source {load_mock_config['paths']['profile_sh_path']} && echo $PASSWORD $USER $NT_HASH $DOMAIN",
         ],
         stdout=subprocess.PIPE,
     )
@@ -221,66 +149,68 @@ async def test_add_and_set_credential_full_tui(
 
 
 @pytest.mark.asyncio
-async def test_add_credential_empty_tui(
-    open_keepass: PyKeePass,
-    load_mock_config: dict[str, Any],
-    create_mock_profile_sh: None,
+async def test_add_credential_empty(
+    open_keepass: PyKeePass, load_mock_config: dict[str, Any]
 ):
-    config = load_mock_config
     kp = open_keepass
-    app = DbCredsApp(config, kp)
+    app = DbCredsApp(load_mock_config, kp)
+    add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
 
     async with app.run_test() as pilot:
-        await pilot.press("f4")
-        await pilot.click("#confirm_add")
+        await pilot.press(add_credential_keybind)
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
-    credentials = get_credentials(kp)
-
-    assert len(credentials) == 0
+    assert get_credentials(kp) == [Credential("1")]
 
 
 @pytest.mark.asyncio
-async def test_add_credential_existing_tui(
+async def test_add_credential_existing(
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
 ):
-    config = load_mock_config
     kp = open_keepass
-    app = DbCredsApp(config, kp)
+    app = DbCredsApp(load_mock_config, kp)
+    add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
 
     async with app.run_test() as pilot:
-        await pilot.press("f4")
-        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE)
-        await pilot.click("#confirm_add")
+        await pilot.press(add_credential_keybind)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
+        )
+        await select_input_and_enter_text(
+            pilot, f"#{ID_DOMAIN_INPUT}", DOMAIN_TEST_VALUE
+        )
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
-        credentials = get_credentials(kp)
+        assert get_credentials(kp) == [
+            Credential(id="1", username=USERNAME_TEST_VALUE, domain=DOMAIN_TEST_VALUE)
+        ]
 
-        assert credentials == [("1", USERNAME_TEST_VALUE, "", "", DOMAIN_TEST_VALUE)]
+        await pilot.press(add_credential_keybind)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
+        )
+        await select_input_and_enter_text(
+            pilot, f"#{ID_PASSWORD_INPUT}", PASSWORD_TEST_VALUE
+        )
+        await select_input_and_enter_text(pilot, f"#{ID_HASH_INPUT}", HASH_TEST_VALUE)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_DOMAIN_INPUT}", DOMAIN_TEST_VALUE
+        )
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
-        await pilot.press("f4")
-        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#password", PASSWORD_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#hash", HASH_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE)
-        await pilot.click("#confirm_add")
-
-        credentials = get_credentials(kp)
-
-        assert credentials == [
-            (
-                "1",
-                USERNAME_TEST_VALUE,
-                "",
-                "",
-                DOMAIN_TEST_VALUE,
+        assert get_credentials(kp) == [
+            Credential(
+                id="1",
+                username=USERNAME_TEST_VALUE,
+                domain=DOMAIN_TEST_VALUE,
             ),
-            (
-                "2",
-                USERNAME_TEST_VALUE,
-                PASSWORD_TEST_VALUE,
-                HASH_TEST_VALUE,
-                DOMAIN_TEST_VALUE,
-            )
+            Credential(
+                id="2",
+                username=USERNAME_TEST_VALUE,
+                password=PASSWORD_TEST_VALUE,
+                hash=HASH_TEST_VALUE,
+                domain=DOMAIN_TEST_VALUE,
+            ),
         ]
 
 
@@ -288,19 +218,19 @@ async def test_add_credential_existing_tui(
 async def test_add_credential_issue_3(  # https://github.com/ThePorgs/Exegol-history/issues/3
     open_keepass: PyKeePass, load_mock_config: dict[str, Any]
 ):
-    config = load_mock_config
     kp = open_keepass
-    app = DbCredsApp(config, kp)
+    app = DbCredsApp(load_mock_config, kp)
+    add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
 
     async with app.run_test() as pilot:
-        await pilot.press("f4")
-        await pilot.press("f4")
-        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await pilot.click("#confirm_add")
+        await pilot.press(add_credential_keybind)
+        await pilot.press(add_credential_keybind)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
+        )
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
-    credentials = get_credentials(kp)
-
-    assert credentials == [("1", USERNAME_TEST_VALUE, "", "", "")]
+    assert get_credentials(kp) == [Credential(id="1", username=USERNAME_TEST_VALUE)]
 
 
 @pytest.mark.asyncio
@@ -310,38 +240,55 @@ async def test_add_credential_multiple_local_account(
     open_keepass: PyKeePass,
     load_mock_config: dict[str, Any],
 ):
-    config = load_mock_config
     kp = open_keepass
-    app = DbCredsApp(config, kp)
+    app = DbCredsApp(load_mock_config, kp)
+    add_credential_keybind = load_mock_config["keybindings"]["add_credential"]
 
     async with app.run_test() as pilot:
-        await pilot.press("f4")
-        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#password", PASSWORD_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE)
-        await pilot.click("#confirm_add")
+        await pilot.press(add_credential_keybind)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
+        )
+        await select_input_and_enter_text(
+            pilot, f"#{ID_PASSWORD_INPUT}", PASSWORD_TEST_VALUE
+        )
+        await select_input_and_enter_text(
+            pilot, f"#{ID_DOMAIN_INPUT}", DOMAIN_TEST_VALUE
+        )
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
-        credentials = get_credentials(kp)
-
-        assert credentials == [
-            ("1", USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, "", DOMAIN_TEST_VALUE)
+        assert get_credentials(kp) == [
+            Credential(
+                id="1",
+                username=USERNAME_TEST_VALUE,
+                password=PASSWORD_TEST_VALUE,
+                domain=DOMAIN_TEST_VALUE,
+            )
         ]
 
-        await pilot.press("f4")
-        await select_input_and_enter_text(pilot, "#username", USERNAME_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#password", PASSWORD_TEST_VALUE)
-        await select_input_and_enter_text(pilot, "#domain", DOMAIN_TEST_VALUE + "2")
-        await pilot.click("#confirm_add")
+        await pilot.press(add_credential_keybind)
+        await select_input_and_enter_text(
+            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
+        )
+        await select_input_and_enter_text(
+            pilot, f"#{ID_PASSWORD_INPUT}", PASSWORD_TEST_VALUE
+        )
+        await select_input_and_enter_text(
+            pilot, f"#{ID_DOMAIN_INPUT}", DOMAIN_TEST_VALUE + "2"
+        )
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
 
-        credentials = get_credentials(kp)
-
-        assert credentials == [
-            ("1", USERNAME_TEST_VALUE, PASSWORD_TEST_VALUE, "", DOMAIN_TEST_VALUE),
-            (
-                "2",
-                USERNAME_TEST_VALUE,
-                PASSWORD_TEST_VALUE,
-                "",
-                DOMAIN_TEST_VALUE + "2",
+        assert get_credentials(kp) == [
+            Credential(
+                id="1",
+                username=USERNAME_TEST_VALUE,
+                password=PASSWORD_TEST_VALUE,
+                domain=DOMAIN_TEST_VALUE,
+            ),
+            Credential(
+                id="2",
+                username=USERNAME_TEST_VALUE,
+                password=PASSWORD_TEST_VALUE,
+                domain=DOMAIN_TEST_VALUE + "2",
             ),
         ]

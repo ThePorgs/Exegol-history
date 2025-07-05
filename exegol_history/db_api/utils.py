@@ -1,76 +1,46 @@
+import pyperclip
 import subprocess
-import re
+import platform
 
-CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
-HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP"]
-PROFILE_SH_PATH = "/opt/tools/Exegol-history/profile.sh"
-VARIABLE_REGEX = r"export (.*)='.*?'"
+ID_DELIMITER = ","
+ID_RANGE_DELIMITER = "-"
+
+MESSAGE_ID_NOT_EXIST = "The provided id does not exist !"
 
 
 def copy_in_clipboard(input: str):
     # Reference:
     # https://stackoverflow.com/questions/48499398/how-to-run-a-process-and-quit-after-the-script-is-over
     # https://github.com/kovidgoyal/kitty/issues/828
-    subprocess.run(
-        ["xclip", "-selection", "clipboard"],
-        input=input.encode("utf-8"),
-        stdout=subprocess.DEVNULL,
-    )
-    subprocess.run(
-        ["xclip", "-selection", "primary"],
-        input=input.encode("utf-8"),
-        stdout=subprocess.DEVNULL,
-    )
+
+    # Pyperclip doesn't seems to provide public
+    # API access to the primary argument
+    # so we must manually do it
+    if platform.system() == "Linux":
+        subprocess.run(
+            ["xclip", "-selection", "primary"],
+            input=input.encode("utf-8"),
+            stdout=subprocess.DEVNULL,
+        )
+
+    pyperclip.copy(input)
 
 
-def write_host_in_profile(profile_path, ip, hostname, role):
-    variables_correspondance = {
-        HOSTS_VARIABLES[0]: ip,
-        HOSTS_VARIABLES[1]: ip,
-        HOSTS_VARIABLES[2]: hostname,
-    }
+def parse_ids(input: str) -> list[int]:
+    ids = set()
+    parts = input.split(ID_DELIMITER)
 
-    if role == "DC":
-        variables_correspondance[HOSTS_VARIABLES[3]] = hostname
-        variables_correspondance[HOSTS_VARIABLES[4]] = ip
+    for part in parts:
+        part = part.strip()
 
-    with open(profile_path, "r") as profile:
-        variables = profile.readlines()
+        try:
+            if ID_RANGE_DELIMITER in part:
+                start, end = map(int, part.split(ID_RANGE_DELIMITER))
+                if start <= end:
+                    ids.update(range(start, end + 1))
+            else:
+                ids.add(int(part))
+        except ValueError:
+            continue
 
-        for i, line in enumerate(variables):
-            tmp = re.search(VARIABLE_REGEX, line)
-
-            if tmp:
-                variable_name = tmp.group(1)
-
-                if variable_name in variables_correspondance.keys():
-                    line = f"export {variable_name}='{variables_correspondance[variable_name]}'\n"
-                    variables[i] = line
-
-            with open(profile_path, "w") as profile:
-                profile.write("".join(variables))
-
-
-def write_credential_in_profile(profile_path, username, password, hash, domain):
-    variables_correspondance = {
-        CREDS_VARIABLES[0]: username,
-        CREDS_VARIABLES[1]: password,
-        CREDS_VARIABLES[2]: hash,
-        CREDS_VARIABLES[3]: domain,
-    }
-
-    with open(profile_path, "r") as profile:
-        variables = profile.readlines()
-
-        for i, line in enumerate(variables):
-            tmp = re.search(VARIABLE_REGEX, line)
-
-            if tmp:
-                variable_name = tmp.group(1)
-
-                if variable_name in variables_correspondance.keys():
-                    line = f"export {variable_name}='{variables_correspondance[variable_name]}'\n"
-                    variables[i] = line
-
-            with open(profile_path, "w") as profile:
-                profile.write("".join(variables))
+    return list(ids)
