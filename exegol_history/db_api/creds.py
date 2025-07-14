@@ -120,12 +120,12 @@ def delete_credential(kp: PyKeePass, id: str = ""):
 
 def edit_credentials(kp: PyKeePass, credentials: list[Credential]):
     for credential in credentials:
-        edit_credential(kp, credential)
+        edit_credential(kp, credential, skip_save=True)
 
     kp.save()
 
 
-def edit_credential(kp: PyKeePass, credential: Credential):
+def edit_credential(kp: PyKeePass, credential: Credential, skip_save: bool = False):
     group = kp.find_groups(name=Credential.GROUP_NAME, first=True)
     entry = kp.find_entries(title=credential.id, first=True, group=group)
 
@@ -138,5 +138,7 @@ def edit_credential(kp: PyKeePass, credential: Credential):
         entry.set_custom_property(
             Credential.EXEGOL_DB_DOMAIN_PROPERTY, credential.domain, protect=True
         )
+        if not skip_save:
+            kp.save()
     else:
         raise RuntimeError(MESSAGE_ID_NOT_EXIST)

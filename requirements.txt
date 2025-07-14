@@ -1,3 +1,4 @@
 rich
 textual
 pykeepass
+pyperclip

@@ -159,7 +159,8 @@ def set_objects(
         try:
             app = DbCredsApp(config, kp)
             row_data = app.run()
-            write_credential_in_profile(Credential(*row_data), config)
+            if row_data is not None:
+                write_credential_in_profile(Credential(*row_data), config)
         except TypeError:  # It means the user left the TUI without choosing anything
             sys.exit(0)
     elif args.subcommand == HOSTS_SUBCOMMAND:
@@ -167,7 +168,8 @@ def set_objects(
 
         try:
             row_data = app.run()
-            write_host_in_profile(Host(*row_data), config)
+            if row_data is not None:
+                write_host_in_profile(Host(*row_data), config)
         except TypeError:  # It means the user left the TUI without choosing anything
             sys.exit(0)
 

@@ -17,7 +17,7 @@ class AppConfig:
     EXEGOL_HISTORY_HOME_FOLDER_NAME = Path.home() / ".exegol_history"
     CONFIG_FILENAME = "config.toml"
     PROFILE_SH_FILENAME_UNIX = "profile.sh"
-    PROFILE_SH_FILENAME_WINDOWS = "profile.sh"
+    PROFILE_SH_FILENAME_WINDOWS = "profile.ps1"
 
     @classmethod
     def setup_db(cls, db_path: str, db_key_path: str) -> None:
