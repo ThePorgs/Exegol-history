@@ -177,7 +177,7 @@ def import_subparser(subparsers):
 
 def edit_subparser(subparsers):
     edit_parser = subparsers.add_parser(
-        EDIT_SUBCOMMAND, help="Add new credentials or hosts to the database."
+        EDIT_SUBCOMMAND, help="Edit existing credentials or hosts to the database."
     )
     edit_subparsers = edit_parser.add_subparsers(
         dest="subcommand",
@@ -319,6 +319,7 @@ def delete_subparser(subparsers):
     credential_delete_parser.add_argument(
         "-i",
         "--id",
+        required=True,
         help="IDs of the credentials to be deleted, value are separated by a ',', and ranges by a '-', e.g: '5,7,8-18'.",
     )
 
