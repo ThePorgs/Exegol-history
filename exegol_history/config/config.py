@@ -48,9 +48,9 @@ class AppConfig:
             Path(profile_path).parent.mkdir(exist_ok=True, parents=True)
 
             default_config_path = (
-                Path(__file__).parent / cls.PROFILE_SH_FILENAME_WINDOWS
+                Path(__file__).parent.parent.parent / cls.PROFILE_SH_FILENAME_WINDOWS
                 if platform.system() == "Windows"
-                else Path(__file__).parent / cls.PROFILE_SH_FILENAME_UNIX
+                else Path(__file__).parent.parent.parent / cls.PROFILE_SH_FILENAME_UNIX
             )
             shutil.copy(default_config_path, Path(profile_path))
 
