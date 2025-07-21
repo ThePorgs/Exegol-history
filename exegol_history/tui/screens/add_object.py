@@ -8,9 +8,15 @@ from exegol_history.tui.widgets.import_file import AssetsType, ImportFile
 
 
 class AddObjectScreen(ModalScreen):
-    def __init__(self, asset_type: AssetsType = AssetsType.Credentials, id: str = None):
+    def __init__(
+        self,
+        asset_type: AssetsType = AssetsType.Credentials,
+        id: str = None,
+        domains: list[str] = [],
+    ):
         super().__init__(id=id)
         self.asset_type = asset_type
+        self.domains = domains
 
     def compose(self) -> ComposeResult:
         container = Container()
@@ -18,7 +24,7 @@ class AddObjectScreen(ModalScreen):
             f"{self.app.config['theme']['add_icon']} Adding an object"
         )
         form = (
-            CredentialForm()
+            CredentialForm(domains=self.domains)
             if self.asset_type == AssetsType.Credentials
             else HostForm()
         )

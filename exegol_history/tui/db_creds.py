@@ -133,7 +133,10 @@ class DbCredsApp(App):
         self.set_keymap(self.config["keybindings"])
 
         if self.show_add_screen:
-            self.push_screen(AddObjectScreen(), self.check_added_creds)
+            self.push_screen(
+                AddObjectScreen(domains=set(table.get_column_at(4))),
+                self.check_added_creds,
+            )
 
     def get_system_commands(self, screen: Screen):
         yield SystemCommand(
@@ -247,7 +250,11 @@ class DbCredsApp(App):
             sys.exit(0)
 
     def action_add_credential(self) -> None:
-        self.push_screen(AddObjectScreen(), self.check_added_creds)
+        table = self.screen.query_one(ObjectsDataTable)
+        self.push_screen(
+            AddObjectScreen(domains=set(filter(None, table.get_column_at(4)))),
+            self.check_added_creds,
+        )
 
     def check_export_credential(self, result: tuple) -> None:
         if result:
@@ -308,7 +315,11 @@ class DbCredsApp(App):
             row_data = table.get_row_at(selected_row)
             credential = get_credentials(self.kp, id=row_data[0])[0]
             self.push_screen(
-                EditObjectScreen(AssetsType.Credentials, credential),
+                EditObjectScreen(
+                    AssetsType.Credentials,
+                    credential,
+                    domains=set(filter(None, table.get_column_at(4))),
+                ),
                 check_edit_creds,
             )
         except Exception:

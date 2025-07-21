@@ -1,10 +1,12 @@
 from textual.app import ComposeResult
-from textual.widgets import Button, Input
+from textual.widgets import Button
+from textual.suggester import SuggestFromList
 from textual.containers import (
     Container,
 )
 from exegol_history.db_api.creds import Credential
 from exegol_history.tui.widgets.action_buttons import ActionButtons
+from exegol_history.tui.widgets.bordered_inputs import BorderedInput
 
 ID_USERNAME_INPUT = "username_input"
 ID_PASSWORD_INPUT = "password_input"
@@ -19,31 +21,39 @@ ID_CANCEL_BUTTON = "cancel_button"
 
 
 class CredentialForm(Container):
-    def __init__(self, credential: Credential = None, id: str = None):
+    def __init__(
+        self, credential: Credential = None, id: str = None, domains: list[str] = []
+    ):
         super().__init__(id=id)
+        self.domains = domains
         self.credential = credential
         self.button_clicked = None
 
     def compose(self) -> ComposeResult:
-        yield Input(
-            placeholder="Username",
+        yield BorderedInput(
+            "Username",
+            placeholder="Administrator",
             id=ID_USERNAME_INPUT,
             value=self.credential.username if self.credential else "",
         )
-        yield Input(
-            placeholder="Password",
+        yield BorderedInput(
+            "Password",
+            placeholder="Password123!",
             id=ID_PASSWORD_INPUT,
             value=self.credential.password if self.credential else "",
         )
-        yield Input(
-            placeholder="Hash",
+        yield BorderedInput(
+            "Hash",
+            placeholder="b4b9b02e6f09a9bd760f388b67351e2b",
             id=ID_HASH_INPUT,
             value=self.credential.hash if self.credential else "",
         )
-        yield Input(
-            placeholder="Domain",
+        yield BorderedInput(
+            "Domain",
+            placeholder="example.local",
             id=ID_DOMAIN_INPUT,
             value=self.credential.domain if self.credential else "",
+            suggester=SuggestFromList(self.domains, case_sensitive=False),
         )
         yield ActionButtons()
 
@@ -51,10 +61,16 @@ class CredentialForm(Container):
         if event.button.id == ID_CONFIRM_BUTTON:
             self.credential = Credential(
                 id=self.credential.id if self.credential else "",
-                username=self.screen.query_one(f"#{ID_USERNAME_INPUT}", Input).value,
-                password=self.screen.query_one(f"#{ID_PASSWORD_INPUT}", Input).value,
-                hash=self.screen.query_one(f"#{ID_HASH_INPUT}", Input).value,
-                domain=self.screen.query_one(f"#{ID_DOMAIN_INPUT}", Input).value,
+                username=self.screen.query_one(
+                    f"#{ID_USERNAME_INPUT}", BorderedInput
+                ).value,
+                password=self.screen.query_one(
+                    f"#{ID_PASSWORD_INPUT}", BorderedInput
+                ).value,
+                hash=self.screen.query_one(f"#{ID_HASH_INPUT}", BorderedInput).value,
+                domain=self.screen.query_one(
+                    f"#{ID_DOMAIN_INPUT}", BorderedInput
+                ).value,
             )
 
             self.screen.dismiss([self.credential])
