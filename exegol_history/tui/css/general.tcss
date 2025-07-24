@@ -1,0 +1,102 @@
+/* General */
+Input {
+    margin: 1;
+}
+
+Select {
+    margin: 1;
+}
+
+TextArea {
+    margin: 1;
+    min-height: 10;
+}
+
+Button {
+    margin: 1;
+}
+/* General end */
+
+/* Button bottom bar (confirm, cancel, ...) */
+#actions_horizontal {
+    align: center bottom;
+    height: auto;
+}
+/* Button bottom bar (confirm, cancel, ...) end */
+
+/* KDBX keyfile import */
+#kdbx_keyfile_horizontal {
+    margin: 1;
+    height: auto;
+}
+
+#kdbx_keyfile_button {
+    margin: 0;
+    margin-right: 1;
+    width: 40%;
+}
+
+#kdbx_keyfile_input {
+    height: auto;
+    width: 60%;
+    margin: 0;
+}
+/* KDBX keyfile import end */
+
+/* Export horizontal browse */
+#browse_horizontal {
+    width: 50;
+}
+
+#browse_button {
+    width: 30%;
+}
+
+#path_input {
+    width: 70%;
+}
+/* Export horizontal browse end */
+
+/* Modal */
+ModalScreen {
+    align: center middle;
+    overflow: auto auto;
+}
+
+ModalScreen > Container {
+    padding: 0 1;
+    overflow: auto auto;
+    height: auto;
+    width: auto;
+    border: inner $background;
+    background: $surface;
+    border-title-align: center;
+    border-title-style: bold;
+    border-title-color: white;
+}
+
+AddObjectScreen > Container {
+    height: 35;
+    width: 60;
+}
+
+EditObjectScreen > Container {
+    height: 25;
+    width: 50;
+}
+
+DeleteObjectScreen > Container {
+    height: 18;
+    width: 40;
+}
+
+ExportObjectScreen > Container {
+    height: 16;
+    width: 55;
+}
+
+OpenFileScreen > Container {
+    height: 25;
+    width: 80;
+}
+/* Modal end */
