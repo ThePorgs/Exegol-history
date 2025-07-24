@@ -2,8 +2,8 @@ import sqlite3
 from exegol_history.db_api.creds import (
     Credential,
     add_credentials,
+    edit_credentials,
     get_existing_credential,
-    update_credentials,
 )
 
 
@@ -39,7 +39,7 @@ class NXC_Credentials_Extractor:
                     credentials_to_edit.append(credential)
 
                 add_credentials(self.kp, credentials_to_add)
-                update_credentials(self.kp, credentials_to_edit)
+                edit_credentials(self.kp, credentials_to_edit)
 
             print(f"Synced {counter} {self.service_name} credentials")
 

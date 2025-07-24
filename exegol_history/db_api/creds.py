@@ -151,32 +151,3 @@ def edit_credential(kp: PyKeePass, credential: Credential, skip_save: bool = Fal
             kp.save()
     else:
         raise RuntimeError(MESSAGE_ID_NOT_EXIST)
-
-
-def update_credentials(kp: PyKeePass, credentials: list[Credential]):
-    for credential in credentials:
-        update_credential(kp, credential)
-
-    kp.save()
-
-
-def update_credential(kp: PyKeePass, credential: Credential):
-    group = kp.find_groups(name=Credential.GROUP_NAME, first=True)
-    entry = kp.find_entries(title=credential.id, first=True, group=group)
-
-    if entry:
-        username = credential.username if credential.username else entry.username
-        password = credential.password if credential.password else entry.password
-        hash = credential.hash if credential.hash else entry.get_custom_property(Credential.EXEGOL_DB_HASH_PROPERTY)
-        domain = credential.domain if credential.domain else entry.get_custom_property(Credential.EXEGOL_DB_DOMAIN_PROPERTY)
-
-        entry.username = username
-        entry.password = password
-        entry.set_custom_property(
-            Credential.EXEGOL_DB_HASH_PROPERTY, hash, protect=True
-        )
-        entry.set_custom_property(
-            Credential.EXEGOL_DB_DOMAIN_PROPERTY, domain, protect=True
-        )
-    else:
-        raise RuntimeError(MESSAGE_ID_NOT_EXIST)
