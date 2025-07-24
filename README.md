@@ -132,6 +132,9 @@ edit_host = "f5"
 export_host = "f6"
 quit = "ctrl+c"
 
+[sync.nxc]
+auto = true
+
 [theme]
 primary = "#0178D4"
 secondary = "#004578"
@@ -196,6 +199,9 @@ exh export hosts --format CSV
 
 # Delete the host with the id 1
 exh rm hosts --id 1
+
+# Sychronise objects from external sources (Netxec, Metasploit, ...)
+exh sync
 ```
 
 ## 📥 Importing credential
@@ -236,7 +242,7 @@ exh rm hosts --id 1
 | Name  | Status |
 | ------------- | ------------- |
 | Metasploit Database  | 🚧  |
-| NetExec  | 🚧  |
+| NetExec  | ✅  |
 | Cobalt Strike  | ❌  |
 | Havoc  | ❌  |
 | Sliver  | ❌  |
@@ -244,6 +250,9 @@ exh rm hosts --id 1
 | Crackhound  | ❌  |
 | DonPAPI  | ❌  |
 | Hashcat  | ❌  |
+
+> [!NOTE]
+> Automatic synchronisation can be disabled in the config file with the `auto` directive for each synchronisation connectors.
 
 ## 🛠 Development and contribution
 All pull request must be targeting the `dev` branch, all contributions are welcome, it is recommended to use `poetry` to set up a development environement.
