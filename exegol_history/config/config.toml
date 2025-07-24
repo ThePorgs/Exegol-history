@@ -20,6 +20,10 @@ edit_host = "f5"
 export_host = "f6"
 quit = "ctrl+c"
 
+[sync]
+[nxc]
+auto = true
+
 [theme]
 primary = "#0178D4"
 secondary = "#004578"

@@ -1,5 +1,5 @@
 import sqlite3
-from dbassets.db_api.creds import add_credential
+from exegol_history.db_api.creds import Credential, add_credential
 
 class NXC_Users_Extractor:
     def __init__(self, db_file_path, kp, service_name):
@@ -19,13 +19,14 @@ class NXC_Users_Extractor:
 
             for row in rows:
                 domain, username, password, credtype = row
+                credential = Credential(username=username, password=password, domain=domain)
                 if credtype == 'plaintext':
-                    add_credential(self.kp, username=username, password=password, domain=domain)
+                    add_credential(self.kp, credential)
                     counter = counter + 1
                 elif credtype == 'hash':
                     if ':' in password:
                         password = password.split(':')[1]
-                    add_credential(self.kp, username=username, hash=password, domain=domain)
+                    add_credential(self.kp, credential)
                     counter = counter + 1
             
             print(f"Synced {counter} {self.service_name} credentials")

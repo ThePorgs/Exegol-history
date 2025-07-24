@@ -1,7 +1,6 @@
 import os
-from dbassets.db_api.creds import add_credential
-from dbassets.connectors.nxc.extractors.credentials import NXC_Credentials_Extractor
-from dbassets.connectors.nxc.extractors.users import NXC_Users_Extractor
+from exegol_history.connectors.nxc.extractors.credentials import NXC_Credentials_Extractor
+from exegol_history.connectors.nxc.extractors.users import NXC_Users_Extractor
 
 class NXCWorkspaceSyncer:
     def __init__(self, kp, workspaces_dir='~/.nxc/workspaces/'):

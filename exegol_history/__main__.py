@@ -27,6 +27,7 @@ from exegol_history.cli.functions import (
     VERSION_SUBCOMMAND,
 )
 from exegol_history.config.config import AppConfig
+from exegol_history.connectors.nxc.nxc_workspace_syncer import NXCWorkspaceSyncer
 
 console = Console(soft_wrap=True)
 
@@ -62,6 +63,13 @@ def main():
         db_key_path = (
             AppConfig.EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_key_name"]
         )
+
+        # Synchronise all connectors
+        for connector in config['sync']:
+            if config['sync'][connector]['auto']:
+                if connector == "nxc":
+                    syncer = NXCWorkspaceSyncer(kp)
+                    syncer.sync()
 
         AppConfig.setup_profile(config["paths"]["profile_sh_path"])
 
