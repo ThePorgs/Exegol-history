@@ -14,6 +14,7 @@ from exegol_history.cli.functions import (
     IMPORT_SUBCOMMAND,
     SET_SUBCOMMAND,
     SHOW_SUBCOMMAND,
+    SYNC_SUBCOMMAND,
     UNSET_SUBCOMMAND,
     add_object,
     cli_export_objects,
@@ -23,6 +24,7 @@ from exegol_history.cli.functions import (
     set_objects,
     show_objects,
     show_version,
+    sync_objects,
     unset_objects,
     VERSION_SUBCOMMAND,
 )
@@ -50,6 +52,7 @@ def main():
         EXPORT_SUBCOMMAND,
         DELETE_SUBCOMMAND,
         SET_SUBCOMMAND,
+        SYNC_SUBCOMMAND,
     ]:
         need_kp = True
         need_config = True
@@ -64,13 +67,6 @@ def main():
             AppConfig.EXEGOL_HISTORY_HOME_FOLDER_NAME / config["paths"]["db_key_name"]
         )
 
-        # Synchronise all connectors
-        for connector in config['sync']:
-            if config['sync'][connector]['auto']:
-                if connector == "nxc":
-                    syncer = NXCWorkspaceSyncer(kp)
-                    syncer.sync()
-
         AppConfig.setup_profile(config["paths"]["profile_sh_path"])
 
         if need_kp:
@@ -78,6 +74,10 @@ def main():
                 Path(db_path).touch(exist_ok=True)
                 AppConfig.setup_db(db_path, db_key_path)
             kp = PyKeePass(db_path, keyfile=db_key_path)
+
+            # Synchronise all connectors
+            if args.command != SYNC_SUBCOMMAND:
+                sync_objects(kp, config)
 
     try:
         # CLI
@@ -93,6 +93,8 @@ def main():
             cli_export_objects(args, kp, console)
         elif args.command == DELETE_SUBCOMMAND:
             delete_objects(args, kp, console)
+        elif args.command == SYNC_SUBCOMMAND:
+            sync_objects(kp, config)
 
         # TUI
         elif args.command == SET_SUBCOMMAND:

@@ -12,6 +12,7 @@ from exegol_history.cli.functions import (
     SHOW_SUBCOMMAND,
     UNSET_SUBCOMMAND,
     VERSION_SUBCOMMAND,
+    SYNC_SUBCOMMAND,
 )
 from exegol_history.cli.utils import check_delimiter
 from exegol_history.db_api.exporting import CredsExportFileType, HostsExportFileType
@@ -43,6 +44,7 @@ def parse_arguments() -> argparse.Namespace:
     edit_subparser(subparsers)
     export_subparser(subparsers)
     delete_subparser(subparsers)
+    sync_subparser(subparsers)
     tui_subparser(subparsers)
 
     return parser
@@ -334,6 +336,11 @@ def delete_subparser(subparsers):
         help="IDs of the hosts to be deleted, value are separated by a ',', and ranges by a '-', e.g: '5,7,8-18'.",
     )
 
+def sync_subparser(subparsers):
+    sync_parser = subparsers.add_parser(
+        SYNC_SUBCOMMAND,
+        help="Synchronise credentials or hosts with external sources (netexec, Metasploit, ...).",
+    )
 
 def tui_subparser(subparsers):
     tui_parser = subparsers.add_parser(

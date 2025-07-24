@@ -10,6 +10,7 @@ from exegol_history.cli.utils import (
     write_credential_in_profile,
     write_host_in_profile,
 )
+from exegol_history.connectors.nxc.nxc_workspace_syncer import NXCWorkspaceSyncer
 from exegol_history.db_api.creds import (
     Credential,
     add_credentials,
@@ -48,6 +49,7 @@ SET_SUBCOMMAND = "set"
 UNSET_SUBCOMMAND = "unset"
 SHOW_SUBCOMMAND = "show"
 DELETE_SUBCOMMAND = "rm"
+SYNC_SUBCOMMAND = "sync"
 
 
 def add_object(args: argparse.Namespace, kp: PyKeePass, config: dict[str, Any]):
@@ -193,6 +195,14 @@ def show_objects(console: Console):
             console.print(f"{var}:{os.environ.get(var)}")
     else:
         console.print("No environment variables are set.")
+
+
+def sync_objects(kp: PyKeePass, config: dict[str, Any]):
+    for connector in config['sync']:
+        if config['sync'][connector]['auto']:
+            if connector == NXCWorkspaceSyncer.SYNCER_NAME:
+                syncer = NXCWorkspaceSyncer(kp)
+                syncer.sync()
 
 
 def show_version(console: Console):

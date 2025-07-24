@@ -65,6 +65,10 @@ class Credential:
         )
 
 
+def get_existing_credential(kp: PyKeePass, credential: Credential) -> Entry:
+    return kp.find_entries(username=credential.username, string={Credential.EXEGOL_DB_DOMAIN_PROPERTY: credential.domain}, first=True)
+
+
 def get_new_credential_id(kp: PyKeePass) -> str:
     credentials = get_credentials(kp)
 
@@ -79,11 +83,10 @@ def add_credentials(kp: PyKeePass, credentials: list[Credential]):
 
 
 def add_credential(kp: PyKeePass, credential: Credential):
-    id = get_new_credential_id(kp)
-    credential.id = id
+    credential.id = get_new_credential_id(kp)
 
     group = kp.find_groups(name=Credential.GROUP_NAME, first=True)
-    entry = kp.add_entry(group, id, credential.username, credential.password or "")
+    entry = kp.add_entry(group, credential.id, credential.username, credential.password or "")
     entry.set_custom_property(
         Credential.EXEGOL_DB_HASH_PROPERTY, credential.hash, protect=True
     )
