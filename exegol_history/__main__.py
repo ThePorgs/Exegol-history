@@ -29,7 +29,6 @@ from exegol_history.cli.functions import (
     VERSION_SUBCOMMAND,
 )
 from exegol_history.config.config import AppConfig
-from exegol_history.connectors.nxc.nxc_workspace_syncer import NXCWorkspaceSyncer
 
 console = Console(soft_wrap=True)
 

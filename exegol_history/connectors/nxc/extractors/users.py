@@ -1,5 +1,11 @@
 import sqlite3
-from exegol_history.db_api.creds import Credential, add_credentials, edit_credentials, get_existing_credential
+from exegol_history.db_api.creds import (
+    Credential,
+    add_credentials,
+    edit_credentials,
+    get_existing_credential,
+)
+
 
 class NXC_Users_Extractor:
     def __init__(self, db_file_path, kp, service_name):
@@ -24,11 +30,11 @@ class NXC_Users_Extractor:
                 credential = Credential(username=username, domain=domain)
                 existing_credential = get_existing_credential(self.kp, credential)
 
-                if credtype == 'plaintext':
+                if credtype == "plaintext":
                     credential.password = password
-                elif credtype == 'hash':
-                    if ':' in password:
-                        password = password.split(':')[1]
+                elif credtype == "hash":
+                    if ":" in password:
+                        password = password.split(":")[1]
                     credential.hash = password
 
                 if not existing_credential:

@@ -1,4 +1,4 @@
-from pykeepass import PyKeePass
+from pykeepass import PyKeePass, Entry
 
 from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST
 
@@ -66,7 +66,11 @@ class Credential:
 
 
 def get_existing_credential(kp: PyKeePass, credential: Credential) -> Entry:
-    return kp.find_entries(username=credential.username, string={Credential.EXEGOL_DB_DOMAIN_PROPERTY: credential.domain}, first=True)
+    return kp.find_entries(
+        username=credential.username,
+        string={Credential.EXEGOL_DB_DOMAIN_PROPERTY: credential.domain},
+        first=True,
+    )
 
 
 def get_new_credential_id(kp: PyKeePass) -> str:
@@ -86,7 +90,9 @@ def add_credential(kp: PyKeePass, credential: Credential):
     credential.id = get_new_credential_id(kp)
 
     group = kp.find_groups(name=Credential.GROUP_NAME, first=True)
-    entry = kp.add_entry(group, credential.id, credential.username, credential.password or "")
+    entry = kp.add_entry(
+        group, credential.id, credential.username, credential.password or ""
+    )
     entry.set_custom_property(
         Credential.EXEGOL_DB_HASH_PROPERTY, credential.hash, protect=True
     )

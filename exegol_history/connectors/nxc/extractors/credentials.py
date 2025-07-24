@@ -1,5 +1,11 @@
 import sqlite3
-from exegol_history.db_api.creds import Credential, add_credentials, edit_credentials, get_existing_credential
+from exegol_history.db_api.creds import (
+    Credential,
+    add_credentials,
+    edit_credentials,
+    get_existing_credential,
+)
+
 
 class NXC_Credentials_Extractor:
     def __init__(self, db_file_path, kp, service_name):

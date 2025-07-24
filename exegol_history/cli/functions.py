@@ -198,8 +198,8 @@ def show_objects(console: Console):
 
 
 def sync_objects(kp: PyKeePass, config: dict[str, Any]):
-    for connector in config['sync']:
-        if config['sync'][connector]['auto']:
+    for connector in config["sync"]:
+        if config["sync"][connector]["auto"]:
             if connector == NXCWorkspaceSyncer.SYNCER_NAME:
                 syncer = NXCWorkspaceSyncer(kp)
                 syncer.sync()
