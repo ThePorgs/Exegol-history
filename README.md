@@ -4,7 +4,7 @@ Exegol-history is a tool to quickly store and retrieve compromised credentials a
 Once an asset is selected from the TUI, the information can be accessed through environment variables and doesn't need to be typed over and over.
 
 ## ✨ Features
-- Add / edit / delete credentials and hosts informations trough a CLI or a TUI
+- Add / edit / delete credentials and hosts information trough a CLI or a TUI
 - Import / export in various format (CSV, Pypykatz, ...)
 - Keybinds customisation
 
