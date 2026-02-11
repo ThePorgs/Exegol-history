@@ -39,7 +39,7 @@ import importlib.metadata
 
 CREDS_SUBCOMMAND = "creds"
 HOSTS_SUBCOMMAND = "hosts"
-
+ALL_SUBCOMMAND = "all"
 VERSION_SUBCOMMAND = "version"
 ADD_SUBCOMMAND = "add"
 IMPORT_SUBCOMMAND = "import"
@@ -189,15 +189,17 @@ def set_objects(
             sys.exit(0)
 
 
-def unset_objects(args: argparse.Namespace, config: AppConfig):
-    if args.subcommand == CREDS_SUBCOMMAND:
-        write_credential_in_profile(Credential(), config)
-    elif args.subcommand == HOSTS_SUBCOMMAND:
-        write_host_in_profile(Host(), config)
-    else:
-        raise NotImplementedError
+def unset_objects(args: argparse.Namespace, config: dict[str, Any]): 
+    if args.subcommand == CREDS_SUBCOMMAND: 
+        write_credential_in_profile(Credential(), config) 
+    elif args.subcommand == HOSTS_SUBCOMMAND: 
+        write_host_in_profile(Host(), config) 
+    elif args.subcommand == ALL_SUBCOMMAND: 
+        write_credential_in_profile(Credential(), config) 
+        write_host_in_profile(Host(), config) 
+    else: 
+        raise NotImplementedError 
     sys.exit(0)
-
 
 def show_objects(console: Console):
     env_vars = CREDS_VARIABLES + HOSTS_VARIABLES
