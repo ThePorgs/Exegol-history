@@ -14,6 +14,7 @@ class CredsImportFileType(Enum):
     KDBX = 3
     PYPYKATZ_JSON = 4
     SECRETSDUMP = 5
+    HASHCAT = 6
 
 
 class HostsImportFileType(Enum):
@@ -40,6 +41,8 @@ def import_objects(
             objects = import_objects_csv(file_raw)
         case CredsImportFileType.JSON | HostsImportFileType.JSON:
             objects = json.loads(file_raw)
+        case CredsImportFileType.HASHCAT:
+            objects = import_creds_hashcat(file_raw)
 
     for object in objects:
         # Reference: https://stackoverflow.com/questions/2544710/how-i-can-get-rid-of-none-values-in-dictionary, answer by John La Rooy
@@ -133,4 +136,21 @@ def import_creds_kdbx(
 
         parsed_credentials.append(dict)
 
+    return parsed_credentials
+
+def import_creds_hashcat(file_raw: bytes):
+    parsed_credentials = []
+    file_raw = io.StringIO(file_raw.decode("utf-8"))
+    for line in file_raw.readlines():
+        values = line.rstrip().split(':', 2)
+        if len(values) == 3:
+            username = values[0]
+            password_hash = values[1]
+            password = values[2]
+        else:
+            username = None
+            password_hash = values[0]
+            password = values[1]
+        domain = None
+        parsed_credentials.append({"username": username, "password": password, "hash": password_hash, "domain": domain})
     return parsed_credentials
