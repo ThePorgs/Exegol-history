@@ -176,22 +176,32 @@ def set_objects(
     args: argparse.Namespace, engine: Engine, config: AppConfig, console: Console
 ):
     if args.subcommand == CREDS_SUBCOMMAND:
-        try:
-            app = DbCredsApp(config, engine)
-            row_data = app.run(inline=config.theme.inline)
-            if row_data is not None:
-                write_credential_in_profile(Credential(*row_data), config)
-        except TypeError:  # It means the user left the TUI without choosing anything
-            sys.exit(0)
+        if not args.id:
+            try:
+                app = DbCredsApp(config, engine)
+                row_data = app.run(inline=config.theme.inline)
+                if row_data is not None:
+                    write_credential_in_profile(Credential(*row_data), config)
+            except TypeError:  # It means the user left the TUI without choosing anything
+                sys.exit(0)
+        else:
+            objects = get_credentials(engine, args.id)
+            if objects[0]:
+                write_credential_in_profile(objects[0], config)
     elif args.subcommand == HOSTS_SUBCOMMAND:
         app = DbHostsApp(config, engine)
 
-        try:
-            row_data = app.run(inline=config.theme.inline)
-            if row_data is not None:
-                write_host_in_profile(Host(*row_data), config)
-        except TypeError:  # It means the user left the TUI without choosing anything
-            sys.exit(0)
+        if not args.id:
+            try:
+                row_data = app.run(inline=config.theme.inline)
+                if row_data is not None:
+                    write_host_in_profile(Host(*row_data), config)
+            except TypeError:  # It means the user left the TUI without choosing anything
+                sys.exit(0)
+        else:
+            objects = get_hosts(engine, args.id)
+            if objects[0]:
+                write_host_in_profile(objects[0], config)
 
 
 def unset_objects(args: argparse.Namespace, config: AppConfig):

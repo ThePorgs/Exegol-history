@@ -340,6 +340,7 @@ def sync_subparser(subparsers):
 
 
 def tui_subparser(subparsers):
+    # For set command, when opening the TUI.
     tui_parser = subparsers.add_parser(
         SET_SUBCOMMAND,
         help="Select credentials or assets and set them in the current shell to use with the preset history commands.",
@@ -351,13 +352,25 @@ def tui_subparser(subparsers):
     )
 
     # Credentials
-    tui_subparsers.add_parser(
+    credentials_tui_parser = tui_subparsers.add_parser(
         CREDS_SUBCOMMAND,
         help="Manage credentials using the TUI and set related environment variables.",
     )
+    credentials_tui_parser.add_argument(
+        "-i",
+        "--id",
+        required=False,
+        help="ID of the credentials to be set. If set, the tui won't be opened",
+    )
 
     # Hosts
-    tui_subparsers.add_parser(
+    hosts_tui_parser = tui_subparsers.add_parser(
         HOSTS_SUBCOMMAND,
         help="Manage hosts using the TUI and set related environment variables.",
+    )
+    hosts_tui_parser.add_argument(
+        "-i",
+        "--id",
+        required=False,
+        help="ID of the host to be set. If set, the tui won't be opened",
     )
