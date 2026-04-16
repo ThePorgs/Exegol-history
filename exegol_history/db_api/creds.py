@@ -102,8 +102,11 @@ def get_credentials(
 ) -> list[Credential]:
     credentials = []
 
-    if credential_id:
+    if credential_id and int(credential_id) >= 0:
         query = select(Credential).where(Credential.credential_id == credential_id)
+    elif credential_id:
+        # if credential_id = -1, offset = 1-1 = 0 so it fetches the last one
+        query = select(Credential).order_by(Credential.credential_id.desc()).offset(-int(credential_id)-1).limit(1)
     else:
         query = select(Credential)
 
