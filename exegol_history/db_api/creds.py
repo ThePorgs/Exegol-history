@@ -131,6 +131,12 @@ def delete_credentials(engine: Engine, credential_ids: list[str] = list()):
         raise RuntimeError(MESSAGE_ID_NOT_EXIST)
 
 
+def delete_all_credentials(engine: Engine):
+    with Session(engine) as session:
+        session.execute(Credential.__table__.delete())
+        session.commit()
+
+
 def edit_credentials(engine: Engine, credentials: list[Credential]):
     with Session(engine) as session:
         try:

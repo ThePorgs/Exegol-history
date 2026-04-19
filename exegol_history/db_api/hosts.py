@@ -104,6 +104,12 @@ def delete_hosts(engine: Engine, host_ids: list[str] = list()):
         raise RuntimeError(MESSAGE_ID_NOT_EXIST)
 
 
+def delete_all_hosts(engine: Engine):
+    with Session(engine) as session:
+        session.execute(Host.__table__.delete())
+        session.commit()
+
+
 def edit_hosts(engine: Engine, hosts: list[Host]):
     with Session(engine) as session:
         try:

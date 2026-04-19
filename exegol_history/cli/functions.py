@@ -12,6 +12,7 @@ from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import (
     Credential,
     add_credentials,
+    delete_all_credentials,
     delete_credentials,
     edit_credentials,
     get_credentials,
@@ -20,6 +21,7 @@ from exegol_history.db_api.exporting import export_objects
 from exegol_history.db_api.hosts import (
     Host,
     add_hosts,
+    delete_all_hosts,
     delete_hosts,
     edit_hosts,
     get_hosts,
@@ -39,6 +41,7 @@ import importlib.metadata
 
 CREDS_SUBCOMMAND = "creds"
 HOSTS_SUBCOMMAND = "hosts"
+ALL_SUBCOMMAND = "all"
 
 VERSION_SUBCOMMAND = "version"
 ADD_SUBCOMMAND = "add"
@@ -93,13 +96,27 @@ def add_object(args: argparse.Namespace, engine: Engine, config: AppConfig):
 
 
 def delete_objects(args: argparse.Namespace, engine: Engine, console: Console):
-    ids = parse_ids(args.id)
+    if args.subcommand == ALL_SUBCOMMAND:
+        delete_all_credentials(engine)
+        delete_all_hosts(engine)
+        return
+
+    if not args.all and args.id is None:
+        console.print(console_error(RuntimeError("Provide --id or --all.")))
+        return
 
     try:
-        if args.subcommand == CREDS_SUBCOMMAND:
-            delete_credentials(engine, ids)
-        elif args.subcommand == HOSTS_SUBCOMMAND:
-            delete_hosts(engine, ids)
+        if args.all:
+            if args.subcommand == CREDS_SUBCOMMAND:
+                delete_all_credentials(engine)
+            elif args.subcommand == HOSTS_SUBCOMMAND:
+                delete_all_hosts(engine)
+        else:
+            ids = parse_ids(args.id)
+            if args.subcommand == CREDS_SUBCOMMAND:
+                delete_credentials(engine, ids)
+            elif args.subcommand == HOSTS_SUBCOMMAND:
+                delete_hosts(engine, ids)
     except RuntimeError as e:
         console.print(console_error(e))
 
