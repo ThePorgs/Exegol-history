@@ -1,28 +1,49 @@
-[tool.poetry]
+[project]
 name = "exegol-history"
 version = "3.0"
 description = "exegol-history is a TUI to manage compromised credentials and hosts during an engagement."
-authors = ["lap1nou"]
+authors = [{ name = "lap1nou" }]
+requires-python = ">=3.11,<4"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "rich>=14.2.0,<15",
+    "textual>=6.6.0,<7",
+    "pykeepass>=4.1.1,<5",
+    "pyperclip>=1.9.0,<2",
+    "SQLAlchemy>=2.0.44,<3",
+    "psycopg[binary, pool]>=3.2.6,<4",
+    "pyyaml>=6.0.2,<7",
+    "argcomplete>=3.1.4,<4",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-rich  = "^14.2.0"
-textual = "^6.6.0"
-pykeepass = "^4.1.1"
-pyperclip = "^1.9.0"
-SQLAlchemy = "^2.0.44"
-psycopg = { version = "^3.2.6", extras = ["binary", "pool"] }
-pyyaml = "^6.0.2"
-argcomplete = "^3.1.4"
+[project.scripts]
+exegol-history = "exegol_history.__main__:main"
 
-[tool.poetry.scripts]
-exegol-history="exegol_history.__main__:main"
+[dependency-groups]
+dev = [
+    "pytest==8.3.4",
+    "pytest-asyncio==0.25.2",
+    "pytest-cov==6.1.1",
+    "textual-dev==1.7.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "8.3.4"
-pytest-asyncio = "0.25.2"
-pytest-cov = "6.1.1"
-textual-dev = "1.7.0"
+[tool.uv]
+default-groups = "all"
+exclude-newer = "2 weeks"
+
+[tool.uv.build-backend]
+module-name = "exegol_history"
+module-root = ""
+
+[build-system]
+requires = ["uv_build>=0.10.7,<0.11.0"]
+build-backend = "uv_build"
 
 [tool.ruff.lint.extend-per-file-ignores]
 "exegol_history/tests/*" = ["F811"]
@@ -35,7 +56,3 @@ omit = [ "exegol_history/tests/*", "exegol_history/__main__.py" ]
 
 [tool.coverage.report]
 show_missing = true
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
