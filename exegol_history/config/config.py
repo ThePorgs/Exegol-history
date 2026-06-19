@@ -95,7 +95,7 @@ class ConfigSyncNetexec:
     CONNECTOR_NAME = NetexecSyncer.CONNECTOR_NAME
 
     def __init__(
-        self, enabled: bool = True, workspace_path: str = "~/.nxc/workspaces/"
+        self, enabled: bool = False, workspace_path: str = "~/.nxc/workspaces/"
     ):
         self.enabled = enabled
         self.workspace_path = workspace_path
