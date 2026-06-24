@@ -20,7 +20,7 @@ export_host = "f6"
 quit = "ctrl+c"
 
 [sync.netexec]
-enabled = true
+enabled = false
 workspace_path = "~/.nxc/workspaces/"
 
 [sync.metasploit]

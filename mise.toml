@@ -1,14 +1,14 @@
 [hooks]
-enter = "mise i -q && poetry install"
+enter = "mise i -q && uv sync"
 
 [tools]
 ruff = "latest"
+uv = "latest"
 python = "3.13"
-poetry = "2.2.1"
 
 [tasks]
 lint = "ruff format . && ruff check ."
-test = "poetry run pytest"
+test = "uv run pytest"
 
 [tasks.debug]
 description = ""
@@ -20,8 +20,8 @@ run = '''
 echo "[*] Please run the 'poetry run textual console -x EVENT -x DEBUG -x SYSTEM' command"
 
 if [[ ${usage_type?} = "creds" ]]; then
-    poetry run textual run --dev exegol-history.py set creds
+    uv run textual run --dev exegol-history.py set creds
 else
-    poetry run textual run --dev exegol-history.py set hosts
+    uv run textual run --dev exegol-history.py set hosts
 fi
 '''
