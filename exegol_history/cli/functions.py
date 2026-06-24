@@ -207,6 +207,7 @@ def unset_objects(args: argparse.Namespace, config: dict[str, Any]):
         raise NotImplementedError 
     sys.exit(0)
 
+
 def show_objects(console: Console):
     env_vars = CREDS_VARIABLES + HOSTS_VARIABLES
     not_none_vars = [var for var in env_vars if os.environ.get(var) is not None]

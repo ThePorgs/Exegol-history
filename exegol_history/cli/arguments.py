@@ -80,6 +80,7 @@ def unset_subparser(subparsers):
         help="Unset all variables (credentials and hosts)"
     )
 
+
 def add_subparser(subparsers):
     add_parser = subparsers.add_parser(
         ADD_SUBCOMMAND, help="Add new credentials or hosts to the database."
