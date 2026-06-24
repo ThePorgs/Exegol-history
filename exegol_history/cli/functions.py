@@ -33,6 +33,7 @@ from exegol_history.db_api.sync import sync_objects
 from exegol_history.db_api.utils import parse_ids
 from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.tui.db_hosts import DbHostsApp
+from typing import Any
 from rich.console import Console
 from sqlalchemy import Engine
 import importlib.metadata

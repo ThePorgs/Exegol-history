@@ -78,7 +78,7 @@ def unset_subparser(subparsers):
     unset_subparsers.add_parser(
         ALL_SUBCOMMAND,
         help="Unset all variables (credentials and hosts)"
-    (
+    )
 
 def add_subparser(subparsers):
     add_parser = subparsers.add_parser(
