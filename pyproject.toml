@@ -1,6 +1,6 @@
 [project]
 name = "exegol-history"
-version = "3.0"
+version = "3.1"
 description = "exegol-history is a TUI to manage compromised credentials and hosts during an engagement."
 authors = [{ name = "lap1nou" }]
 requires-python = ">=3.11,<4"

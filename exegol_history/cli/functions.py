@@ -195,16 +195,16 @@ def set_objects(
             sys.exit(0)
 
 
-def unset_objects(args: argparse.Namespace, config: dict[str, Any]): 
-    if args.subcommand == CREDS_SUBCOMMAND: 
-        write_credential_in_profile(Credential(), config) 
-    elif args.subcommand == HOSTS_SUBCOMMAND: 
-        write_host_in_profile(Host(), config) 
-    elif args.subcommand == ALL_SUBCOMMAND: 
-        write_credential_in_profile(Credential(), config) 
-        write_host_in_profile(Host(), config) 
-    else: 
-        raise NotImplementedError 
+def unset_objects(args: argparse.Namespace, config: dict[str, Any]):
+    if args.subcommand == CREDS_SUBCOMMAND:
+        write_credential_in_profile(Credential(), config)
+    elif args.subcommand == HOSTS_SUBCOMMAND:
+        write_host_in_profile(Host(), config)
+    elif args.subcommand == ALL_SUBCOMMAND:
+        write_credential_in_profile(Credential(), config)
+        write_host_in_profile(Host(), config)
+    else:
+        raise NotImplementedError
     sys.exit(0)
 
 
