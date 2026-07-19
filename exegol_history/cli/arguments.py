@@ -14,6 +14,7 @@ from exegol_history.cli.functions import (
     UNSET_SUBCOMMAND,
     VERSION_SUBCOMMAND,
     SYNC_SUBCOMMAND,
+    ALL_SUBCOMMAND,
 )
 from exegol_history.cli.utils import check_delimiter
 from exegol_history.db_api.exporting import CredsExportFileType, HostsExportFileType
@@ -72,6 +73,12 @@ def unset_subparser(subparsers):
     unset_subparsers.add_parser(
         HOSTS_SUBCOMMAND,
         help="Unset hosts variables.",
+    )
+
+    # All
+    unset_subparsers.add_parser(
+        ALL_SUBCOMMAND,
+        help="Unset all variables (credentials and hosts)",
     )
 
 

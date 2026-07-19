@@ -35,6 +35,7 @@ from exegol_history.db_api.sync import sync_objects
 from exegol_history.db_api.utils import parse_ids
 from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.tui.db_hosts import DbHostsApp
+from typing import Any
 from rich.console import Console
 from sqlalchemy import Engine
 import importlib.metadata
@@ -211,10 +212,13 @@ def set_objects(
             sys.exit(0)
 
 
-def unset_objects(args: argparse.Namespace, config: AppConfig):
+def unset_objects(args: argparse.Namespace, config: dict[str, Any]):
     if args.subcommand == CREDS_SUBCOMMAND:
         write_credential_in_profile(Credential(), config)
     elif args.subcommand == HOSTS_SUBCOMMAND:
+        write_host_in_profile(Host(), config)
+    elif args.subcommand == ALL_SUBCOMMAND:
+        write_credential_in_profile(Credential(), config)
         write_host_in_profile(Host(), config)
     else:
         raise NotImplementedError
