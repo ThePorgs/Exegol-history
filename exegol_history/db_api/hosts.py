@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy.orm import Mapped, mapped_column, Session
-from sqlalchemy import select, UniqueConstraint, Engine
+from sqlalchemy import func, select, UniqueConstraint, Engine
 from exegol_history.db_api.base import Base
 from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST, OBJECT_ALREADY_EXIST
 from sqlalchemy.dialects.sqlite import insert
@@ -70,7 +70,7 @@ def add_hosts(engine: Engine, hosts: list[dict]):
             set_={
                 "ip": query.excluded.ip,
                 "hostname": query.excluded.hostname,
-                "role": query.excluded.role,
+                "role": func.coalesce(func.nullif(query.excluded.role, ""), Host.role),
             },
         )
         session.execute(query)
