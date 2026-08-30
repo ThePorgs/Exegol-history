@@ -7,8 +7,8 @@ from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
 
-CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
-HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP", "ROLE"]
+CREDS_VARIABLES = ["CREDS_ID", "USER", "PASSWORD", "NT_HASH", "DOMAIN"]
+HOSTS_VARIABLES = ["HOST_ID", "IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP", "ROLE"]
 VARIABLE_REGEX_UNIX = r"(?:export|unset) ([\w\d]*)(?:='.*?')?"
 VARIABLE_REGEX_WINDOWS = r"(?:Set|Remove)-Variable -Name (\S*) (?:-Value '[^']*?' )?-Scope Global(?: -ErrorAction SilentlyContinue)?"
 
@@ -23,14 +23,15 @@ def check_delimiter(delimiter: str) -> str:
 def write_host_in_profile(host: Host, config: AppConfig):
     profile_sh_path = config.paths.profile_sh_path
     variables_correspondance = {
-        HOSTS_VARIABLES[0]: host.ip,
+        HOSTS_VARIABLES[0]: host.host_id,
         HOSTS_VARIABLES[1]: host.ip,
-        HOSTS_VARIABLES[2]: host.hostname,
+        HOSTS_VARIABLES[2]: host.ip,
+        HOSTS_VARIABLES[3]: host.hostname,
     }
 
     if host.role == "DC":
-        variables_correspondance[HOSTS_VARIABLES[3]] = host.hostname
-        variables_correspondance[HOSTS_VARIABLES[4]] = host.ip
+        variables_correspondance[HOSTS_VARIABLES[4]] = host.hostname
+        variables_correspondance[HOSTS_VARIABLES[5]] = host.ip
 
     parse_and_update(profile_sh_path, variables_correspondance)
 
@@ -38,10 +39,11 @@ def write_host_in_profile(host: Host, config: AppConfig):
 def write_credential_in_profile(credential: Credential, config: AppConfig):
     profile_sh_path = config.paths.profile_sh_path
     variables_correspondance = {
-        CREDS_VARIABLES[0]: credential.username,
-        CREDS_VARIABLES[1]: credential.password,
-        CREDS_VARIABLES[2]: credential.hash,
-        CREDS_VARIABLES[3]: credential.domain,
+        CREDS_VARIABLES[0]: credential.credential_id,
+        CREDS_VARIABLES[1]: credential.username,
+        CREDS_VARIABLES[2]: credential.password,
+        CREDS_VARIABLES[3]: credential.hash,
+        CREDS_VARIABLES[4]: credential.domain,
     }
 
     parse_and_update(profile_sh_path, variables_correspondance)
@@ -54,15 +56,17 @@ def parse_and_update(
         variables = profile.readlines()
 
     for i, line in enumerate(variables):
+        # Search for the export line in the profile file
         if platform.system() == "Windows":
             tmp = re.search(VARIABLE_REGEX_WINDOWS, line)
         else:
             tmp = re.search(VARIABLE_REGEX_UNIX, line)
 
         if tmp:
+            # extract the variable name from the regex match
             variable_name = tmp.group(1)
-
             if variable_name in variables_correspondance.keys():
+                # replaces the line in the profile
                 new_value = variables_correspondance[variable_name]
                 if new_value:
                     if platform.system() == "Windows":

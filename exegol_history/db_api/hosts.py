@@ -80,8 +80,10 @@ def add_hosts(engine: Engine, hosts: list[dict]):
 def get_hosts(engine: Engine, host_id: str = None) -> list[Host]:
     hosts = []
 
-    if host_id:
+    if host_id and int(host_id) >= 0:
         query = select(Host).where(Host.host_id == host_id)
+    elif host_id:
+        query = select(Host).order_by(Host.host_id.desc()).offset(-int(host_id)-1).limit(1)
     else:
         query = select(Host)
 
