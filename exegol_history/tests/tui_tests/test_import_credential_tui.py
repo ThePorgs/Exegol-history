@@ -1,6 +1,5 @@
 from sqlalchemy import Engine
 from textual.keys import Keys
-import pytest
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.importing import CredsImportFileType
 from exegol_history.tui.db_creds import DbCredsApp
@@ -34,7 +33,6 @@ from exegol_history.tui.widgets.import_file import (
 from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 
 
-@pytest.mark.asyncio
 async def test_import_credential_csv_textarea(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -70,7 +68,6 @@ async def test_import_credential_csv_textarea(
     ]
 
 
-@pytest.mark.asyncio
 async def test_import_credential_import_csv_file(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -100,7 +97,6 @@ async def test_import_credential_import_csv_file(
         assert get_credentials(engine) == CREDENTIALS_TEST_VALUE
 
 
-@pytest.mark.asyncio
 async def test_import_credential_json_textarea(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -136,7 +132,6 @@ async def test_import_credential_json_textarea(
     ]
 
 
-@pytest.mark.asyncio
 async def test_import_credential_import_json_file(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -162,7 +157,6 @@ async def test_import_credential_import_json_file(
         assert get_credentials(engine) == CREDENTIALS_TEST_VALUE
 
 
-@pytest.mark.asyncio
 async def test_import_credential_pypykatz_json(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -191,7 +185,6 @@ async def test_import_credential_pypykatz_json(
     assert get_credentials(engine) == CREDENTIALS_TEST_VALUE_GOAD_PYPYKATZ
 
 
-@pytest.mark.asyncio
 async def test_import_credential_kdbx(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]

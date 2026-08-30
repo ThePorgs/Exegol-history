@@ -1,5 +1,4 @@
 import tempfile
-import pytest
 from sqlalchemy import Engine
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.importing import CredsImportFileType
@@ -21,7 +20,6 @@ from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
 from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 
 
-@pytest.mark.asyncio
 async def test_export_credential_csv(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     export_credential_keybind = load_mock_config.keybindings["export_credential"]
@@ -44,7 +42,6 @@ async def test_export_credential_csv(engine: Engine, load_mock_config: AppConfig
         )
 
 
-@pytest.mark.asyncio
 async def test_export_credential_json(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     export_credential_keybind = load_mock_config.keybindings["export_credential"]

@@ -23,7 +23,6 @@ from exegol_history.tui.widgets.credential_form import (
 )
 
 
-@pytest.mark.asyncio
 async def test_add_credential_only_username(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -42,7 +41,6 @@ async def test_add_credential_only_username(
     assert credentials == [Credential(1, username=USERNAME_TEST_VALUE)]
 
 
-@pytest.mark.asyncio
 async def test_add_credential_half(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -62,7 +60,6 @@ async def test_add_credential_half(engine: Engine, load_mock_config: AppConfig):
     ]
 
 
-@pytest.mark.asyncio
 async def test_add_credential_full(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -95,7 +92,6 @@ async def test_add_credential_full(engine: Engine, load_mock_config: AppConfig):
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
-@pytest.mark.asyncio
 async def test_add_and_set_credential_full(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -141,7 +137,6 @@ async def test_add_and_set_credential_full(engine: Engine, load_mock_config: App
     assert DOMAIN_TEST_VALUE in envs
 
 
-@pytest.mark.asyncio
 async def test_add_credential_empty(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -151,7 +146,6 @@ async def test_add_credential_empty(engine: Engine, load_mock_config: AppConfig)
     assert get_credentials(engine) == [Credential(1)]
 
 
-@pytest.mark.asyncio
 async def test_add_credential_existing(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -190,7 +184,6 @@ async def test_add_credential_existing(engine: Engine, load_mock_config: AppConf
         ]
 
 
-@pytest.mark.asyncio
 async def test_add_credential_issue_3(  # https://github.com/ThePorgs/Exegol-history/issues/3
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -208,7 +201,6 @@ async def test_add_credential_issue_3(  # https://github.com/ThePorgs/Exegol-his
     assert get_credentials(engine) == [Credential(1, username=USERNAME_TEST_VALUE)]
 
 
-@pytest.mark.asyncio
 async def test_add_credential_multiple_local_account(
     # This test was made in order to test the case
     # were multiple local account were given, with only the domain being different

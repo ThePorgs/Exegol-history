@@ -23,7 +23,6 @@ from exegol_history.tui.widgets.credential_form import (
 )
 
 
-@pytest.mark.asyncio
 async def test_set_credential_without_selecting(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -36,7 +35,6 @@ async def test_set_credential_without_selecting(
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
-@pytest.mark.asyncio
 async def test_set_credential_only_username_linux(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -81,7 +79,6 @@ async def test_set_credential_only_username_linux(
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
-@pytest.mark.asyncio
 async def test_set_credential_half_linux(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -128,7 +125,6 @@ async def test_set_credential_half_linux(engine: Engine, load_mock_config: AppCo
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
-@pytest.mark.asyncio
 async def test_set_credential_full_linux(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -169,7 +165,6 @@ async def test_set_credential_full_linux(engine: Engine, load_mock_config: AppCo
 
 
 @pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
-@pytest.mark.asyncio
 async def test_set_credential_only_username_windows(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -214,7 +209,6 @@ async def test_set_credential_only_username_windows(
 
 
 @pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
-@pytest.mark.asyncio
 async def test_set_credential_half_windows(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -261,7 +255,6 @@ async def test_set_credential_half_windows(engine: Engine, load_mock_config: App
 
 
 @pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
-@pytest.mark.asyncio
 async def test_set_credential_full_windows(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]

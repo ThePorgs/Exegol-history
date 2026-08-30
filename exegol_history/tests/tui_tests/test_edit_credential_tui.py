@@ -1,4 +1,3 @@
-import pytest
 from sqlalchemy import Engine
 from exegol_history.config.config import AppConfig
 from exegol_history.tui.db_creds import DbCredsApp
@@ -20,7 +19,6 @@ from exegol_history.tui.widgets.credential_form import (
 )
 
 
-@pytest.mark.asyncio
 async def test_edit_credential_only_username(
     engine: Engine, load_mock_config: AppConfig
 ):
@@ -48,7 +46,6 @@ async def test_edit_credential_only_username(
         ]
 
 
-@pytest.mark.asyncio
 async def test_edit_credential_full(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -104,7 +101,6 @@ async def test_edit_credential_full(engine: Engine, load_mock_config: AppConfig)
         ]
 
 
-@pytest.mark.asyncio
 async def test_edit_credential_not_exist(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     edit_credential_keybind = load_mock_config.keybindings["edit_credential"]
@@ -115,7 +111,6 @@ async def test_edit_credential_not_exist(engine: Engine, load_mock_config: AppCo
     assert len(get_credentials(engine)) == 0
 
 
-@pytest.mark.asyncio
 async def test_edit_credential_issue_3(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]

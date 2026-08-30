@@ -1,6 +1,5 @@
 from sqlalchemy import Engine
 from textual.keys import Keys
-import pytest
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.importing import HostsImportFileType
 from exegol_history.tui.db_hosts import DbHostsApp
@@ -23,7 +22,6 @@ from exegol_history.tui.widgets.import_file import (
 from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 
 
-@pytest.mark.asyncio
 async def test_import_host_csv(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -51,7 +49,6 @@ async def test_import_host_csv(engine: Engine, load_mock_config: AppConfig):
     ]
 
 
-@pytest.mark.asyncio
 async def test_import_host_csv_file(
     engine: Engine, load_mock_config: AppConfig, HOSTS_TEST_VALUE: list[Host]
 ):

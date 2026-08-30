@@ -1,4 +1,3 @@
-import pytest
 from sqlalchemy import Engine
 from exegol_history.config.config import AppConfig
 from exegol_history.tui.db_creds import DbCredsApp
@@ -28,7 +27,6 @@ from exegol_history.tui.screens.delete_object import (
 )
 
 
-@pytest.mark.asyncio
 async def test_delete_credential(engine: Engine, load_mock_config):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -49,7 +47,6 @@ async def test_delete_credential(engine: Engine, load_mock_config):
         assert len(get_credentials(engine)) == 0
 
 
-@pytest.mark.asyncio
 async def test_delete_credential_full(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     add_credential_keybind = load_mock_config.keybindings["add_credential"]
@@ -85,7 +82,6 @@ async def test_delete_credential_full(engine: Engine, load_mock_config: AppConfi
         assert len(get_credentials(engine)) == 0
 
 
-@pytest.mark.asyncio
 async def test_delete_credential_range(
     engine: Engine,
     load_mock_config: AppConfig,
@@ -121,7 +117,6 @@ async def test_delete_credential_range(
         )
 
 
-@pytest.mark.asyncio
 async def test_delete_credential_range_with_invalid_id(
     engine: Engine,
     load_mock_config: AppConfig,
@@ -158,7 +153,8 @@ async def test_delete_credential_range_with_invalid_id(
 
 
 # Trying to delete an object when no object are present should not raise an exception
-@pytest.mark.asyncio
+
+
 async def test_delete_credential_empty(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     delete_credential_keybind = load_mock_config.keybindings["delete_credential"]
@@ -167,7 +163,6 @@ async def test_delete_credential_empty(engine: Engine, load_mock_config: AppConf
         await pilot.press(delete_credential_keybind)
 
 
-@pytest.mark.asyncio
 async def test_delete_credential_issue_3(engine: Engine, load_mock_config: AppConfig):
     app = DbCredsApp(load_mock_config, engine)
     delete_credential_keybind = load_mock_config.keybindings["delete_credential"]

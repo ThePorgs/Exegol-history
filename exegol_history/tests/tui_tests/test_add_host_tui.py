@@ -21,7 +21,6 @@ from exegol_history.tui.widgets.host_form import (
 )
 
 
-@pytest.mark.asyncio
 async def test_add_host_only_ip(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -34,7 +33,6 @@ async def test_add_host_only_ip(engine: Engine, load_mock_config: AppConfig):
     assert get_hosts(engine) == [Host(1, ip=IP_TEST_VALUE)]
 
 
-@pytest.mark.asyncio
 async def test_add_host_only_half(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -52,7 +50,6 @@ async def test_add_host_only_half(engine: Engine, load_mock_config: AppConfig):
     ]
 
 
-@pytest.mark.asyncio
 async def test_add_host_full(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -72,7 +69,6 @@ async def test_add_host_full(engine: Engine, load_mock_config: AppConfig):
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
-@pytest.mark.asyncio
 async def test_add_and_set_host_full(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -106,7 +102,6 @@ async def test_add_and_set_host_full(engine: Engine, load_mock_config: AppConfig
     assert ROLE_TEST_VALUE in envs
 
 
-@pytest.mark.asyncio
 async def test_add_host_empty(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -116,7 +111,6 @@ async def test_add_host_empty(engine: Engine, load_mock_config: AppConfig):
     assert get_hosts(engine) == [Host(1)]
 
 
-@pytest.mark.asyncio
 async def test_add_host_existing(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -155,7 +149,6 @@ async def test_add_host_existing(engine: Engine, load_mock_config: AppConfig):
         ]
 
 
-@pytest.mark.asyncio
 async def test_add_host_issue_3(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -168,7 +161,7 @@ async def test_add_host_issue_3(engine: Engine, load_mock_config: AppConfig):
 
     assert get_hosts(engine) == [Host(1, ip=IP_TEST_VALUE)]
 
-@pytest.mark.asyncio
+
 async def test_add_host_existing_no_role_keeps_role(
     engine: Engine, load_mock_config: AppConfig
 ):

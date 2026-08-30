@@ -26,7 +26,6 @@ from exegol_history.tui.widgets.host_form import (
 )
 
 
-@pytest.mark.asyncio
 async def test_set_host_without_selecting(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
 
@@ -37,7 +36,6 @@ async def test_set_host_without_selecting(engine: Engine, load_mock_config: AppC
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
-@pytest.mark.asyncio
 async def test_set_host_only_ip_linux(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -76,7 +74,6 @@ async def test_set_host_only_ip_linux(engine: Engine, load_mock_config: AppConfi
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
-@pytest.mark.asyncio
 async def test_set_host_half_linux(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -119,7 +116,6 @@ async def test_set_host_half_linux(engine: Engine, load_mock_config: AppConfig):
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
-@pytest.mark.asyncio
 async def test_set_host_full_linux(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -167,7 +163,6 @@ async def test_set_host_full_linux(engine: Engine, load_mock_config: AppConfig):
 # Test the special case of a DC host, if we select an host that is not a DC,
 # the DC_HOST and DC_IP variable shouldn't change
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")
-@pytest.mark.asyncio
 async def test_set_host_dc_linux(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -229,7 +224,6 @@ async def test_set_host_dc_linux(engine: Engine, load_mock_config: AppConfig):
 
 
 @pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
-@pytest.mark.asyncio
 async def test_set_host_only_ip_windows(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -268,7 +262,6 @@ async def test_set_host_only_ip_windows(engine: Engine, load_mock_config: AppCon
 
 
 @pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
-@pytest.mark.asyncio
 async def test_set_host_half_windows(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -311,7 +304,6 @@ async def test_set_host_half_windows(engine: Engine, load_mock_config: AppConfig
 
 
 @pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
-@pytest.mark.asyncio
 async def test_set_host_full_windows(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
@@ -359,7 +351,6 @@ async def test_set_host_full_windows(engine: Engine, load_mock_config: AppConfig
 # Test the special case of a DC host, if we select an host that is not a DC,
 # the DC_HOST and DC_IP variable shouldn't change
 @pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
-@pytest.mark.asyncio
 async def test_set_host_dc_windows(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]
