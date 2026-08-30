@@ -147,6 +147,9 @@ class DbCredsApp(App):
         # Apply keybindings from config
         self.set_keymap(self.config.keybindings)
 
+        search_input = self.screen.query_one(Input)
+        search_input.focus()
+
         if self.show_add_screen:
             self.push_screen(
                 AddObjectScreen(domains=set(table.get_column_at(4))),
