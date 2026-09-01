@@ -7,8 +7,8 @@ from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
 
-CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
-HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP", "ROLE"]
+CREDS_VARIABLES = ["CREDS_ID", "USER", "PASSWORD", "NT_HASH", "DOMAIN"]
+HOSTS_VARIABLES = ["HOST_ID", "IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP", "ROLE"]
 VARIABLE_REGEX_UNIX = r"(?:export|unset) ([\w\d]*)(?:='.*?')?"
 VARIABLE_REGEX_WINDOWS = r"(?:Set|Remove)-Variable -Name (\S*) (?:-Value '[^']*?' )?-Scope Global(?: -ErrorAction SilentlyContinue)?"
 
@@ -61,7 +61,6 @@ def parse_and_update(
 
         if tmp:
             variable_name = tmp.group(1)
-
             if variable_name in variables_correspondance.keys():
                 new_value = variables_correspondance[variable_name]
                 if new_value:
