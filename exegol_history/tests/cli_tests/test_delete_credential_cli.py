@@ -10,6 +10,7 @@ from exegol_history.cli.functions import (
 from exegol_history.db_api.creds import (
     Credential,
     add_credentials,
+    delete_all_credentials,
     get_credentials,
 )
 from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST, parse_ids
@@ -87,3 +88,25 @@ def test_delete_credential_not_exist(engine: Engine):
 
     assert MESSAGE_ID_NOT_EXIST in console.file.getvalue().replace("\n", "")
     assert len(get_credentials(engine)) == 0
+
+
+def test_delete_all_credentials(engine: Engine):
+    credential1 = Credential(1, username=USERNAME_TEST_VALUE + "2", password=PASSWORD_TEST_VALUE)
+    credential2 = Credential(2, username=USERNAME_TEST_VALUE)
+    add_credentials(engine, [credential1.as_dict(), credential2.as_dict()])
+
+    command_line = f"{DELETE_SUBCOMMAND} {CREDS_SUBCOMMAND} --all".split()
+    args = parse_arguments().parse_args(command_line)
+
+    delete_objects(args, engine, Console(file=io.StringIO()))
+
+    assert get_credentials(engine) == []
+
+
+def test_delete_all_credentials_empty_table(engine: Engine):
+    command_line = f"{DELETE_SUBCOMMAND} {CREDS_SUBCOMMAND} --all".split()
+    args = parse_arguments().parse_args(command_line)
+
+    delete_objects(args, engine, Console(file=io.StringIO()))
+
+    assert get_credentials(engine) == []

@@ -2,6 +2,7 @@ import argparse
 
 from exegol_history.cli.functions import (
     ADD_SUBCOMMAND,
+    ALL_SUBCOMMAND,
     CREDS_SUBCOMMAND,
     DELETE_SUBCOMMAND,
     EDIT_SUBCOMMAND,
@@ -323,8 +324,15 @@ def delete_subparser(subparsers):
     credential_delete_parser.add_argument(
         "-i",
         "--id",
-        required=True,
+        required=False,
+        default=None,
         help="IDs of the credentials to be deleted, value are separated by a ',', and ranges by a '-', e.g: '5,7,8-18'.",
+    )
+    credential_delete_parser.add_argument(
+        "--all",
+        action="store_true",
+        default=False,
+        help="Delete all credentials from the database.",
     )
 
     # Hosts
@@ -334,8 +342,21 @@ def delete_subparser(subparsers):
     hosts_delete_parser.add_argument(
         "-i",
         "--id",
-        required=True,
+        required=False,
+        default=None,
         help="IDs of the hosts to be deleted, value are separated by a ',', and ranges by a '-', e.g: '5,7,8-18'.",
+    )
+    hosts_delete_parser.add_argument(
+        "--all",
+        action="store_true",
+        default=False,
+        help="Delete all hosts from the database.",
+    )
+
+    # All
+    delete_subparsers.add_parser(
+        ALL_SUBCOMMAND,
+        help="Delete all credentials and hosts from the database.",
     )
 
 
