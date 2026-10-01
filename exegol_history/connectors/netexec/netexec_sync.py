@@ -131,6 +131,8 @@ class NetexecSyncer:
                 credential["hash"] = password
             elif credtype == NetexecCredType.PASSWORD.value:
                 credential["password"] = password
+            else: # Do not sync other nxc creds type (e.g: SSH key)
+                continue
 
             credentials.append(credential)
 
