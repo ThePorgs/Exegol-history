@@ -57,6 +57,40 @@ Button {
 }
 /* Export horizontal browse end */
 
+/* Kerberos tickets layout */
+#main_horizontal {
+    height: 1fr;
+    /* In inline mode the Screen is auto-height, so 1fr collapses. Give the
+       split a concrete height (and a floor) so the table and describe panel
+       stay visible when the TUI runs inline. */
+    min-height: 15;
+}
+
+Screen:inline #main_horizontal {
+    height: 20;
+}
+
+#main_horizontal > ObjectsDataTable {
+    width: 60%;
+    height: 100%;
+}
+
+#describe_panel {
+    width: 40%;
+    height: 100%;
+    border: round $primary;
+    padding: 0 1;
+    border-title-align: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#describe_static {
+    width: 100%;
+    height: auto;
+}
+/* Kerberos tickets layout end */
+
 /* Modal */
 ModalScreen {
     align: center middle;

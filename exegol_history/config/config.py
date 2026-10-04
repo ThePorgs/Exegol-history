@@ -52,6 +52,9 @@ class AppConfig:
             ),
         ]
         self.theme = ConfigTheme(**config_data["theme"])
+        # Kerberos section is optional to stay backward compatible with
+        # configuration files generated before the feature was introduced.
+        self.kerberos = ConfigKerberos(**config_data.get("kerberos", {}))
 
     @staticmethod
     def setup_db(db_path: str) -> Engine:
@@ -111,6 +114,23 @@ class ConfigSyncMetasploit:
     ):
         self.enabled = enabled
         self.db_config_path = db_config_path
+
+
+class ConfigKerberos:
+    def __init__(
+        self,
+        search_paths: list[str] = None,
+        search_depth: int = 3,
+        describe_ticket_command: str = "describeTicket.py",
+        ticket_converter_command: str = "ticketConverter.py",
+    ):
+        # Default to the two Exegol paths if nothing is configured.
+        self.search_paths = (
+            search_paths if search_paths is not None else ["/workspace", "/root"]
+        )
+        self.search_depth = search_depth
+        self.describe_ticket_command = describe_ticket_command
+        self.ticket_converter_command = ticket_converter_command
 
 
 class ConfigTheme:

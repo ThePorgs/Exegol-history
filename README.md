@@ -6,6 +6,7 @@ Once an asset is selected from the TUI, the information can be accessed through 
 ## ✨ Features
 - Add / edit / delete credentials and hosts informations trough a CLI or a TUI
 - Import / export in various format (CSV, Pypykatz, ...)
+- Scan, describe and convert Kerberos CCACHE tickets (`exh set krb`)
 - Keybinds customisation
 
 ## 🖼️ Screenshots
@@ -130,6 +131,15 @@ delete_host = "f4"
 edit_host = "f5"
 export_host = "f6"
 quit = "ctrl+c"
+
+[kerberos]
+# Paths that will be recursively scanned for Kerberos CCACHE tickets.
+search_paths = ["/workspace", "/root"]
+# Maximum recursion depth used while scanning the paths above.
+search_depth = 3
+# Impacket tools used to describe and convert tickets.
+describe_ticket_command = "describeTicket.py"
+ticket_converter_command = "ticketConverter.py"
 
 [sync.nxc]
 auto = true

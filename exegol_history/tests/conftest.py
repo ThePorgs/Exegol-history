@@ -27,6 +27,7 @@ TEST_NETEXEC_PATH = TEST_ARTIFACTS_PATH / "netexec_artifacts"
 TEST_CONFIG_PATH = TEST_ARTIFACTS_PATH / AppConfig.CONFIG_FILENAME
 TEST_PROFILE_SH = TEST_ARTIFACTS_PATH / "profile.sh"
 TEST_PROFILE_PS1 = TEST_ARTIFACTS_PATH / "profile.ps1"
+TEST_KERBEROS_PATH = TEST_ARTIFACTS_PATH / "kerberos_artifacts"
 
 
 @pytest.fixture
@@ -49,6 +50,11 @@ def load_mock_config() -> AppConfig:
 
         if connector.CONNECTOR_NAME == NetexecSyncer.CONNECTOR_NAME:
             connector.workspace_path = TEST_NETEXEC_PATH
+
+    # Point the Kerberos scanner at the test artifacts instead of the Exegol
+    # default paths (/workspace, /root) which don't exist during tests.
+    mock_config.kerberos.search_paths = [str(TEST_KERBEROS_PATH)]
+    mock_config.kerberos.search_depth = 3
 
     return mock_config
 

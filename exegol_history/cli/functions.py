@@ -7,6 +7,7 @@ from exegol_history.cli.utils import (
     console_error,
     write_credential_in_profile,
     write_host_in_profile,
+    write_kerberos_in_profile,
 )
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import (
@@ -29,10 +30,12 @@ from exegol_history.db_api.importing import (
     HostsImportFileType,
     import_objects,
 )
+from exegol_history.db_api.kerberos import Ticket
 from exegol_history.db_api.sync import sync_objects
 from exegol_history.db_api.utils import parse_ids
 from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.tui.db_hosts import DbHostsApp
+from exegol_history.tui.db_kerberos import DbKerberosApp
 from typing import Any
 from rich.console import Console
 from sqlalchemy import Engine
@@ -40,6 +43,7 @@ import importlib.metadata
 
 CREDS_SUBCOMMAND = "creds"
 HOSTS_SUBCOMMAND = "hosts"
+KRB_SUBCOMMAND = "krb"
 ALL_SUBCOMMAND = "all"
 VERSION_SUBCOMMAND = "version"
 ADD_SUBCOMMAND = "add"
@@ -191,6 +195,18 @@ def set_objects(
             row_data = app.run(inline=config.theme.inline)
             if row_data is not None:
                 write_host_in_profile(Host(*row_data), config)
+        except TypeError:  # It means the user left the TUI without choosing anything
+            sys.exit(0)
+    elif args.subcommand == KRB_SUBCOMMAND:
+        app = DbKerberosApp(config, engine)
+
+        try:
+            result = app.run(inline=config.theme.inline)
+            if result is not None:
+                # The TUI may return a Ticket or the raw row data depending on
+                # how the selection was triggered.
+                ticket = result if isinstance(result, Ticket) else Ticket(*result)
+                write_kerberos_in_profile(ticket, config)
         except TypeError:  # It means the user left the TUI without choosing anything
             sys.exit(0)
 

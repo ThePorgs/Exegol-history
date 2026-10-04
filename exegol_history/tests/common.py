@@ -80,8 +80,23 @@ HOSTS_TEST_VALUE = [
     Host(4, ip=IP_TEST_VALUE + "3"),
 ]
 
+KRB_USERNAME_TEST_VALUE = "john"
+KRB_DOMAIN_TEST_VALUE = "DOMAIN.LOCAL"
+# Sample describeTicket.py-like output used to test identity parsing.
+KRB_DESCRIBE_OUTPUT = """[*] Number of credentials in cache: 1
+[*] Parsing credential[0]:
+Ticket Session Key            : 0123456789abcdef0123456789abcdef
+User Name                      : john
+User Realm                     : DOMAIN.LOCAL
+Service Name                  : krbtgt/DOMAIN.LOCAL
+ServiceRealm                  : DOMAIN.LOCAL
+"""
+
 # Paths
 TEST_ARTIFACTS_PATH = Path(__file__).parent / "artifacts"
+TEST_KERBEROS_ARTIFACTS_PATH = TEST_ARTIFACTS_PATH / "kerberos_artifacts"
+TEST_KRB_TICKET1 = TEST_KERBEROS_ARTIFACTS_PATH / "ticket1.ccache"
+TEST_KRB_TICKET2 = TEST_KERBEROS_ARTIFACTS_PATH / "subdir" / "ticket2.ccache"
 TEST_HOSTS_CSV_COMMA = TEST_ARTIFACTS_PATH / "hosts_comma.csv"
 TEST_HOSTS_CSV_COLON = TEST_ARTIFACTS_PATH / "hosts_colon.csv"
 TEST_HOSTS_JSON = TEST_ARTIFACTS_PATH / "hosts.json"

@@ -6,9 +6,11 @@ from typing import Dict, Union
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
+from exegol_history.db_api.kerberos import Ticket
 
 CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
 HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP", "ROLE"]
+KERBEROS_VARIABLES = ["USER", "DOMAIN", "KRB5CCNAME", "PASSWORD", "NT_HASH"]
 VARIABLE_REGEX_UNIX = r"(?:export|unset) ([\w\d]*)(?:='.*?')?"
 VARIABLE_REGEX_WINDOWS = r"(?:Set|Remove)-Variable -Name (\S*) (?:-Value '[^']*?' )?-Scope Global(?: -ErrorAction SilentlyContinue)?"
 
@@ -42,6 +44,21 @@ def write_credential_in_profile(credential: Credential, config: AppConfig):
         CREDS_VARIABLES[1]: credential.password,
         CREDS_VARIABLES[2]: credential.hash,
         CREDS_VARIABLES[3]: credential.domain,
+    }
+
+    parse_and_update(profile_sh_path, variables_correspondance)
+
+
+def write_kerberos_in_profile(ticket: Ticket, config: AppConfig):
+    profile_sh_path = config.paths.profile_sh_path
+    # Setting a Kerberos ticket sets USER/DOMAIN/KRB5CCNAME and clears any
+    # password or NT hash currently set since we now authenticate with a ticket.
+    variables_correspondance = {
+        KERBEROS_VARIABLES[0]: ticket.username,
+        KERBEROS_VARIABLES[1]: ticket.domain,
+        KERBEROS_VARIABLES[2]: ticket.path,
+        KERBEROS_VARIABLES[3]: None,
+        KERBEROS_VARIABLES[4]: None,
     }
 
     parse_and_update(profile_sh_path, variables_correspondance)

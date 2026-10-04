@@ -19,6 +19,15 @@ edit_host = "f5"
 export_host = "f6"
 quit = "ctrl+c"
 
+[kerberos]
+# Paths that will be recursively scanned for Kerberos CCACHE tickets.
+search_paths = ["/workspace", "/root"]
+# Maximum recursion depth used while scanning the paths above.
+search_depth = 3
+# Impacket tools used to describe and convert tickets.
+describe_ticket_command = "describeTicket.py"
+ticket_converter_command = "ticketConverter.py"
+
 [sync.netexec]
 enabled = false
 workspace_path = "~/.nxc/workspaces/"

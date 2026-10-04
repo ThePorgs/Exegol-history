@@ -5,6 +5,7 @@
 #export USER='someuser'
 #export PASSWORD='somepassword'
 #export NT_HASH='c1c635aa12ae60b7fe39e28456a7bac6'
+#export KRB5CCNAME='/workspace/ticket.ccache'
 #export DC_IP='192.168.56.101'
 #export DC_HOST='DC01.DOMAIN.LOCAL'
 #export DB_HOSTNAME='DC01.DOMAIN.LOCAL'

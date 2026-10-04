@@ -8,6 +8,7 @@ from exegol_history.cli.functions import (
     EXPORT_SUBCOMMAND,
     HOSTS_SUBCOMMAND,
     IMPORT_SUBCOMMAND,
+    KRB_SUBCOMMAND,
     SET_SUBCOMMAND,
     SHOW_SUBCOMMAND,
     UNSET_SUBCOMMAND,
@@ -367,4 +368,10 @@ def tui_subparser(subparsers):
     tui_subparsers.add_parser(
         HOSTS_SUBCOMMAND,
         help="Manage hosts using the TUI and set related environment variables.",
+    )
+
+    # Kerberos
+    tui_subparsers.add_parser(
+        KRB_SUBCOMMAND,
+        help="Scan, describe and convert Kerberos CCACHE tickets using the TUI and set related environment variables.",
     )
