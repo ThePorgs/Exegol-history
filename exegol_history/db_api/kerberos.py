@@ -82,7 +82,7 @@ def scan_ccache_tickets(search_paths: list[str], search_depth: int = 3) -> list[
 
             for name in filenames:
                 # Cheap filename check first, before touching the filesystem.
-                if not name.lower().endswith(CCACHE_EXTENSIONS):
+                if not name.lower().startswith("krb5cc_") or not name.lower().endswith(CCACHE_EXTENSIONS):
                     continue
 
                 full_path = os.path.join(dirpath, name)
