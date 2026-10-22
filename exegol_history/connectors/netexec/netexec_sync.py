@@ -125,7 +125,7 @@ class NetexecSyncer:
             else:
                 username, password = row
 
-            credential = Credential.dict(None, username, None, None, domain)
+            credential = Credential.dict(None, username, None, None, domain.lower())
 
             if credtype == NetexecCredType.HASH.value:
                 credential["hash"] = password
