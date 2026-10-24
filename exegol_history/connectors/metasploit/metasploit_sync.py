@@ -1,6 +1,4 @@
 from sqlalchemy import Engine
-import psycopg
-from psycopg.errors import UndefinedTable
 from exegol_history.db_api.creds import Credential
 from exegol_history.connectors.metasploit.utils import (
     get_msf_postgres_db_infos,
@@ -23,6 +21,10 @@ class MetasploitSyncer:
         self.engine = engine
 
     def sync(self):
+        # Lazy import: psycopg costs ~60 ms and is only needed when syncing
+        import psycopg
+        from psycopg.errors import UndefinedTable
+
         try:
             conn = psycopg.connect(
                 f"dbname={self.msf_db_name} user={self.msf_db_username} port={self.msf_db_port} password={self.msf_db_password} host=localhost"

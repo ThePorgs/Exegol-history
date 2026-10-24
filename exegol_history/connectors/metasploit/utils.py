@@ -1,5 +1,3 @@
-import yaml
-
 from enum import Enum
 
 MSF_DB_CONFIG_PATH = "/var/lib/postgresql/.msf4/database.yml"
@@ -37,6 +35,8 @@ def is_private_data_hash(private_data_type: str) -> bool:
 
 
 def get_msf_postgres_db_infos(msf_db_config_path: str) -> tuple[str, str, str, str]:
+    import yaml  # lazy import
+
     with open(msf_db_config_path, "rb") as msf_config:
         msf_config_yml = yaml.safe_load(msf_config)
         database = msf_config_yml["development"]["database"]

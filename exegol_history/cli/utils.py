@@ -1,4 +1,3 @@
-import argparse
 import re
 import platform
 from pathlib import Path
@@ -7,19 +6,13 @@ from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
 from exegol_history.db_api.kerberos import Ticket
+from exegol_history.cli.arguments import check_delimiter  # noqa: F401 (re-export)
 
 CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
 HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP", "ROLE"]
 KERBEROS_VARIABLES = ["USER", "DOMAIN", "KRB5CCNAME", "PASSWORD", "NT_HASH"]
 VARIABLE_REGEX_UNIX = r"(?:export|unset) ([\w\d]*)(?:='.*?')?"
 VARIABLE_REGEX_WINDOWS = r"(?:Set|Remove)-Variable -Name (\S*) (?:-Value '[^']*?' )?-Scope Global(?: -ErrorAction SilentlyContinue)?"
-
-
-def check_delimiter(delimiter: str) -> str:
-    if len(delimiter) != 1:
-        raise argparse.ArgumentTypeError("Delimiter must be a single character.")
-
-    return delimiter
 
 
 def write_host_in_profile(host: Host, config: AppConfig):

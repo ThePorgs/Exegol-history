@@ -21,10 +21,10 @@ class Credential(Base):
     def __init__(
         self,
         credential_id: int = None,
-        username: str = None,
-        password: str = None,
-        hash: str = None,
-        domain: str = None,
+        username: str = "",
+        password: str = "",
+        hash: str = "",
+        domain: str = "",
     ):
         self.credential_id = credential_id
         self.username = username
@@ -58,10 +58,10 @@ class Credential(Base):
     @staticmethod
     def dict(
         credential_id: int = None,
-        username: str = None,
-        password: str = None,
-        hash: str = None,
-        domain: str = None,
+        username: str = "",
+        password: str = "",
+        hash: str = "",
+        domain: str = "",
     ) -> dict:
         return {
             "credential_id": credential_id,

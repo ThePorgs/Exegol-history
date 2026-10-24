@@ -112,7 +112,8 @@ TEST_NETEXEC_WORKSPACE = TEST_ARTIFACTS_PATH / "netexec_artifacts"
 
 # Path for patching function for mocking
 SQLITE3_PATCH_PATH = "exegol_history.connectors.netexec.netexec_sync.sqlite3"
-PSYCOPG_PATCH_PATH = "exegol_history.connectors.metasploit.metasploit_sync.psycopg"
+# psycopg is imported lazily inside MetasploitSyncer.sync(), so patch it at the source
+PSYCOPG_PATCH_PATH = "psycopg.connect"
 GET_PG_DB_INFOS_PATCH_PATH = (
     "exegol_history.connectors.metasploit.metasploit_sync.get_msf_postgres_db_infos"
 )

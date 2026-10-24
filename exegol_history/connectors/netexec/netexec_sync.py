@@ -116,7 +116,7 @@ class NetexecSyncer:
         columns = [desc[0] for desc in cursor.description]
 
         for row in cursor.fetchall():
-            username = password = domain = credtype = None
+            username = password = domain = credtype = ""
 
             if ("domain" in columns) and ("credtype" in columns):
                 username, password, domain, credtype = row
@@ -134,7 +134,8 @@ class NetexecSyncer:
             else: # Do not sync other nxc creds type (e.g: SSH key)
                 continue
 
-            credentials.append(credential)
+            if credential["hash"] or credential["password"]:
+                credentials.append(credential)
 
         conn.close()
 
@@ -149,7 +150,7 @@ class NetexecSyncer:
         columns = [desc[0] for desc in cursor.description]
 
         for row in cursor.fetchall():
-            ip = hostname = None
+            ip = hostname = ""
 
             if "domain" in columns:
                 ip, hostname, domain = row
@@ -159,7 +160,7 @@ class NetexecSyncer:
             else:
                 hostname = row
 
-            hosts.append(Host.dict(ip=ip, hostname=hostname))
+            hosts.append(Host.dict(ip=ip, hostname=hostname.lower()))
 
         conn.close()
 

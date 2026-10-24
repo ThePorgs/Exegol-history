@@ -8,6 +8,7 @@ from textual.widgets.data_table import RowDoesNotExist
 from textual.widgets import Footer, Header, Input, Rule, Static
 from textual.containers import Horizontal, VerticalScroll
 from textual.binding import Binding
+from textual import work
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.kerberos import (
     Ticket,
@@ -18,6 +19,7 @@ from exegol_history.db_api.kerberos import (
 )
 from exegol_history.db_api.utils import copy_in_clipboard
 from exegol_history.tui.widgets.object_datatable import ObjectsDataTable
+from exegol_history.tui.widgets.search_input import SearchInput
 
 """
 This is the main application displaying the Kerberos tickets table, a search bar
@@ -101,7 +103,7 @@ class DbKerberosApp(App):
                     id=ID_DESCRIBE_STATIC,
                 )
         yield Rule(line_style="heavy")
-        yield Input(placeholder="🔍 Search...", id="search-bar")
+        yield SearchInput(placeholder="🔍 Search...", id="search-bar")
         yield Footer()
 
     def _scan_tickets(self) -> list[Ticket]:
@@ -126,18 +128,44 @@ class DbKerberosApp(App):
         self.register_theme(self.custom_theme)
         self.theme = "custom"
 
-        tickets = self._scan_tickets()
-
         table = self.screen.query_one(ObjectsDataTable)
         # Explicit column keys let us reliably update cells later on.
         table.add_column("path", key="path")
         table.add_column("username", key="username")
         table.add_column("domain", key="domain")
-        self._set_tickets(tickets)
-        self._populate_rows(table, tickets)
 
         # Apply keybindings from config
         self.set_keymap(self.config.keybindings)
+
+        self.query_one(SearchInput).focus()
+
+        # Scanning the filesystem and running describeTicket.py (one Python
+        # process per ticket) is slow: do it in a thread so the TUI shows up
+        # immediately and fills the table when ready.
+        self.load_tickets()
+
+    @work(thread=True, exclusive=True, group="scan")
+    def load_tickets(self) -> None:
+        self.call_from_thread(self._set_loading, True)
+        tickets = self._scan_tickets()
+        self.call_from_thread(self._show_tickets, tickets)
+
+    def _set_loading(self, loading: bool) -> None:
+        self.screen.query_one(ObjectsDataTable).loading = loading
+
+    def _show_tickets(self, tickets: list[Ticket]) -> None:
+        table = self.screen.query_one(ObjectsDataTable)
+        table.loading = False
+        table.clear()
+        self._set_tickets(tickets)
+        search_query = self.screen.query_one("#search-bar", Input).value.lower()
+        if search_query:
+            tickets = [
+                ticket
+                for ticket in tickets
+                if any(search_query in str(cell).lower() for cell in ticket)
+            ]
+        self._populate_rows(table, tickets)
 
 
     def _populate_rows(self, table: ObjectsDataTable, tickets: list[Ticket]) -> None:
@@ -217,13 +245,8 @@ class DbKerberosApp(App):
         sys.exit(0)
 
     def action_refresh_tickets(self) -> None:
-        # Rescan and re-describe everything, then refresh the cached description panel.
-        tickets = self._scan_tickets()
-
-        table = self.screen.query_one(ObjectsDataTable)
-        table.clear()
-        self._set_tickets(tickets)
-        self._populate_rows(table, tickets)
+        # Rescan and re-describe everything in the background.
+        self.load_tickets()
 
     def action_convert_ticket(self) -> None:
         try:

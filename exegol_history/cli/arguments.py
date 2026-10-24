@@ -1,6 +1,6 @@
 import argparse
 
-from exegol_history.cli.functions import (
+from exegol_history.cli.constants import (
     ADD_SUBCOMMAND,
     CREDS_SUBCOMMAND,
     DELETE_SUBCOMMAND,
@@ -16,9 +16,19 @@ from exegol_history.cli.functions import (
     SYNC_SUBCOMMAND,
     ALL_SUBCOMMAND,
 )
-from exegol_history.cli.utils import check_delimiter
-from exegol_history.db_api.exporting import CredsExportFileType, HostsExportFileType
-from exegol_history.db_api.importing import CredsImportFileType, HostsImportFileType
+from exegol_history.db_api.file_types import (
+    CredsExportFileType,
+    CredsImportFileType,
+    HostsExportFileType,
+    HostsImportFileType,
+)
+
+
+def check_delimiter(delimiter: str) -> str:
+    if len(delimiter) != 1:
+        raise argparse.ArgumentTypeError("Delimiter must be a single character.")
+
+    return delimiter
 
 
 def parse_arguments() -> argparse.Namespace:

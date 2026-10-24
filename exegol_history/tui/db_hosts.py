@@ -6,8 +6,9 @@ from textual.keys import Keys
 from textual.theme import Theme
 from textual.screen import Screen
 from textual.widgets.data_table import RowDoesNotExist
-from textual.widgets import Footer, Header, DataTable, Input, Rule
+from textual.widgets import Footer, Header, Input, Rule
 from textual.binding import Binding
+from textual import work
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.exporting import export_objects
 from exegol_history.db_api.hosts import (
@@ -18,12 +19,8 @@ from exegol_history.db_api.hosts import (
     get_hosts,
 )
 from exegol_history.db_api.utils import copy_in_clipboard
-from exegol_history.tui.screens.add_object import AddObjectScreen
-from exegol_history.tui.screens.delete_object import DeleteObjectScreen
-from exegol_history.tui.screens.edit_object import EditObjectScreen
-from exegol_history.tui.screens.export_object import ExportObjectScreen
-from exegol_history.tui.widgets.import_file import AssetsType
 from exegol_history.tui.widgets.object_datatable import ObjectsDataTable
+from exegol_history.tui.widgets.search_input import SearchInput
 
 TOOLTIP_COPY_IP = "Copy the IP to the clipboard"
 TOOLTIP_COPY_HOSTNAME = "Copy the hostname to the clipboard"
@@ -89,7 +86,11 @@ class DbHostsApp(App):
     ]
 
     def __init__(
-        self, config: AppConfig, engine: Engine, show_add_screen: bool = False
+        self,
+        config: AppConfig,
+        engine: Engine,
+        show_add_screen: bool = False,
+        background_sync: bool = False,
     ):
         self.CSS_PATH = "css/general.tcss"
         self.TITLE = (
@@ -113,12 +114,15 @@ class DbHostsApp(App):
             dark=config.theme.dark,
         )
         self.show_add_screen = show_add_screen
+        self.background_sync = background_sync
+        self.original_data: list = []
+        self._search_index: list[str] = []
 
     def compose(self) -> ComposeResult:
         yield Header()
         yield ObjectsDataTable()
         yield Rule(line_style="heavy")
-        yield Input(placeholder="🔍 Search...", id="search-bar")
+        yield SearchInput(placeholder="🔍 Search...", id="search-bar")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -132,13 +136,46 @@ class DbHostsApp(App):
         table = self.screen.query_one(ObjectsDataTable)
         table.add_columns(*_tmp.__dict__.keys())
         table.add_rows(tmp)
-        self.original_data = tmp
+        self._set_data(tmp)
 
         # Apply keybindings from config
         self.set_keymap(self.config.keybindings)
 
+        self.query_one(SearchInput).focus()
+
         if self.show_add_screen:
+            from exegol_history.tui.screens.add_object import AddObjectScreen
+            from exegol_history.tui.widgets.import_file import AssetsType
+
             self.push_screen(AddObjectScreen(AssetsType.Hosts), self.check_added_host)
+
+        if self.background_sync:
+            self.sync_connectors()
+
+    @work(thread=True, exclusive=True, group="sync", exit_on_error=False)
+    def sync_connectors(self) -> None:
+        """Pull NetExec / Metasploit hosts without blocking the UI."""
+        from exegol_history.db_api.sync import sync_objects
+
+        try:
+            sync_objects(self.engine, self.config, True, True)
+        except Exception:
+            return
+        self.call_from_thread(self._refresh_after_sync)
+
+    def _refresh_after_sync(self) -> None:
+        try:
+            self.update_table()
+        except Exception:
+            # e.g. a modal screen is on top: data will be refreshed on next update
+            pass
+
+    def _set_data(self, data: list) -> None:
+        self.original_data = data
+        # Pre-compute the lowercase searchable text once, instead of on every keystroke
+        self._search_index = [
+            "\0".join(str(cell).lower() for cell in row) for row in data
+        ]
 
     def get_system_commands(self, screen: Screen):
         yield SystemCommand("Copy IP", TOOLTIP_COPY_IP, self.action_copy_ip_clipboard)
@@ -156,31 +193,34 @@ class DbHostsApp(App):
         # Refresh the table
         tmp = get_hosts(self.engine)
 
-        table = self.screen.query_one(DataTable)
-        table.clear()
-        table.add_rows(tmp)
-        self.original_data = tmp
+        table = self.screen.query_one(ObjectsDataTable)
+        search_query = self.screen.query_one("#search-bar", Input).value
+        self._set_data(tmp)
+        if search_query:
+            self._filter_table(search_query)
+        else:
+            table.clear()
+            table.add_rows(tmp)
 
     def on_input_changed(self, event: Input.Changed) -> None:
+        """Filter the DataTable when the search bar input changes."""
         try:
-            search_query = event.value.lower()
-            data_table = self.screen.query_one(ObjectsDataTable)
-
-            # Clear current rows
-            data_table.clear()
-
-            # Filter rows based on the search query
-            filtered_data = [
-                row
-                for row in self.original_data
-                if any(search_query in str(cell).lower() for cell in row)
-            ]
-
-            # Add filtered rows back to the DataTable
-            for row in filtered_data:
-                data_table.add_row(*map(str, row))
+            self._filter_table(event.value)
         except Exception:
             pass
+
+    def _filter_table(self, query: str) -> None:
+        search_query = query.lower()  # Case-insensitive search
+        data_table = self.screen.query_one(ObjectsDataTable)
+
+        filtered_data = [
+            row
+            for row, haystack in zip(self.original_data, self._search_index)
+            if search_query in haystack
+        ]
+
+        data_table.clear()
+        data_table.add_rows([tuple(map(str, row)) for row in filtered_data])
 
     def action_copy_ip_clipboard(self) -> None:
         table = self.screen.query_one(ObjectsDataTable)
@@ -235,12 +275,20 @@ class DbHostsApp(App):
                     )
 
     def action_export_host(self) -> None:
+        from exegol_history.tui.screens.export_object import ExportObjectScreen
+        from exegol_history.tui.widgets.import_file import AssetsType
+
         self.push_screen(ExportObjectScreen(AssetsType.Hosts), self.check_export_host)
 
     def action_add_host(self) -> None:
+        from exegol_history.tui.screens.add_object import AddObjectScreen
+        from exegol_history.tui.widgets.import_file import AssetsType
+
         self.push_screen(AddObjectScreen(AssetsType.Hosts), self.check_added_host)
 
     def action_delete_host(self) -> None:
+        from exegol_history.tui.screens.delete_object import DeleteObjectScreen
+
         def check_delete(result: list[int]) -> None:
             for id in result:
                 try:
@@ -262,6 +310,9 @@ class DbHostsApp(App):
             pass
 
     def action_edit_host(self) -> None:
+        from exegol_history.tui.screens.edit_object import EditObjectScreen
+        from exegol_history.tui.widgets.import_file import AssetsType
+
         def check_edit_host(host: Host) -> None:
             try:
                 edit_hosts(self.engine, [host])

@@ -18,9 +18,9 @@ class Host(Base):
     def __init__(
         self,
         host_id: int = None,
-        ip: str = None,
-        hostname: str = None,
-        role: str = None,
+        ip: str = "",
+        hostname: str = "",
+        role: str = "",
     ):
         self.host_id = host_id
         self.ip = ip
@@ -49,7 +49,7 @@ class Host(Base):
 
     @staticmethod
     def dict(
-        host_id: int = None, ip: str = None, hostname: str = None, role: str = None
+        host_id: int = None, ip: str = "", hostname: str = "", role: str = ""
     ) -> dict:
         return {
             "host_id": host_id,

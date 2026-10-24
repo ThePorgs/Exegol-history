@@ -232,7 +232,7 @@ def test_sync_credential_metasploit_big(engine: Engine, load_mock_config: AppCon
 
     with patch(PSYCOPG_PATCH_PATH) as mockpsycopg:
         with patch(GET_PG_DB_INFOS_PATCH_PATH) as get_msf_postgres_db_infos:
-            mockpsycopg.connect().cursor().fetchall.return_value = credentials_row
+            mockpsycopg().cursor().fetchall.return_value = credentials_row
             get_msf_postgres_db_infos.return_value = ("", "", "", "")
 
             command_line = f"{SYNC_SUBCOMMAND}".split()
@@ -257,7 +257,7 @@ def test_sync_credential_metasploit_big_update(
 
     with patch(PSYCOPG_PATCH_PATH) as mockpsycopg:
         with patch(GET_PG_DB_INFOS_PATCH_PATH) as get_msf_postgres_db_infos:
-            mockpsycopg.connect().cursor().fetchall.return_value = credentials_row
+            mockpsycopg().cursor().fetchall.return_value = credentials_row
             get_msf_postgres_db_infos.return_value = ("", "", "", "")
 
             command_line = f"{SYNC_SUBCOMMAND}".split()
@@ -287,7 +287,7 @@ def test_sync_credential_metasploit_big_update(
 
     with patch(PSYCOPG_PATCH_PATH) as mockpsycopg:
         with patch(GET_PG_DB_INFOS_PATCH_PATH) as get_msf_postgres_db_infos:
-            mockpsycopg.connect().cursor().fetchall.return_value = credentials_row
+            mockpsycopg().cursor().fetchall.return_value = credentials_row
             get_msf_postgres_db_infos.return_value = ("", "", "", "")
 
             command_line = f"{SYNC_SUBCOMMAND}".split()
@@ -307,7 +307,7 @@ def test_sync_credential_metasploit(engine: Engine, load_mock_config: AppConfig)
 
     with patch(PSYCOPG_PATCH_PATH) as mockpsycopg:
         with patch(GET_PG_DB_INFOS_PATCH_PATH) as get_msf_postgres_db_infos:
-            mockpsycopg.connect().cursor().fetchall.return_value = [
+            mockpsycopg().cursor().fetchall.return_value = [
                 (
                     None,
                     USERNAME_TEST_VALUE,
@@ -339,7 +339,7 @@ def test_sync_credential_metasploit_empty(engine: Engine, load_mock_config: AppC
 
     with patch(PSYCOPG_PATCH_PATH) as mockpsycopg:
         with patch(GET_PG_DB_INFOS_PATCH_PATH) as get_msf_postgres_db_infos:
-            mockpsycopg.connect().cursor().fetchall.return_value = []
+            mockpsycopg().cursor().fetchall.return_value = []
             get_msf_postgres_db_infos.return_value = ("", "", "", "")
 
             command_line = f"{SYNC_SUBCOMMAND}".split()

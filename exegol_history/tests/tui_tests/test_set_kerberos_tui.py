@@ -23,6 +23,11 @@ from common import (
 )
 
 
+async def wait_for_tickets(app, pilot):
+    await app.workers.wait_for_complete()
+    await pilot.pause()
+
+
 def patch_describe(**kwargs):
     """
     Patch describeTicket.py invocation at its source module. describe_and_enrich_
@@ -37,7 +42,9 @@ async def test_kerberos_tui_lists_tickets(load_mock_config: AppConfig):
     with patch_describe():
         app = DbKerberosApp(load_mock_config, None)
 
-        async with app.run_test():
+        async with app.run_test() as pilot:
+            # Tickets are scanned in a background worker
+            await wait_for_tickets(app, pilot)
             table = app.screen.query_one(ObjectsDataTable)
             # Two .ccache tickets exist in the test artifacts (one nested).
             assert table.row_count == 2
@@ -49,7 +56,9 @@ async def test_kerberos_tui_identity_enriched_at_mount(load_mock_config: AppConf
     with patch_describe():
         app = DbKerberosApp(load_mock_config, None)
 
-        async with app.run_test():
+        async with app.run_test() as pilot:
+            # Tickets are scanned in a background worker
+            await wait_for_tickets(app, pilot)
             table = app.screen.query_one(ObjectsDataTable)
             usernames = list(table.get_column_at(1))
             domains = list(table.get_column_at(2))
@@ -64,6 +73,8 @@ async def test_kerberos_tui_describe_runs_at_mount_not_on_highlight(
         app = DbKerberosApp(load_mock_config, None)
 
         async with app.run_test() as pilot:
+            # Tickets are scanned in a background worker
+            await wait_for_tickets(app, pilot)
             # describeTicket.py was run once per ticket at creation time.
             calls_after_mount = mock_describe.call_count
             assert calls_after_mount == 2
@@ -87,6 +98,8 @@ async def test_kerberos_tui_describe_panel_shows_cached_output(
         app = DbKerberosApp(load_mock_config, None)
 
         async with app.run_test() as pilot:
+            # Tickets are scanned in a background worker
+            await wait_for_tickets(app, pilot)
             table = app.screen.query_one(ObjectsDataTable)
             table.focus()
             await pilot.pause()
@@ -102,12 +115,14 @@ async def test_kerberos_tui_refresh_reruns_describe(load_mock_config: AppConfig)
         app = DbKerberosApp(load_mock_config, None)
 
         async with app.run_test() as pilot:
+            # Tickets are scanned in a background worker
+            await wait_for_tickets(app, pilot)
             calls_after_mount = mock_describe.call_count
             assert calls_after_mount == 2
 
             refresh_keybind = load_mock_config.keybindings.get("refresh_tickets", "f3")
             await pilot.press(refresh_keybind)
-            await pilot.pause()
+            await wait_for_tickets(app, pilot)
 
             # Refresh rescans and re-describes every ticket.
             assert mock_describe.call_count == calls_after_mount + 2
@@ -123,6 +138,8 @@ async def test_kerberos_tui_convert_ticket(load_mock_config: AppConfig):
         app = DbKerberosApp(load_mock_config, None)
 
         async with app.run_test() as pilot:
+            # Tickets are scanned in a background worker
+            await wait_for_tickets(app, pilot)
             table = app.screen.query_one(ObjectsDataTable)
             table.focus()
             await pilot.pause()
@@ -144,6 +161,8 @@ async def test_kerberos_tui_search_filters(load_mock_config: AppConfig):
         app = DbKerberosApp(load_mock_config, None)
 
         async with app.run_test() as pilot:
+            # Tickets are scanned in a background worker
+            await wait_for_tickets(app, pilot)
             search = app.screen.query_one(Input)
             search.focus()
             await pilot.pause()
@@ -160,6 +179,8 @@ async def test_kerberos_tui_select_ticket_returns_ticket(load_mock_config: AppCo
         app = DbKerberosApp(load_mock_config, None)
 
         async with app.run_test() as pilot:
+            # Tickets are scanned in a background worker
+            await wait_for_tickets(app, pilot)
             table = app.screen.query_one(ObjectsDataTable)
             table.focus()
             await pilot.pause()

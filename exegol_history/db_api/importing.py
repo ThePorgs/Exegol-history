@@ -1,24 +1,13 @@
-from enum import Enum
 from typing import Any
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
-from pykeepass import PyKeePass
 import json
 import io
 import csv
-
-
-class CredsImportFileType(Enum):
-    CSV = 1
-    JSON = 2
-    KDBX = 3
-    PYPYKATZ_JSON = 4
-    SECRETSDUMP = 5
-
-
-class HostsImportFileType(Enum):
-    CSV = 1
-    JSON = 2
+from exegol_history.db_api.file_types import (  # noqa: F401 (re-export)
+    CredsImportFileType,
+    HostsImportFileType,
+)
 
 
 def import_objects(
@@ -124,6 +113,8 @@ def import_creds_kdbx(
     file_raw, kdbx_password: str = None, keyfile_path: str = None
 ) -> list[Credential]:
     parsed_credentials = list()
+    from pykeepass import PyKeePass  # lazy: pulls lxml, ~70 ms
+
     kp = PyKeePass(io.BytesIO(file_raw), password=kdbx_password, keyfile=keyfile_path)
 
     for entry in kp.entries:

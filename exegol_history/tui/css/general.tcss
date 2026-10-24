@@ -134,3 +134,15 @@ OpenFileScreen > Container {
     width: 80;
 }
 /* Modal end */
+
+/* Main table: fill remaining space so the search bar stays visible */
+ObjectsDataTable {
+    height: 1fr;
+}
+
+/* In inline mode the Screen is auto-height, so 1fr collapses:
+   cap the table instead (same approach as #main_horizontal) */
+Screen:inline ObjectsDataTable {
+    height: auto;
+    max-height: 20;
+}

@@ -33,31 +33,38 @@ from exegol_history.db_api.importing import (
 from exegol_history.db_api.kerberos import Ticket
 from exegol_history.db_api.sync import sync_objects
 from exegol_history.db_api.utils import parse_ids
-from exegol_history.tui.db_creds import DbCredsApp
-from exegol_history.tui.db_hosts import DbHostsApp
-from exegol_history.tui.db_kerberos import DbKerberosApp
 from typing import Any
 from rich.console import Console
 from sqlalchemy import Engine
 import importlib.metadata
 
-CREDS_SUBCOMMAND = "creds"
-HOSTS_SUBCOMMAND = "hosts"
-KRB_SUBCOMMAND = "krb"
-ALL_SUBCOMMAND = "all"
-VERSION_SUBCOMMAND = "version"
-ADD_SUBCOMMAND = "add"
-IMPORT_SUBCOMMAND = "import"
-EDIT_SUBCOMMAND = "edit"
-EXPORT_SUBCOMMAND = "export"
-SET_SUBCOMMAND = "set"
-UNSET_SUBCOMMAND = "unset"
-SHOW_SUBCOMMAND = "show"
-DELETE_SUBCOMMAND = "rm"
-SYNC_SUBCOMMAND = "sync"
+from exegol_history.cli.constants import (  # noqa: F401 (re-export)
+    ADD_SUBCOMMAND,
+    ALL_SUBCOMMAND,
+    CREDS_SUBCOMMAND,
+    DELETE_SUBCOMMAND,
+    EDIT_SUBCOMMAND,
+    EXPORT_SUBCOMMAND,
+    HOSTS_SUBCOMMAND,
+    IMPORT_SUBCOMMAND,
+    KRB_SUBCOMMAND,
+    SET_SUBCOMMAND,
+    SHOW_SUBCOMMAND,
+    SYNC_SUBCOMMAND,
+    UNSET_SUBCOMMAND,
+    VERSION_SUBCOMMAND,
+)
+
+# The TUI apps (and therefore textual) are imported lazily, only by the
+# subcommands that actually display a TUI.
 
 
-def add_object(args: argparse.Namespace, engine: Engine, config: AppConfig):
+def add_object(
+    args: argparse.Namespace,
+    engine: Engine,
+    config: AppConfig,
+    background_sync: bool = False,
+):
     if args.subcommand == CREDS_SUBCOMMAND:
         if any([args.username, args.password, args.hash, args.domain]):
             add_credentials(
@@ -81,7 +88,11 @@ def add_object(args: argparse.Namespace, engine: Engine, config: AppConfig):
                 )
                 write_credential_in_profile(credential_to_add, config)
         else:  # If no arguments are given, display the TUI adding screen
-            app = DbCredsApp(config, engine, show_add_screen=True)
+            from exegol_history.tui.db_creds import DbCredsApp
+
+            app = DbCredsApp(
+                config, engine, show_add_screen=True, background_sync=background_sync
+            )
             app.run(inline=config.theme.inline)
     elif args.subcommand == HOSTS_SUBCOMMAND:
         if any([args.ip, args.hostname, args.role]):
@@ -93,7 +104,11 @@ def add_object(args: argparse.Namespace, engine: Engine, config: AppConfig):
                 host_to_add = Host(ip=args.ip, hostname=args.hostname, role=args.role)
                 write_host_in_profile(host_to_add, config)
         else:  # If no arguments are given, display the TUI adding screen
-            app = DbHostsApp(config, engine, show_add_screen=True)
+            from exegol_history.tui.db_hosts import DbHostsApp
+
+            app = DbHostsApp(
+                config, engine, show_add_screen=True, background_sync=background_sync
+            )
             app.run(inline=config.theme.inline)
 
 
@@ -178,18 +193,26 @@ def cli_import_objects(args: argparse.Namespace, engine: Engine):
 
 
 def set_objects(
-    args: argparse.Namespace, engine: Engine, config: AppConfig, console: Console
+    args: argparse.Namespace,
+    engine: Engine,
+    config: AppConfig,
+    console: Console,
+    background_sync: bool = False,
 ):
     if args.subcommand == CREDS_SUBCOMMAND:
+        from exegol_history.tui.db_creds import DbCredsApp
+
         try:
-            app = DbCredsApp(config, engine)
+            app = DbCredsApp(config, engine, background_sync=background_sync)
             row_data = app.run(inline=config.theme.inline)
             if row_data is not None:
                 write_credential_in_profile(Credential(*row_data), config)
         except TypeError:  # It means the user left the TUI without choosing anything
             sys.exit(0)
     elif args.subcommand == HOSTS_SUBCOMMAND:
-        app = DbHostsApp(config, engine)
+        from exegol_history.tui.db_hosts import DbHostsApp
+
+        app = DbHostsApp(config, engine, background_sync=background_sync)
 
         try:
             row_data = app.run(inline=config.theme.inline)
@@ -198,6 +221,8 @@ def set_objects(
         except TypeError:  # It means the user left the TUI without choosing anything
             sys.exit(0)
     elif args.subcommand == KRB_SUBCOMMAND:
+        from exegol_history.tui.db_kerberos import DbKerberosApp
+
         app = DbKerberosApp(config, engine)
 
         try:

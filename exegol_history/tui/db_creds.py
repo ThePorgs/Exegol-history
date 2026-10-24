@@ -8,6 +8,7 @@ from textual.screen import Screen
 from textual.widgets.data_table import RowDoesNotExist
 from textual.widgets import Footer, Header, Input, Rule
 from textual.binding import Binding
+from textual import work
 from textual import events
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import (
@@ -19,12 +20,8 @@ from exegol_history.db_api.creds import (
 )
 from exegol_history.db_api.exporting import export_objects
 from exegol_history.db_api.utils import copy_in_clipboard
-from exegol_history.tui.screens.add_object import AddObjectScreen
-from exegol_history.tui.screens.delete_object import DeleteObjectScreen
-from exegol_history.tui.screens.edit_object import EditObjectScreen
-from exegol_history.tui.screens.export_object import ExportObjectScreen
-from exegol_history.tui.widgets.import_file import AssetsType
 from exegol_history.tui.widgets.object_datatable import ObjectsDataTable
+from exegol_history.tui.widgets.search_input import SearchInput
 
 """
 This is the main application displaying the credentials table and a search bar
@@ -97,7 +94,11 @@ class DbCredsApp(App):
     ]
 
     def __init__(
-        self, config: AppConfig, engine: Engine, show_add_screen: bool = False
+        self,
+        config: AppConfig,
+        engine: Engine,
+        show_add_screen: bool = False,
+        background_sync: bool = False,
     ):
         self.CSS_PATH = "css/general.tcss"
         self.TITLE = (
@@ -123,12 +124,15 @@ class DbCredsApp(App):
             dark=config.theme.dark,
         )
         self.show_add_screen = show_add_screen
+        self.background_sync = background_sync
+        self.original_data: list = []
+        self._search_index: list[str] = []
 
     def compose(self) -> ComposeResult:
         yield Header()
         yield ObjectsDataTable()
         yield Rule(line_style="heavy")
-        yield Input(placeholder="🔍 Search...", id="search-bar")
+        yield SearchInput(placeholder="🔍 Search...", id="search-bar")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -142,16 +146,48 @@ class DbCredsApp(App):
         table = self.screen.query_one(ObjectsDataTable)
         table.add_columns(*_tmp.__dict__.keys())
         table.add_rows(tmp)
-        self.original_data = tmp
+        self._set_data(tmp)
 
         # Apply keybindings from config
         self.set_keymap(self.config.keybindings)
 
+        self.query_one(SearchInput).focus()
+
         if self.show_add_screen:
+            from exegol_history.tui.screens.add_object import AddObjectScreen
+
             self.push_screen(
                 AddObjectScreen(domains=set(table.get_column_at(4))),
                 self.check_added_creds,
             )
+
+        if self.background_sync:
+            self.sync_connectors()
+
+    @work(thread=True, exclusive=True, group="sync", exit_on_error=False)
+    def sync_connectors(self) -> None:
+        """Pull NetExec / Metasploit credentials without blocking the UI."""
+        from exegol_history.db_api.sync import sync_objects
+
+        try:
+            sync_objects(self.engine, self.config, True, True)
+        except Exception:
+            return
+        self.call_from_thread(self._refresh_after_sync)
+
+    def _refresh_after_sync(self) -> None:
+        try:
+            self.update_table()
+        except Exception:
+            # e.g. a modal screen is on top: data will be refreshed on next update
+            pass
+
+    def _set_data(self, data: list) -> None:
+        self.original_data = data
+        # Pre-compute the lowercase searchable text once, instead of on every keystroke
+        self._search_index = [
+            "\0".join(str(cell).lower() for cell in row) for row in data
+        ]
 
     def get_system_commands(self, screen: Screen):
         yield SystemCommand(
@@ -183,9 +219,13 @@ class DbCredsApp(App):
         tmp = get_credentials(self.engine)
 
         table = self.screen.query_one(ObjectsDataTable)
-        table.clear()
-        table.add_rows(tmp)
-        self.original_data = tmp
+        search_query = self.screen.query_one("#search-bar", Input).value
+        self._set_data(tmp)
+        if search_query:
+            self._filter_table(search_query)
+        else:
+            table.clear()
+            table.add_rows(tmp)
 
     def on_key(self, event: events.Key) -> Credential:
         if event.key == Keys.Enter:
@@ -202,26 +242,24 @@ class DbCredsApp(App):
                 pass
 
     def on_input_changed(self, event: Input.Changed) -> None:
+        """Filter the DataTable when the search bar input changes."""
         try:
-            """Filter the DataTable when the search bar input changes."""
-            search_query = event.value.lower()  # Case-insensitive search
-            data_table = self.screen.query_one(ObjectsDataTable)
-
-            # Clear current rows
-            data_table.clear()
-
-            # Filter rows based on the search query
-            filtered_data = [
-                row
-                for row in self.original_data
-                if any(search_query in str(cell).lower() for cell in row)
-            ]
-
-            # Add filtered rows back to the DataTable
-            for row in filtered_data:
-                data_table.add_row(*map(str, row))
+            self._filter_table(event.value)
         except Exception:
             pass
+
+    def _filter_table(self, query: str) -> None:
+        search_query = query.lower()  # Case-insensitive search
+        data_table = self.screen.query_one(ObjectsDataTable)
+
+        filtered_data = [
+            row
+            for row, haystack in zip(self.original_data, self._search_index)
+            if search_query in haystack
+        ]
+
+        data_table.clear()
+        data_table.add_rows([tuple(map(str, row)) for row in filtered_data])
 
     def action_copy_username_clipboard(self) -> None:
         table = self.screen.query_one(ObjectsDataTable)
@@ -268,6 +306,8 @@ class DbCredsApp(App):
             sys.exit(0)
 
     def action_add_credential(self) -> None:
+        from exegol_history.tui.screens.add_object import AddObjectScreen
+
         table = self.screen.query_one(ObjectsDataTable)
         self.push_screen(
             AddObjectScreen(domains=set(filter(None, table.get_column_at(4)))),
@@ -296,9 +336,13 @@ class DbCredsApp(App):
                     )
 
     def action_export_credential(self) -> None:
+        from exegol_history.tui.screens.export_object import ExportObjectScreen
+
         self.push_screen(ExportObjectScreen(), self.check_export_credential)
 
     def action_delete_credential(self) -> None:
+        from exegol_history.tui.screens.delete_object import DeleteObjectScreen
+
         def check_delete(result: list[int]) -> None:
             for id in result:
                 try:
@@ -320,6 +364,9 @@ class DbCredsApp(App):
             pass
 
     def action_edit_credential(self) -> None:
+        from exegol_history.tui.screens.edit_object import EditObjectScreen
+        from exegol_history.tui.widgets.import_file import AssetsType
+
         def check_edit_creds(credential: Credential) -> None:
             try:
                 edit_credentials(self.engine, [credential])
