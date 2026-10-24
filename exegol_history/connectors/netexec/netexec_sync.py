@@ -1,9 +1,12 @@
 import sqlite3
+import os
 from enum import Enum
 from pathlib import Path
-from sqlalchemy import Engine
+from sqlalchemy import Engine, engine, insert, select, update
+from sqlalchemy.orm import Session
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
+from exegol_history.db_api.sync_nxc_time import SyncNxcTime
 
 
 class NetexecCredType(Enum):
@@ -87,6 +90,19 @@ class NetexecSyncer:
         for db_file, queries in self.db_files.items():
             db_file_path = workspace_path / Path(db_file)
 
+            nxc_timestamp = os.path.getmtime(db_file_path)
+            db_timestamp = 0.0
+
+            # If the file didn't changed since last sync, skip it
+            with Session(self.engine) as session:
+                query = select(SyncNxcTime).where(SyncNxcTime.filename == db_file)
+                result = session.scalars(query).first()
+                db_timestamp = float(result) if result is not None else 0.0
+
+            if db_timestamp > nxc_timestamp:
+                print(db_file)
+                return
+
             if db_file_path.is_file():
                 if self.sync_credentials:
                     try:
@@ -103,6 +119,16 @@ class NetexecSyncer:
                         hosts += self.extract_hosts(db_file_path, queries[1])
                     except Exception:
                         continue
+
+                with Session(self.engine) as session:
+                    query = insert(SyncNxcTime).where(SyncNxcTime.filename == db_file).values(SyncNxcTime(filename=db_file,timestamp=nxc_timestamp))
+                    #query = update(SyncNxcTime).where(SyncNxcTime.filename == db_file).values(timestamp=nxc_timestamp)
+                    query = query.on_conflict_do_update(
+                        index_elements=["timestamp_id", "filename"],                 # the unique column to match on
+                        set_={"timestamp": query.excluded.timestamp},        # what to update if it exists
+                    )
+                    session.execute(query)
+                    session.commit()
 
         return (credentials, hosts)
 
