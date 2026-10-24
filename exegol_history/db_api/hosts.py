@@ -64,7 +64,7 @@ def add_hosts(engine: Engine, hosts: list[dict]):
         return
 
     with Session(engine) as session:
-        query = insert(Host).values(hosts)
+        query = insert(Host)
         query = query.on_conflict_do_update(
             index_elements=["ip", "hostname"],
             set_={
@@ -73,7 +73,7 @@ def add_hosts(engine: Engine, hosts: list[dict]):
                 "role": func.coalesce(func.nullif(query.excluded.role, ""), Host.role),
             },
         )
-        session.execute(query)
+        session.execute(query, hosts)
         session.commit()
 
 

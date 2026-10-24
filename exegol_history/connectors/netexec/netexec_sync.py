@@ -2,7 +2,8 @@ import sqlite3
 import os
 from enum import Enum
 from pathlib import Path
-from sqlalchemy import Engine, engine, insert, select, update
+from sqlalchemy import Engine, engine, select, update
+from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Session
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
@@ -97,11 +98,10 @@ class NetexecSyncer:
             with Session(self.engine) as session:
                 query = select(SyncNxcTime).where(SyncNxcTime.filename == db_file)
                 result = session.scalars(query).first()
-                db_timestamp = float(result) if result is not None else 0.0
+                db_timestamp = float(result.timestamp) if result is not None else 0.0
 
-            if db_timestamp > nxc_timestamp:
-                print(db_file)
-                return
+            if db_timestamp >= nxc_timestamp:
+                continue
 
             if db_file_path.is_file():
                 if self.sync_credentials:
@@ -109,7 +109,8 @@ class NetexecSyncer:
                         credentials += self.extract_credentials(
                             db_file_path, queries[0]
                         )
-                    except Exception:
+                    except Exception as e:
+                        print(e)
                         continue
 
                 if self.sync_hosts and (
@@ -117,14 +118,14 @@ class NetexecSyncer:
                 ):  # Need to fix FTP and SSH in Netexec
                     try:
                         hosts += self.extract_hosts(db_file_path, queries[1])
-                    except Exception:
+                    except Exception as e:
+                        print(e)
                         continue
 
                 with Session(self.engine) as session:
-                    query = insert(SyncNxcTime).where(SyncNxcTime.filename == db_file).values(SyncNxcTime(filename=db_file,timestamp=nxc_timestamp))
-                    #query = update(SyncNxcTime).where(SyncNxcTime.filename == db_file).values(timestamp=nxc_timestamp)
+                    query = insert(SyncNxcTime).values(filename=db_file, timestamp=nxc_timestamp)
                     query = query.on_conflict_do_update(
-                        index_elements=["timestamp_id", "filename"],                 # the unique column to match on
+                        index_elements=["filename"],                 # the unique column to match on
                         set_={"timestamp": query.excluded.timestamp},        # what to update if it exists
                     )
                     session.execute(query)

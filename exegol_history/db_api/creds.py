@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy.orm import Mapped, mapped_column, Session
-from sqlalchemy import case, select, UniqueConstraint, Engine
+from sqlalchemy import case, func, select, UniqueConstraint, Engine
 from sqlalchemy.dialects.sqlite import insert
 from exegol_history.db_api.base import Base
 from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST, OBJECT_ALREADY_EXIST
@@ -77,23 +77,21 @@ def add_credentials(engine: Engine, credentials: list[dict]):
         return
 
     with Session(engine) as session:
-        query = insert(Credential).values(credentials)
+        query = insert(Credential)
         query = query.on_conflict_do_update(
             index_elements=["username", "domain"],
             set_={
                 "username": query.excluded.username,
-                "password": case(
-                    (query.excluded.password.isnot(None), query.excluded.password),
-                    else_=Credential.password,
+                "password": func.coalesce(
+                    func.nullif(query.excluded.password, ""), Credential.password
                 ),
-                "hash": case(
-                    (query.excluded.hash.isnot(None), query.excluded.hash),
-                    else_=Credential.hash,
+                "hash": func.coalesce(
+                    func.nullif(query.excluded.hash, ""), Credential.hash
                 ),
                 "domain": query.excluded.domain,
             },
         )
-        session.execute(query)
+        session.execute(query, credentials)
         session.commit()
 
 

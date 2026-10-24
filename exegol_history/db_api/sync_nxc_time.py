@@ -6,8 +6,7 @@ from exegol_history.db_api.base import Base
 class SyncNxcTime(Base):
     __tablename__ = "synctime"
 
-    timestamp_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    filename: Mapped[str] = mapped_column(primary_key=True, nullable=False)
+    filename: Mapped[str] = mapped_column(primary_key=True, unique=True)
     timestamp: Mapped[float] = mapped_column(nullable=False)
 
     def __init__(
