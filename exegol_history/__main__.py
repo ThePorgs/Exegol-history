@@ -1,5 +1,6 @@
 # PYTHON_ARGCOMPLETE_OK
 import sys
+
 import argcomplete
 
 # Only lightweight (stdlib-only) modules are imported at the top level:
@@ -8,11 +9,11 @@ import argcomplete
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.constants import (
     ADD_SUBCOMMAND,
+    CREDS_SUBCOMMAND,
     DELETE_SUBCOMMAND,
     EDIT_SUBCOMMAND,
     EXPORT_SUBCOMMAND,
     HOSTS_SUBCOMMAND,
-    CREDS_SUBCOMMAND,
     IMPORT_SUBCOMMAND,
     KRB_SUBCOMMAND,
     SET_SUBCOMMAND,
@@ -60,7 +61,7 @@ def main():
         return
 
     from sqlalchemy import exc
-    from exegol_history.config.config import AppConfig
+
     from exegol_history.cli.functions import (
         add_object,
         cli_export_objects,
@@ -72,6 +73,7 @@ def main():
         sync_objects,
         unset_objects,
     )
+    from exegol_history.config.config import AppConfig
 
     need_config = False
     need_db = False

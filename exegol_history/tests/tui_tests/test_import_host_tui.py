@@ -1,17 +1,19 @@
-from sqlalchemy import Engine
-from textual.keys import Keys
-from exegol_history.config.config import AppConfig
-from exegol_history.db_api.importing import HostsImportFileType
-from exegol_history.tui.db_hosts import DbHostsApp
-from exegol_history.db_api.hosts import Host, get_hosts
 from common import (
-    IP_TEST_VALUE,
     HOSTNAME_TEST_VALUE,
+    IP_TEST_VALUE,
     ROLE_TEST_VALUE,
     TEST_HOSTS_CSV_COMMA,
     select_input_and_enter_text,
     select_select_index,
 )
+from sqlalchemy import Engine
+from textual.keys import Keys
+
+from exegol_history.config.config import AppConfig
+from exegol_history.db_api.hosts import Host, get_hosts
+from exegol_history.db_api.importing import HostsImportFileType
+from exegol_history.tui.db_hosts import DbHostsApp
+from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
 from exegol_history.tui.widgets.import_file import (
     ID_CONFIRM_IMPORT_BUTTON,
@@ -19,7 +21,6 @@ from exegol_history.tui.widgets.import_file import (
     ID_FILE_TYPE_SELECT,
     ID_IMPORT_BUTTON,
 )
-from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 
 
 async def test_import_host_csv(engine: Engine, load_mock_config: AppConfig):

@@ -1,14 +1,16 @@
-import sys
 import importlib
-from textual.app import App, ComposeResult, SystemCommand
-from textual.keys import Keys
-from textual.theme import Theme
-from textual.screen import Screen
-from textual.widgets.data_table import RowDoesNotExist
-from textual.widgets import Footer, Header, Input, Rule, Static
-from textual.containers import Horizontal, VerticalScroll
-from textual.binding import Binding
+import sys
+
 from textual import work
+from textual.app import App, ComposeResult, SystemCommand
+from textual.binding import Binding
+from textual.containers import Horizontal, VerticalScroll
+from textual.keys import Keys
+from textual.screen import Screen
+from textual.theme import Theme
+from textual.widgets import Footer, Header, Input, Rule, Static
+from textual.widgets.data_table import RowDoesNotExist
+
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.kerberos import (
     Ticket,
@@ -166,7 +168,6 @@ class DbKerberosApp(App):
                 if any(search_query in str(cell).lower() for cell in ticket)
             ]
         self._populate_rows(table, tickets)
-
 
     def _populate_rows(self, table: ObjectsDataTable, tickets: list[Ticket]) -> None:
         # Use the ticket path as the row key so cells can be updated by path.

@@ -1,14 +1,16 @@
-import sys
 import importlib
+import sys
+
 from sqlalchemy import Engine
-from textual.app import App, ComposeResult, SystemCommand
-from textual.keys import Keys
-from textual.theme import Theme
-from textual.screen import Screen
-from textual.widgets.data_table import RowDoesNotExist
-from textual.widgets import Footer, Header, Input, Rule
-from textual.binding import Binding
 from textual import work
+from textual.app import App, ComposeResult, SystemCommand
+from textual.binding import Binding
+from textual.keys import Keys
+from textual.screen import Screen
+from textual.theme import Theme
+from textual.widgets import Footer, Header, Input, Rule
+from textual.widgets.data_table import RowDoesNotExist
+
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.exporting import export_objects
 from exegol_history.db_api.hosts import (

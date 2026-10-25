@@ -1,17 +1,19 @@
-from sqlalchemy import Engine
-from textual.keys import Keys
-import pytest
 import subprocess
 import sys
-from exegol_history.cli.utils import (
-    HOSTS_VARIABLES,
-    write_host_in_profile,
-)
+
+import pytest
 from common import (
     HOSTNAME_TEST_VALUE,
     IP_TEST_VALUE,
     ROLE_TEST_VALUE,
     select_input_and_enter_text,
+)
+from sqlalchemy import Engine
+from textual.keys import Keys
+
+from exegol_history.cli.utils import (
+    HOSTS_VARIABLES,
+    write_host_in_profile,
 )
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.hosts import Host

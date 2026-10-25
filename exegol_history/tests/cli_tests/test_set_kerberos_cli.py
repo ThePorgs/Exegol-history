@@ -1,14 +1,15 @@
 import subprocess
 import sys
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+import pytest
+
+import exegol_history.db_api.kerberos as kerberos_module
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import KRB_SUBCOMMAND, SET_SUBCOMMAND
 from exegol_history.cli.utils import KERBEROS_VARIABLES, write_kerberos_in_profile
 from exegol_history.config.config import AppConfig
-import exegol_history.db_api.kerberos as kerberos_module
 from exegol_history.db_api.kerberos import (
     Ticket,
     convert_ticket,

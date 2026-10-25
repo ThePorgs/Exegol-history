@@ -1,26 +1,27 @@
 import subprocess
 import sys
-import pytest
 from pathlib import Path
 from unittest.mock import patch
-from textual.keys import Keys
-from textual.widgets import Static, Input
 
-import exegol_history.db_api.kerberos as kerberos_module
-from exegol_history.cli.utils import KERBEROS_VARIABLES, write_kerberos_in_profile
-from exegol_history.config.config import AppConfig
-from exegol_history.db_api.kerberos import Ticket
-from exegol_history.tui.db_kerberos import (
-    DbKerberosApp,
-    ID_DESCRIBE_STATIC,
-)
-from exegol_history.tui.widgets.object_datatable import ObjectsDataTable
+import pytest
 from common import (
     KRB_DESCRIBE_OUTPUT,
     KRB_DOMAIN_TEST_VALUE,
     KRB_USERNAME_TEST_VALUE,
     TEST_KRB_TICKET1,
 )
+from textual.keys import Keys
+from textual.widgets import Input, Static
+
+import exegol_history.db_api.kerberos as kerberos_module
+from exegol_history.cli.utils import KERBEROS_VARIABLES, write_kerberos_in_profile
+from exegol_history.config.config import AppConfig
+from exegol_history.db_api.kerberos import Ticket
+from exegol_history.tui.db_kerberos import (
+    ID_DESCRIBE_STATIC,
+    DbKerberosApp,
+)
+from exegol_history.tui.widgets.object_datatable import ObjectsDataTable
 
 
 async def wait_for_tickets(app, pilot):

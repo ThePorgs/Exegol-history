@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-08-16T12:03:23.437656885Z"
+exclude-newer = "2026-10-11T08:39:42.517052536Z"
 exclude-newer-span = "P2W"
 
 [[package]]
@@ -414,7 +414,7 @@ toml = [
 
 [[package]]
 name = "exegol-history"
-version = "3.1"
+version = "3.2"
 source = { editable = "." }
 dependencies = [
     { name = "argcomplete" },

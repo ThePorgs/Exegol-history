@@ -1,8 +1,10 @@
 import time
 from unittest.mock import patch
+
+from sqlalchemy import Engine
+
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import SYNC_SUBCOMMAND, cli_sync_objects
-from sqlalchemy import Engine
 from exegol_history.config.config import AppConfig
 from exegol_history.connectors.netexec.netexec_sync import NetexecSyncer
 from exegol_history.db_api.hosts import Host, add_hosts, get_hosts

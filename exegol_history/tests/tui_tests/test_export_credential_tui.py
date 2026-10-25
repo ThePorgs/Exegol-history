@@ -1,23 +1,24 @@
 import tempfile
-from sqlalchemy import Engine
-from exegol_history.config.config import AppConfig
-from exegol_history.db_api.importing import CredsImportFileType
-from exegol_history.tui.db_creds import DbCredsApp
-from exegol_history.db_api.creds import add_credentials
+
 from common import (
     CREDENTIAL1,
     CREDENTIAL2,
     CREDENTIALS_TEST_VALUE,
-    CREDENTIALS_TEST_VALUE,
     TEST_CREDS_JSON,
     select_select_index,
 )
+from sqlalchemy import Engine
+
+from exegol_history.config.config import AppConfig
+from exegol_history.db_api.creds import add_credentials
+from exegol_history.db_api.importing import CredsImportFileType
+from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.tui.screens.export_object import (
     ID_BROWSE_BUTTON,
     ID_EXPORT_TYPE_SELECT,
 )
-from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
 from exegol_history.tui.screens.open_file import ID_PATH_INPUT
+from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
 
 
 async def test_export_credential_csv(engine: Engine, load_mock_config: AppConfig):

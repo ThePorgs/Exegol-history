@@ -1,4 +1,5 @@
 from sqlalchemy import Engine
+
 from exegol_history.config.config import AppConfig
 from exegol_history.connectors.metasploit.metasploit_sync import MetasploitSyncer
 from exegol_history.connectors.netexec.netexec_sync import NetexecSyncer

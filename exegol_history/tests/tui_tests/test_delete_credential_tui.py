@@ -1,17 +1,23 @@
+from common import (
+    DOMAIN_TEST_VALUE,
+    HASH_TEST_VALUE,
+    PASSWORD_TEST_VALUE,
+    USERNAME_TEST_VALUE,
+    select_input_and_enter_text,
+)
 from sqlalchemy import Engine
+from textual.keys import Keys
+
 from exegol_history.config.config import AppConfig
-from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.db_api.creds import (
     Credential,
     add_credentials,
     get_credentials,
 )
-from common import (
-    USERNAME_TEST_VALUE,
-    PASSWORD_TEST_VALUE,
-    HASH_TEST_VALUE,
-    DOMAIN_TEST_VALUE,
-    select_input_and_enter_text,
+from exegol_history.tui.db_creds import DbCredsApp
+from exegol_history.tui.screens.delete_object import (
+    ID_CONFIRM_RANGE_BUTTON,
+    ID_IDS_INPUT,
 )
 from exegol_history.tui.widgets.credential_form import (
     ID_CONFIRM_BUTTON,
@@ -19,11 +25,6 @@ from exegol_history.tui.widgets.credential_form import (
     ID_HASH_INPUT,
     ID_PASSWORD_INPUT,
     ID_USERNAME_INPUT,
-)
-from textual.keys import Keys
-from exegol_history.tui.screens.delete_object import (
-    ID_CONFIRM_RANGE_BUTTON,
-    ID_IDS_INPUT,
 )
 
 

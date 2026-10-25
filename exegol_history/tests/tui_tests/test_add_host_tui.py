@@ -1,18 +1,19 @@
-import pytest
 import subprocess
 import sys
 
-from sqlalchemy import Engine
-from exegol_history.cli.utils import write_host_in_profile
-from exegol_history.config.config import AppConfig
-from exegol_history.tui.db_hosts import DbHostsApp
-from exegol_history.db_api.hosts import Host, get_hosts
+import pytest
 from common import (
-    IP_TEST_VALUE,
     HOSTNAME_TEST_VALUE,
+    IP_TEST_VALUE,
     ROLE_TEST_VALUE,
     select_input_and_enter_text,
 )
+from sqlalchemy import Engine
+
+from exegol_history.cli.utils import write_host_in_profile
+from exegol_history.config.config import AppConfig
+from exegol_history.db_api.hosts import Host, get_hosts
+from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
 from exegol_history.tui.widgets.host_form import (
     ID_HOSTNAME_INPUT,

@@ -1,19 +1,21 @@
-from sqlalchemy import Engine
-from textual.keys import Keys
-import pytest
 import subprocess
 import sys
+
+import pytest
+from common import (
+    DOMAIN_TEST_VALUE,
+    HASH_TEST_VALUE,
+    PASSWORD_TEST_VALUE,
+    USERNAME_TEST_VALUE,
+    select_input_and_enter_text,
+)
+from sqlalchemy import Engine
+from textual.keys import Keys
+
 from exegol_history.cli.utils import CREDS_VARIABLES, write_credential_in_profile
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import Credential
 from exegol_history.tui.db_creds import DbCredsApp
-from common import (
-    USERNAME_TEST_VALUE,
-    PASSWORD_TEST_VALUE,
-    HASH_TEST_VALUE,
-    DOMAIN_TEST_VALUE,
-    select_input_and_enter_text,
-)
 from exegol_history.tui.widgets.credential_form import (
     ID_CONFIRM_BUTTON,
     ID_DOMAIN_INPUT,

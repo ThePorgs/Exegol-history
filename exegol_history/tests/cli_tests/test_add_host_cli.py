@@ -1,4 +1,5 @@
 from sqlalchemy import Engine
+
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import ADD_SUBCOMMAND, HOSTS_SUBCOMMAND, add_object
 from exegol_history.db_api.hosts import Host, get_hosts

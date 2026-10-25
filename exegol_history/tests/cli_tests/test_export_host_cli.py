@@ -1,7 +1,10 @@
 import io
 import tempfile
+
+import pytest
 from rich.console import Console
 from sqlalchemy import Engine
+
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import (
     EXPORT_SUBCOMMAND,
@@ -18,7 +21,6 @@ from exegol_history.tests.common import (
     ROLE_TEST_VALUE,
     delete_all_entries,
 )
-import pytest
 
 
 def test_export_host_csv(engine: Engine, TEST_HOST2: list[Host]):

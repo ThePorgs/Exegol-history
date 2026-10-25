@@ -1,4 +1,5 @@
 from sqlalchemy import Engine
+
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import ADD_SUBCOMMAND, CREDS_SUBCOMMAND, add_object
 from exegol_history.db_api.creds import Credential, get_credentials

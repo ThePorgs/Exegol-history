@@ -1,6 +1,8 @@
 import io
 import os
+
 from rich.console import Console
+
 from exegol_history.cli.functions import show_objects
 from exegol_history.cli.utils import CREDS_VARIABLES
 from exegol_history.tests.common import (

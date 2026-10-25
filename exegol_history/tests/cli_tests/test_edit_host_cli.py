@@ -1,5 +1,8 @@
 import io
+
+from rich.console import Console
 from sqlalchemy import Engine
+
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import EDIT_SUBCOMMAND, HOSTS_SUBCOMMAND, edit_object
 from exegol_history.db_api.hosts import Host, add_hosts, get_hosts
@@ -9,7 +12,6 @@ from exegol_history.tests.common import (
     IP_TEST_VALUE,
     ROLE_TEST_VALUE,
 )
-from rich.console import Console
 
 
 def test_edit_host_only_ip(engine: Engine):

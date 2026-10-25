@@ -1,6 +1,8 @@
 import tempfile
+
 import pytest
 from sqlalchemy import Engine
+
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import (
     CREDS_SUBCOMMAND,

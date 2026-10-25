@@ -1,7 +1,7 @@
+import csv
 import io
 import json
-import csv
-from typing import Any, Type, Union
+from typing import Any
 
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
@@ -9,10 +9,6 @@ from exegol_history.db_api.importing import CredsImportFileType, HostsImportFile
 
 CREDENTIAL_PROPERTY_NAME_ID = "credential_id"
 HOST_PROPERTY_NAME_ID = "host_id"
-from exegol_history.db_api.file_types import (  # noqa: F401 (re-export)
-    CredsExportFileType,
-    HostsExportFileType,
-)
 
 
 def export_objects(
@@ -36,7 +32,7 @@ def export_objects(
 
 
 def export_objects_json(objects: list[Any]):
-    results = list()
+    results = []
 
     for object in objects:
         dict = object.as_dict()
@@ -48,9 +44,9 @@ def export_objects_json(objects: list[Any]):
 
 
 def export_objects_csv(
-    objects: list[Union[Credential, Host]],
+    objects: list[Credential | Host],
     delimiter: str,
-    obj_type: Type[Union[Credential, Host]],
+    obj_type: type[Credential | Host],
 ):
     csv_string = io.StringIO()
     csv_writer = csv.writer(

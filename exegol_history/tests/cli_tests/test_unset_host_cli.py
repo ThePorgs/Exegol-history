@@ -1,7 +1,9 @@
 import subprocess
 import sys
-import pytest
 import types
+
+import pytest
+
 from exegol_history.cli.functions import HOSTS_SUBCOMMAND, unset_objects
 from exegol_history.cli.utils import HOSTS_VARIABLES, write_host_in_profile
 from exegol_history.config.config import AppConfig

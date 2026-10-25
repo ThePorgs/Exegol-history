@@ -1,7 +1,9 @@
 import subprocess
 import sys
-import pytest
 import types
+
+import pytest
+
 from exegol_history.cli.functions import CREDS_SUBCOMMAND, unset_objects
 from exegol_history.cli.utils import CREDS_VARIABLES, write_credential_in_profile
 from exegol_history.config.config import AppConfig

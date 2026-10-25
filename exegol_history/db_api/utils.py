@@ -1,6 +1,7 @@
-import pyperclip
-import subprocess
 import platform
+import subprocess
+
+import pyperclip
 
 ID_DELIMITER = ","
 ID_RANGE_DELIMITER = "-"

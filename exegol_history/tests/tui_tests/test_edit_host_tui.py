@@ -1,12 +1,13 @@
-from sqlalchemy import Engine
-from exegol_history.config.config import AppConfig
-from exegol_history.tui.db_hosts import DbHostsApp
-from exegol_history.db_api.hosts import Host, get_hosts
 from common import (
     IP_TEST_VALUE,
     select_input_and_enter_text,
     select_input_erase_and_enter_text,
 )
+from sqlalchemy import Engine
+
+from exegol_history.config.config import AppConfig
+from exegol_history.db_api.hosts import Host, get_hosts
+from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
 from exegol_history.tui.widgets.host_form import ID_IP_INPUT
 

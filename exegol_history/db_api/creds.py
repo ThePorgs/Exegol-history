@@ -1,7 +1,8 @@
 import sqlalchemy
-from sqlalchemy.orm import Mapped, mapped_column, Session
-from sqlalchemy import case, func, select, UniqueConstraint, Engine
+from sqlalchemy import Engine, UniqueConstraint, func, select
 from sqlalchemy.dialects.sqlite import insert
+from sqlalchemy.orm import Mapped, Session, mapped_column
+
 from exegol_history.db_api.base import Base
 from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST, OBJECT_ALREADY_EXIST
 

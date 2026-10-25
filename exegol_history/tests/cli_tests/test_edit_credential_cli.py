@@ -1,5 +1,8 @@
 import io
+
+from rich.console import Console
 from sqlalchemy import Engine
+
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import CREDS_SUBCOMMAND, EDIT_SUBCOMMAND, edit_object
 from exegol_history.db_api.creds import (
@@ -14,7 +17,6 @@ from exegol_history.tests.common import (
     PASSWORD_TEST_VALUE,
     USERNAME_TEST_VALUE,
 )
-from rich.console import Console
 
 
 def test_edit_credential_only_username(engine: Engine):

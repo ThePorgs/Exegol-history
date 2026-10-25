@@ -2,6 +2,7 @@ import argparse
 
 from exegol_history.cli.constants import (
     ADD_SUBCOMMAND,
+    ALL_SUBCOMMAND,
     CREDS_SUBCOMMAND,
     DELETE_SUBCOMMAND,
     EDIT_SUBCOMMAND,
@@ -11,10 +12,9 @@ from exegol_history.cli.constants import (
     KRB_SUBCOMMAND,
     SET_SUBCOMMAND,
     SHOW_SUBCOMMAND,
+    SYNC_SUBCOMMAND,
     UNSET_SUBCOMMAND,
     VERSION_SUBCOMMAND,
-    SYNC_SUBCOMMAND,
-    ALL_SUBCOMMAND,
 )
 from exegol_history.db_api.file_types import (
     CredsExportFileType,

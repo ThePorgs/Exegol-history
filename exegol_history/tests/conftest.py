@@ -1,10 +1,11 @@
 import pathlib
-import shutil
-import pytest
 import platform
+import shutil
 from pathlib import Path
 
+import pytest
 from sqlalchemy import Engine
+
 from exegol_history.config.config import AppConfig
 from exegol_history.connectors.netexec.netexec_sync import NetexecSyncer
 from exegol_history.db_api.creds import Credential

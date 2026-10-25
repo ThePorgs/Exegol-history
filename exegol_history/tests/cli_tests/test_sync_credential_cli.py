@@ -1,5 +1,8 @@
+import time
 from unittest.mock import patch
+
 from sqlalchemy import Engine
+
 from exegol_history.cli.arguments import parse_arguments
 from exegol_history.cli.functions import SYNC_SUBCOMMAND, cli_sync_objects
 from exegol_history.config.config import AppConfig
@@ -20,7 +23,6 @@ from exegol_history.tests.common import (
     USERNAME_TEST_VALUE,
     get_sync_connector_index,
 )
-import time
 
 NETEXEC_CREDENTIALS_COLUMNS = [["username"], ["password"], ["domain"], ["credtype"]]
 

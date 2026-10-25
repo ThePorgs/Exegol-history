@@ -1,26 +1,27 @@
-from sqlalchemy import Engine
-from textual.keys import Keys
-from exegol_history.config.config import AppConfig
-from exegol_history.db_api.importing import CredsImportFileType
-from exegol_history.tui.db_creds import DbCredsApp
-from exegol_history.db_api.creds import Credential, get_credentials
 from common import (
-    CREDENTIALS_TEST_VALUE,
     CREDENTIALS_TEST_VALUE,
     CREDENTIALS_TEST_VALUE_GOAD_PYPYKATZ,
     CREDENTIALS_TEST_VALUE_KDBX,
+    DOMAIN_TEST_VALUE,
+    HASH_TEST_VALUE,
+    PASSWORD_TEST_VALUE,
     TEST_CREDS_CSV_COMMA,
     TEST_CREDS_JSON,
     TEST_CREDS_KDBX,
     TEST_CREDS_KDBX_KEYFILE,
     TEST_CREDS_PYPYKATZ_JSON,
     USERNAME_TEST_VALUE,
-    PASSWORD_TEST_VALUE,
-    HASH_TEST_VALUE,
-    DOMAIN_TEST_VALUE,
     select_input_and_enter_text,
     select_select_index,
 )
+from sqlalchemy import Engine
+from textual.keys import Keys
+
+from exegol_history.config.config import AppConfig
+from exegol_history.db_api.creds import Credential, get_credentials
+from exegol_history.db_api.importing import CredsImportFileType
+from exegol_history.tui.db_creds import DbCredsApp
+from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
 from exegol_history.tui.widgets.import_file import (
     ID_CONFIRM_IMPORT_BUTTON,
@@ -30,7 +31,6 @@ from exegol_history.tui.widgets.import_file import (
     ID_KDBX_KEYFILE_BUTTON,
     ID_KDBX_PASSWORD_INPUT,
 )
-from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 
 
 async def test_import_credential_csv_textarea(

@@ -1,10 +1,12 @@
-import sqlite3
 import os
+import sqlite3
 from enum import Enum
 from pathlib import Path
-from sqlalchemy import Engine, engine, select, update
+
+from sqlalchemy import Engine, select
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Session
+
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
 from exegol_history.db_api.sync_nxc_time import SyncNxcTime
@@ -69,20 +71,24 @@ class NetexecSyncer:
                 "SELECT ip, hostname FROM hosts",
             ),
             "wmi.db": (
-                "SELECT username, password FROM credentials",
+                "SELECT username, password FROM users",
                 "SELECT ip, hostname FROM hosts",
             ),
         }
 
     def sync(self) -> tuple[list[dict], list[dict]]:
+        synced = []
+
         if self.workspaces_dir.exists():
             for workspace in self.workspaces_dir.iterdir():
                 if workspace.is_dir():
-                    return self.process_workspace(workspace)
+                    synced.append(self.process_workspace(workspace))
         else:
             raise (
                 RuntimeError(f"No workspaces directory found at {self.workspaces_dir}")
             )
+
+        return synced
 
     def process_workspace(self, workspace_path: Path) -> tuple[list[dict], list[dict]]:
         credentials = []
@@ -113,9 +119,7 @@ class NetexecSyncer:
                         print(e)
                         continue
 
-                if self.sync_hosts and (
-                    db_file not in ["ftp.db", "ssh.db"]
-                ):  # Need to fix FTP and SSH in Netexec
+                if self.sync_hosts:
                     try:
                         hosts += self.extract_hosts(db_file_path, queries[1])
                     except Exception as e:
@@ -123,10 +127,12 @@ class NetexecSyncer:
                         continue
 
                 with Session(self.engine) as session:
-                    query = insert(SyncNxcTime).values(filename=db_file, timestamp=nxc_timestamp)
+                    query = insert(SyncNxcTime).values(
+                        filename=db_file, timestamp=nxc_timestamp
+                    )
                     query = query.on_conflict_do_update(
-                        index_elements=["filename"],                 # the unique column to match on
-                        set_={"timestamp": query.excluded.timestamp},        # what to update if it exists
+                        index_elements=["filename"],
+                        set_={"timestamp": query.excluded.timestamp},
                     )
                     session.execute(query)
                     session.commit()
@@ -134,6 +140,9 @@ class NetexecSyncer:
         return (credentials, hosts)
 
     def extract_credentials(self, db_file_path: str, query: str) -> list[dict]:
+        if not query:
+            return
+
         conn = sqlite3.connect(db_file_path)
         cursor = conn.cursor()
         credentials = []
@@ -158,8 +167,6 @@ class NetexecSyncer:
                 credential["hash"] = password
             elif credtype == NetexecCredType.PASSWORD.value:
                 credential["password"] = password
-            else: # Do not sync other nxc creds type (e.g: SSH key)
-                continue
 
             if credential["hash"] or credential["password"]:
                 credentials.append(credential)

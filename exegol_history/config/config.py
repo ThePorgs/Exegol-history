@@ -2,9 +2,11 @@ import platform
 import shutil
 import tomllib
 from pathlib import Path
+
+from sqlalchemy import Engine, create_engine
+
 from exegol_history.connectors.metasploit.metasploit_sync import MetasploitSyncer
 from exegol_history.connectors.netexec.netexec_sync import NetexecSyncer
-from sqlalchemy import Engine, create_engine
 from exegol_history.db_api.creds import Base
 
 DEFAULT_KEYBINDS = {

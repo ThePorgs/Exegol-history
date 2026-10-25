@@ -1,11 +1,12 @@
 from sqlalchemy import Engine
-from exegol_history.db_api.creds import Credential
+
 from exegol_history.connectors.metasploit.utils import (
-    get_msf_postgres_db_infos,
-    is_private_data_hash,
     MSF_DB_CREDENTIAL_QUERY,
     MetasploitCredentialType,
+    get_msf_postgres_db_infos,
+    is_private_data_hash,
 )
+from exegol_history.db_api.creds import Credential
 
 
 class MetasploitSyncer:

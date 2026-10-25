@@ -1,25 +1,25 @@
-from sqlalchemy import Engine
-from exegol_history.config.config import AppConfig
-from exegol_history.tui.db_hosts import DbHostsApp
-from exegol_history.db_api.hosts import Host, add_hosts, get_hosts
 from common import (
-    IP_TEST_VALUE,
     HOSTNAME_TEST_VALUE,
+    IP_TEST_VALUE,
     ROLE_TEST_VALUE,
     select_input_and_enter_text,
 )
+from sqlalchemy import Engine
+from textual.keys import Keys
 
-from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
+from exegol_history.config.config import AppConfig
+from exegol_history.db_api.hosts import Host, add_hosts, get_hosts
+from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.tui.screens.delete_object import (
     ID_CONFIRM_RANGE_BUTTON,
     ID_IDS_INPUT,
 )
+from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON
 from exegol_history.tui.widgets.host_form import (
     ID_HOSTNAME_INPUT,
     ID_IP_INPUT,
     ID_ROLE_INPUT,
 )
-from textual.keys import Keys
 
 
 async def test_delete_host(engine: Engine, load_mock_config: AppConfig):

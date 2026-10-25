@@ -1,6 +1,18 @@
 import argparse
+import importlib.metadata
 import os
 import sys
+from typing import Any
+
+from rich.console import Console
+from sqlalchemy import Engine
+
+from exegol_history.cli.constants import (
+    ALL_SUBCOMMAND,
+    CREDS_SUBCOMMAND,
+    HOSTS_SUBCOMMAND,
+    KRB_SUBCOMMAND,
+)
 from exegol_history.cli.utils import (
     CREDS_VARIABLES,
     HOSTS_VARIABLES,
@@ -33,27 +45,6 @@ from exegol_history.db_api.importing import (
 from exegol_history.db_api.kerberos import Ticket
 from exegol_history.db_api.sync import sync_objects
 from exegol_history.db_api.utils import parse_ids
-from typing import Any
-from rich.console import Console
-from sqlalchemy import Engine
-import importlib.metadata
-
-from exegol_history.cli.constants import (  # noqa: F401 (re-export)
-    ADD_SUBCOMMAND,
-    ALL_SUBCOMMAND,
-    CREDS_SUBCOMMAND,
-    DELETE_SUBCOMMAND,
-    EDIT_SUBCOMMAND,
-    EXPORT_SUBCOMMAND,
-    HOSTS_SUBCOMMAND,
-    IMPORT_SUBCOMMAND,
-    KRB_SUBCOMMAND,
-    SET_SUBCOMMAND,
-    SHOW_SUBCOMMAND,
-    SYNC_SUBCOMMAND,
-    UNSET_SUBCOMMAND,
-    VERSION_SUBCOMMAND,
-)
 
 # The TUI apps (and therefore textual) are imported lazily, only by the
 # subcommands that actually display a TUI.
@@ -166,30 +157,27 @@ def cli_export_objects(args: argparse.Namespace, engine: Engine, console: Consol
 
 
 def cli_import_objects(args: argparse.Namespace, engine: Engine):
-    file_to_import = open(args.file, "rb")
+    with open(args.file, "rb") as file_to_import:
+        if args.subcommand == CREDS_SUBCOMMAND:
+            import_type = CredsImportFileType[args.format]
 
-    if args.subcommand == CREDS_SUBCOMMAND:
-        import_type = CredsImportFileType[args.format]
+            parsed_objects = import_objects(
+                import_type,
+                file_to_import.read(),
+                kdbx_password=args.kdbx_password,
+                keyfile_path=args.kdbx_keyfile,
+            )
 
-        parsed_objects = import_objects(
-            import_type,
-            file_to_import.read(),
-            kdbx_password=args.kdbx_password,
-            keyfile_path=args.kdbx_keyfile,
-        )
+            add_credentials(engine, parsed_objects)
+        elif args.subcommand == HOSTS_SUBCOMMAND:
+            import_type = HostsImportFileType[args.format]
 
-        add_credentials(engine, parsed_objects)
-    elif args.subcommand == HOSTS_SUBCOMMAND:
-        import_type = HostsImportFileType[args.format]
+            parsed_objects = import_objects(
+                import_type,
+                file_to_import.read(),
+            )
 
-        parsed_objects = import_objects(
-            import_type,
-            file_to_import.read(),
-        )
-
-        add_hosts(engine, parsed_objects)
-
-    file_to_import.close()
+            add_hosts(engine, parsed_objects)
 
 
 def set_objects(
