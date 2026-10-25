@@ -120,6 +120,7 @@ GET_PG_DB_INFOS_PATCH_PATH = (
 )
 
 OBJECT_NUMBER_VALUE = 2000
+NXC_DB_TIMESTAMP = 99999999999999999.0
 
 
 async def select_input_and_enter_text(pilot, input_id, input_text):

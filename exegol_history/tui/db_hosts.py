@@ -2,7 +2,7 @@ import importlib
 import sys
 
 from sqlalchemy import Engine
-from textual import work
+from textual import events, work
 from textual.app import App, ComposeResult, SystemCommand
 from textual.binding import Binding
 from textual.keys import Keys
@@ -203,6 +203,18 @@ class DbHostsApp(App):
         else:
             table.clear()
             table.add_rows(tmp)
+
+    def on_key(self, event: events.Key) -> Host:
+        if event.key == Keys.Enter:
+            try:
+                table = self.screen.query_one(ObjectsDataTable)
+                selected_row = table.cursor_row
+                row_data = table.get_row_at(selected_row)
+                select_host = get_hosts(self.engine, host_id=row_data[0])[0]
+
+                self.exit(select_host)
+            except Exception:
+                pass
 
     def on_input_changed(self, event: Input.Changed) -> None:
         """Filter the DataTable when the search bar input changes."""

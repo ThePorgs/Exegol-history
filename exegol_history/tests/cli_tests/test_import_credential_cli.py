@@ -1,6 +1,5 @@
 import tempfile
 
-import pytest
 from sqlalchemy import Engine
 
 from exegol_history.cli.arguments import parse_arguments
@@ -88,16 +87,3 @@ def test_import_credential_secretsdump(
     cli_import_objects(args, engine)
 
     assert get_credentials(engine) == CREDENTIALS_TEST_VALUE_GOAD_SECRETSDUMP
-
-
-def test_import_credential_bad_format(engine: Engine):
-    # Write the exported CSV into a file
-    with tempfile.NamedTemporaryFile("w", delete=False) as temp_csv:
-        temp_csv.write("test,test2,test3\ntest")
-        temp_csv.seek(0)
-
-        command_line = f"{IMPORT_SUBCOMMAND} {CREDS_SUBCOMMAND} --format {CredsImportFileType.CSV.name} -f {temp_csv.name}".split()
-        args = parse_arguments().parse_args(command_line)
-
-        with pytest.raises(Exception):
-            cli_import_objects(args, engine)

@@ -58,14 +58,16 @@ def export_objects_csv(
     column_names = []
 
     for column in obj_type.__mapper__.columns:
-        if column.name not in [CREDENTIAL_PROPERTY_NAME_ID , CREDENTIAL_PROPERTY_NAME_SYNC_KEY, HOST_PROPERTY_NAME_ID]:
+        if column.name not in [
+            CREDENTIAL_PROPERTY_NAME_ID,
+            CREDENTIAL_PROPERTY_NAME_SYNC_KEY,
+            HOST_PROPERTY_NAME_ID,
+        ]:
             column_names.append(column.name)
 
     csv_writer.writerow(column_names)
 
     for o in objects:
-        csv_writer.writerow(
-            [getattr(o, column_name) for column_name in column_names]
-        )
+        csv_writer.writerow([getattr(o, column_name) for column_name in column_names])
 
     return csv_string.getvalue()

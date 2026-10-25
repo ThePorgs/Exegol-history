@@ -38,7 +38,7 @@ async def test_export_host_csv(
     with open(temp_export_csv.name, "r") as temp_export_csv_read:
         assert (
             temp_export_csv_read.read()
-            == "ip,hostname,role\n127.0.0.1,DC01,DC\n127.0.0.12,,\n127.0.0.12,DC012,\n127.0.0.13,,\n"
+            == "ip,hostname,role\n127.0.0.1,dc01,DC\n127.0.0.12,,\n127.0.0.12,dc012,\n127.0.0.13,,\n"
         )
 
 

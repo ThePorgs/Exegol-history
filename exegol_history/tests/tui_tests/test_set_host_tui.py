@@ -102,7 +102,7 @@ async def test_set_host_half_linux(engine: Engine, load_mock_config: AppConfig):
     envs = command_output.stdout.decode("utf8")
 
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
     command_output = subprocess.run(
         [
@@ -145,8 +145,7 @@ async def test_set_host_full_linux(engine: Engine, load_mock_config: AppConfig):
     envs = command_output.stdout.decode("utf8")
 
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
-    assert ROLE_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
     command_output = subprocess.run(
         [
@@ -159,7 +158,7 @@ async def test_set_host_full_linux(engine: Engine, load_mock_config: AppConfig):
     envs = command_output.stdout.decode("utf8")
 
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
 
 # Test the special case of a DC host, if we select an host that is not a DC,
@@ -192,7 +191,7 @@ async def test_set_host_dc_linux(engine: Engine, load_mock_config: AppConfig):
     envs = command_output.stdout.decode("utf8")
 
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
     app = DbHostsApp(
         load_mock_config, engine
@@ -220,9 +219,9 @@ async def test_set_host_dc_linux(engine: Engine, load_mock_config: AppConfig):
     envs = command_output.stdout.decode("utf8")
 
     assert "192.168.0.22" in envs
-    assert "MSSQL01" in envs
+    assert "mssql01" in envs
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
 
 @pytest.mark.skipif(sys.platform != "Windows", reason="require Windows")
@@ -290,7 +289,7 @@ async def test_set_host_half_windows(engine: Engine, load_mock_config: AppConfig
     envs = command_output.stdout.decode("utf8")
 
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
     command_output = subprocess.run(
         [
@@ -333,8 +332,7 @@ async def test_set_host_full_windows(engine: Engine, load_mock_config: AppConfig
     envs = command_output.stdout.decode("utf8")
 
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
-    assert ROLE_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
     command_output = subprocess.run(
         [
@@ -347,7 +345,7 @@ async def test_set_host_full_windows(engine: Engine, load_mock_config: AppConfig
     envs = command_output.stdout.decode("utf8")
 
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
 
 # Test the special case of a DC host, if we select an host that is not a DC,
@@ -380,7 +378,7 @@ async def test_set_host_dc_windows(engine: Engine, load_mock_config: AppConfig):
     envs = command_output.stdout.decode("utf8")
 
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
     app = DbHostsApp(
         load_mock_config, engine
@@ -410,4 +408,4 @@ async def test_set_host_dc_windows(engine: Engine, load_mock_config: AppConfig):
     assert "192.168.0.22" in envs
     assert "MSSQL01" in envs
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs

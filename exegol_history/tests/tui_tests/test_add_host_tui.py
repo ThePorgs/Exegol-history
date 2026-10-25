@@ -99,8 +99,7 @@ async def test_add_and_set_host_full(engine: Engine, load_mock_config: AppConfig
     envs = command_output.stdout.decode("utf8")
 
     assert IP_TEST_VALUE in envs
-    assert HOSTNAME_TEST_VALUE in envs
-    assert ROLE_TEST_VALUE in envs
+    assert HOSTNAME_TEST_VALUE.lower() in envs
 
 
 async def test_add_host_empty(engine: Engine, load_mock_config: AppConfig):

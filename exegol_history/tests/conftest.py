@@ -123,7 +123,7 @@ def TEST_HOST2() -> list[Host]:
         Host(
             2,
             ip=IP_TEST_VALUE + "2",
-            hostname=HOSTNAME_TEST_VALUE,
+            hostname=HOSTNAME_TEST_VALUE.lower(),
             role=ROLE_TEST_VALUE,
         ),
     ]
@@ -132,8 +132,8 @@ def TEST_HOST2() -> list[Host]:
 @pytest.fixture(scope="function")
 def HOSTS_TEST_VALUE() -> list[Host]:
     return [
-        Host(1, IP_TEST_VALUE, HOSTNAME_TEST_VALUE, ROLE_TEST_VALUE),
+        Host(1, IP_TEST_VALUE, HOSTNAME_TEST_VALUE.lower(), ROLE_TEST_VALUE),
         Host(2, IP_TEST_VALUE + "2"),
-        Host(3, IP_TEST_VALUE + "2", HOSTNAME_TEST_VALUE + "2"),
+        Host(3, IP_TEST_VALUE + "2", (HOSTNAME_TEST_VALUE + "2").lower()),
         Host(4, IP_TEST_VALUE + "3"),
     ]

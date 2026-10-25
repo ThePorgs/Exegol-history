@@ -1,7 +1,7 @@
 [
   {
     "ip": "127.0.0.1",
-    "hostname": "DC01",
+    "hostname": "dc01",
     "role": "DC"
   },
   {
@@ -11,7 +11,7 @@
   },
   {
     "ip": "127.0.0.12",
-    "hostname": "DC012",
+    "hostname": "dc012",
     "role": ""
   },
   {

@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import Engine, Index, UniqueConstraint, func, select, text
+from sqlalchemy import Engine, Index, func, select, text
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
@@ -9,11 +9,24 @@ from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST, OBJECT_ALREADY_EXI
 DOMAIN_KEYED = text("sync_key = 'domain'")
 PASSWORD_KEYED = text("sync_key = 'password'")
 
+
 class Credential(Base):
     __tablename__ = "credentials"
     __table_args__ = (
-        Index("uq_synced_username_domain", "username", "domain", unique=True, sqlite_where=DOMAIN_KEYED),
-        Index("uq_synced_username_password", "username", "password", unique=True, sqlite_where=PASSWORD_KEYED),
+        Index(
+            "uq_synced_username_domain",
+            "username",
+            "domain",
+            unique=True,
+            sqlite_where=DOMAIN_KEYED,
+        ),
+        Index(
+            "uq_synced_username_password",
+            "username",
+            "password",
+            unique=True,
+            sqlite_where=PASSWORD_KEYED,
+        ),
     )
 
     credential_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -38,8 +51,8 @@ class Credential(Base):
         self.username = username
         self.password = password
         self.hash = hash
-        self.domain = domain
-        self.synced = sync_key
+        self.domain = domain.lower()
+        self.sync_key = sync_key
 
     def __eq__(self, value):
         return (
@@ -47,7 +60,7 @@ class Credential(Base):
             and (self.username == value.username)
             and (self.password == value.password)
             and (self.hash == value.hash)
-            and (self.domain == value.domain)
+            and (self.domain.lower() == value.domain.lower())
             and (self.sync_key == value.sync_key)
         )
 
@@ -79,8 +92,8 @@ class Credential(Base):
             "username": username,
             "password": password,
             "hash": hash,
-            "domain": domain,
-            "sync_key": sync_key
+            "domain": domain.lower(),
+            "sync_key": sync_key,
         }
 
 

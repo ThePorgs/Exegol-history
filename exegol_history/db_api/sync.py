@@ -37,9 +37,9 @@ def sync_objects(
         ):
             syncer = MetasploitSyncer(engine, connector.db_config_path)
             (synced_credentials, synced_hosts) = syncer.sync()
-            credentials += synced_credentials
+            domain_credentials += synced_credentials
             hosts += synced_hosts
 
-    add_credentials(engine, credentials, "domain")
-    add_credentials(engine, domain_credentials, "password")
+    add_credentials(engine, credentials, "password")
+    add_credentials(engine, domain_credentials, "domain")
     add_hosts(engine, hosts)

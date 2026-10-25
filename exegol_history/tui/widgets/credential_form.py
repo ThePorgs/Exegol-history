@@ -76,6 +76,7 @@ class CredentialForm(Container):
                 "password": password,
                 "hash": hash,
                 "domain": domain,
+                "sync_key": "",
             }
 
             self.screen.dismiss(tmp)

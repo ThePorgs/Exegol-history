@@ -10,6 +10,8 @@ from exegol_history.db_api.file_types import (
 )
 from exegol_history.db_api.hosts import Host
 
+DEFAULTS = {"username": "", "password": "", "hash": "", "domain": "", "sync_key": ""}
+
 
 def import_objects(
     file_type: CredsImportFileType | HostsImportFileType,
@@ -29,18 +31,19 @@ def import_objects(
         case CredsImportFileType.JSON | HostsImportFileType.JSON:
             objects = json.loads(file_raw)
 
-    return objects
+    return [{**DEFAULTS, **row} for row in objects]
 
 
 def import_objects_csv(file_raw: bytes):
     file_raw = io.StringIO(file_raw.decode("utf-8"))
     dialect = csv.Sniffer().sniff(file_raw.readline())
     file_raw.seek(0)
+
     return csv.DictReader(file_raw, delimiter=dialect.delimiter, restval="")
 
 
 def import_creds_pypykatz_json(file_raw: bytes) -> dict[Any]:
-    parsed_credentials = dict()
+    parsed_credentials = {}
     credentials_json = json.load(io.BytesIO(file_raw))
     logon_sessions = credentials_json[[*credentials_json][0]]["logon_sessions"]
 

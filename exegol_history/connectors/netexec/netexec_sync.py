@@ -111,19 +111,21 @@ class NetexecSyncer:
         for db_file, queries in self.db_files.items():
             db_file_path = workspace_path / Path(db_file)
 
-            nxc_timestamp = os.path.getmtime(db_file_path)
-            db_timestamp = 0.0
-
-            # If the file didn't changed since last sync, skip it
-            with Session(self.engine) as session:
-                query = select(SyncNxcTime).where(SyncNxcTime.filename == db_file)
-                result = session.scalars(query).first()
-                db_timestamp = float(result.timestamp) if result is not None else 0.0
-
-            if db_timestamp >= nxc_timestamp:
-                continue
-
             if db_file_path.is_file():
+                nxc_timestamp = os.path.getmtime(db_file_path)
+                db_timestamp = 0.0
+
+                # If the file didn't changed since last sync, skip it
+                with Session(self.engine) as session:
+                    query = select(SyncNxcTime).where(SyncNxcTime.filename == db_file)
+                    result = session.scalars(query).first()
+                    db_timestamp = (
+                        float(result.timestamp) if result is not None else 0.0
+                    )
+
+                if db_timestamp >= nxc_timestamp:
+                    continue
+
                 if self.sync_credentials:
                     try:
                         extracted_credentials = self.extract_credentials(
@@ -182,7 +184,12 @@ class NetexecSyncer:
             else:
                 username, password = row
 
-            credential = Credential.dict(None, username, None, None, domain.lower())
+            credential = Credential.dict(
+                None, username, domain=(domain or "").lower(), sync_key="domain"
+            )
+
+            if "domain" not in columns:
+                credential["sync_key"] = "password"
 
             if credtype == NetexecCredType.HASH.value:
                 credential["hash"] = password

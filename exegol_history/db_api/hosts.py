@@ -25,14 +25,14 @@ class Host(Base):
     ):
         self.host_id = host_id
         self.ip = ip
-        self.hostname = hostname
+        self.hostname = hostname.lower()
         self.role = role
 
     def __eq__(self, value):
         return (
             (self.host_id == value.host_id)
             and (self.ip == value.ip)
-            and (self.hostname == value.hostname)
+            and (self.hostname.lower() == value.hostname.lower())
             and (self.role == value.role)
         )
 
@@ -55,7 +55,7 @@ class Host(Base):
         return {
             "host_id": host_id,
             "ip": ip,
-            "hostname": hostname,
+            "hostname": hostname.lower(),
             "role": role,
         }
 

@@ -33,7 +33,7 @@ def test_export_host_csv(engine: Engine, TEST_HOST2: list[Host]):
 
     assert (
         console.file.getvalue()
-        == f"ip,hostname,role\n{IP_TEST_VALUE},,{ROLE_TEST_VALUE}\n{IP_TEST_VALUE + '2'},{HOSTNAME_TEST_VALUE},{ROLE_TEST_VALUE}\n\n"
+        == f"ip,hostname,role\n{IP_TEST_VALUE},,{ROLE_TEST_VALUE}\n{IP_TEST_VALUE + '2'},{HOSTNAME_TEST_VALUE.lower()},{ROLE_TEST_VALUE}\n\n"
     )
 
 
@@ -48,7 +48,7 @@ def test_export_host_csv_delimiter(engine: Engine, TEST_HOST2: list[Host]):
 
     assert (
         console.file.getvalue()
-        == f"ip:hostname:role\n{IP_TEST_VALUE}::{ROLE_TEST_VALUE}\n{IP_TEST_VALUE + '2'}:{HOSTNAME_TEST_VALUE}:{ROLE_TEST_VALUE}\n\n"
+        == f"ip:hostname:role\n{IP_TEST_VALUE}::{ROLE_TEST_VALUE}\n{IP_TEST_VALUE + '2'}:{HOSTNAME_TEST_VALUE.lower()}:{ROLE_TEST_VALUE}\n\n"
     )
 
     # Now with an invalid delimiter
@@ -78,7 +78,7 @@ def test_export_host_json(engine: Engine, TEST_HOST2: list[Host]):
   }},
   {{
     "ip": "{IP_TEST_VALUE + "2"}",
-    "hostname": "{HOSTNAME_TEST_VALUE}",
+    "hostname": "{HOSTNAME_TEST_VALUE.lower()}",
     "role": "{ROLE_TEST_VALUE}"
   }}
 ]

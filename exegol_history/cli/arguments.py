@@ -228,10 +228,16 @@ def edit_subparser(subparsers):
         help="ID used to know which credentials to edit.",
     )
     credential_edit_parser.add_argument(
-        "-u", "--username", help="Username for the credential entry.", default="",
+        "-u",
+        "--username",
+        help="Username for the credential entry.",
+        default="",
     )
     credential_edit_parser.add_argument(
-        "-p", "--password", help="Password for the credential entry.", default="",
+        "-p",
+        "--password",
+        help="Password for the credential entry.",
+        default="",
     )
     credential_edit_parser.add_argument(
         "-H",
@@ -240,7 +246,9 @@ def edit_subparser(subparsers):
         default="",
     )
     credential_edit_parser.add_argument(
-        "-d", "--domain", help="Domain associated with the credential entry.",
+        "-d",
+        "--domain",
+        help="Domain associated with the credential entry.",
         default="",
     )
 
@@ -262,8 +270,10 @@ def edit_subparser(subparsers):
         default="",
     )
     hosts_edit_parser.add_argument(
-        "-n", "--hostname", help="Hostname or NetBIOS name of the host."
-        ,default="",
+        "-n",
+        "--hostname",
+        help="Hostname or NetBIOS name of the host.",
+        default="",
     )
 
 

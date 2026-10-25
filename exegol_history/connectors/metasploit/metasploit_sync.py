@@ -40,8 +40,8 @@ class MetasploitSyncer:
 
             for record in cursor.fetchall():
                 username = record[1]
-                password = None
-                hash = None
+                password = ""
+                hash = ""
                 private_data = record[2]
                 private_data_type = record[3]
                 domain = record[4]
@@ -57,6 +57,7 @@ class MetasploitSyncer:
                         password=password,
                         hash=hash,
                         domain=domain,
+                        sync_key="domain",
                     )
                 )
 
