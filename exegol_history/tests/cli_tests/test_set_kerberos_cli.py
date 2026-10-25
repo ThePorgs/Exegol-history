@@ -7,7 +7,7 @@ import pytest
 
 import exegol_history.db_api.kerberos as kerberos_module
 from exegol_history.cli.arguments import parse_arguments
-from exegol_history.cli.functions import KRB_SUBCOMMAND, SET_SUBCOMMAND
+from exegol_history.cli.constants import KRB_SUBCOMMAND, SET_SUBCOMMAND
 from exegol_history.cli.utils import KERBEROS_VARIABLES, write_kerberos_in_profile
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.kerberos import (
@@ -233,12 +233,14 @@ def test_convert_ticket_failure(tmp_path):
 def test_convert_ticket_missing_tool(tmp_path):
     output_path = str(tmp_path / "ticket.kirbi")
 
-    with patch(
-        "exegol_history.db_api.kerberos.subprocess.run",
-        side_effect=FileNotFoundError(),
+    with (
+        patch(
+            "exegol_history.db_api.kerberos.subprocess.run",
+            side_effect=FileNotFoundError(),
+        ),
+        pytest.raises(RuntimeError),
     ):
-        with pytest.raises(RuntimeError):
-            convert_ticket(str(TEST_KRB_TICKET1), output_path, "ticketConverter.py")
+        convert_ticket(str(TEST_KRB_TICKET1), output_path, "ticketConverter.py")
 
 
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="require Linux")

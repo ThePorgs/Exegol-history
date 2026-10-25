@@ -19,7 +19,7 @@ from textual.keys import Keys
 
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.creds import Credential, get_credentials
-from exegol_history.db_api.importing import CredsImportFileType
+from exegol_history.db_api.file_types import CredsImportFileType
 from exegol_history.tui.db_creds import DbCredsApp
 from exegol_history.tui.screens.open_file import ID_PATH_INPUT
 from exegol_history.tui.widgets.credential_form import ID_CONFIRM_BUTTON

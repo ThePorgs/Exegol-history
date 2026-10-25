@@ -7,8 +7,8 @@ from common import (
 from sqlalchemy import Engine
 
 from exegol_history.config.config import AppConfig
+from exegol_history.db_api.file_types import HostsImportFileType
 from exegol_history.db_api.hosts import Host, add_hosts
-from exegol_history.db_api.importing import HostsImportFileType
 from exegol_history.tui.db_hosts import DbHostsApp
 from exegol_history.tui.screens.export_object import (
     ID_BROWSE_BUTTON,

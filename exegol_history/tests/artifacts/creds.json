@@ -1,9 +1,9 @@
 [
   {
     "username": "username7",
-    "password": null,
-    "hash": null,
-    "domain": null
+    "password": "",
+    "hash": "",
+    "domain": ""
   },
   {
     "username": "username",
@@ -14,26 +14,26 @@
   {
     "username": "username2",
     "password": "password2",
-    "hash": null,
-    "domain": null
+    "hash": "",
+    "domain": ""
   },
   {
     "username": "username3",
     "password": "password",
     "hash": "hash",
-    "domain": null
+    "domain": ""
   },
   {
     "username": "username4",
-    "password": null,
-    "hash": null,
-    "domain": null
+    "password": "",
+    "hash": "",
+    "domain": ""
   },
   {
     "username": "username",
-    "password": null,
-    "hash": null,
-    "domain": null
+    "password": "",
+    "hash": "",
+    "domain": ""
   },
   {
     "username": "username6",

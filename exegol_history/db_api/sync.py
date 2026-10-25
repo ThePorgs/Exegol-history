@@ -14,6 +14,7 @@ def sync_objects(
     sync_hosts: bool = False,
 ):
     credentials = []
+    domain_credentials = []
     hosts = []
 
     for connector in config.sync:
@@ -24,17 +25,21 @@ def sync_objects(
             syncer = NetexecSyncer(
                 engine, connector.workspace_path, sync_credentials, sync_hosts
             )
-            (tmp1, tmp2) = syncer.sync()
-            credentials += tmp1
-            hosts += tmp2
+
+            for result in syncer.sync():
+                (synced_credentials, synced_domain_credentials, synced_hosts) = result
+                credentials += synced_credentials
+                domain_credentials += synced_domain_credentials
+                hosts += synced_hosts
         elif (
             connector.CONNECTOR_NAME == MetasploitSyncer.CONNECTOR_NAME
             and connector.enabled
         ):
             syncer = MetasploitSyncer(engine, connector.db_config_path)
-            (tmp1, tmp2) = syncer.sync()
-            credentials += tmp1
-            hosts += tmp2
+            (synced_credentials, synced_hosts) = syncer.sync()
+            credentials += synced_credentials
+            hosts += synced_hosts
 
-    add_credentials(engine, credentials)
+    add_credentials(engine, credentials, "domain")
+    add_credentials(engine, domain_credentials, "password")
     add_hosts(engine, hosts)

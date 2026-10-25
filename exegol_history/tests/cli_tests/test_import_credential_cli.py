@@ -4,11 +4,8 @@ import pytest
 from sqlalchemy import Engine
 
 from exegol_history.cli.arguments import parse_arguments
-from exegol_history.cli.functions import (
-    CREDS_SUBCOMMAND,
-    IMPORT_SUBCOMMAND,
-    cli_import_objects,
-)
+from exegol_history.cli.constants import CREDS_SUBCOMMAND, IMPORT_SUBCOMMAND
+from exegol_history.cli.functions import cli_import_objects
 from exegol_history.db_api.creds import Credential, get_credentials
 from exegol_history.db_api.importing import CredsImportFileType
 from exegol_history.tests.common import (
@@ -72,13 +69,13 @@ def test_import_credential_kdbx(engine: Engine):
 
 def test_import_credential_pypykatz_json(engine: Engine):
     # Write the exported CSV into a file
-    temp_csv = tempfile.NamedTemporaryFile("w", delete=False)
-    temp_csv.write("test,test2,test3\ntest")
-    temp_csv.seek(0)
+    with tempfile.NamedTemporaryFile("w", delete=False) as temp_csv:
+        temp_csv.write("test,test2,test3\ntest")
+        temp_csv.seek(0)
 
-    command_line = f"{IMPORT_SUBCOMMAND} {CREDS_SUBCOMMAND} --format {CredsImportFileType.PYPYKATZ_JSON.name} -f {TEST_CREDS_PYPYKATZ_JSON}".split()
-    args = parse_arguments().parse_args(command_line)
-    cli_import_objects(args, engine)
+        command_line = f"{IMPORT_SUBCOMMAND} {CREDS_SUBCOMMAND} --format {CredsImportFileType.PYPYKATZ_JSON.name} -f {TEST_CREDS_PYPYKATZ_JSON}".split()
+        args = parse_arguments().parse_args(command_line)
+        cli_import_objects(args, engine)
 
     assert get_credentials(engine) == CREDENTIALS_TEST_VALUE_GOAD_PYPYKATZ
 
@@ -95,14 +92,12 @@ def test_import_credential_secretsdump(
 
 def test_import_credential_bad_format(engine: Engine):
     # Write the exported CSV into a file
-    temp_csv = tempfile.NamedTemporaryFile("w", delete=False)
-    temp_csv.write("test,test2,test3\ntest")
-    temp_csv.seek(0)
+    with tempfile.NamedTemporaryFile("w", delete=False) as temp_csv:
+        temp_csv.write("test,test2,test3\ntest")
+        temp_csv.seek(0)
 
-    command_line = f"{IMPORT_SUBCOMMAND} {CREDS_SUBCOMMAND} --format {CredsImportFileType.CSV.name} -f {temp_csv.name}".split()
-    args = parse_arguments().parse_args(command_line)
+        command_line = f"{IMPORT_SUBCOMMAND} {CREDS_SUBCOMMAND} --format {CredsImportFileType.CSV.name} -f {temp_csv.name}".split()
+        args = parse_arguments().parse_args(command_line)
 
-    with pytest.raises(Exception):
-        cli_import_objects(args, engine)
-
-    temp_csv.close()
+        with pytest.raises(Exception):
+            cli_import_objects(args, engine)

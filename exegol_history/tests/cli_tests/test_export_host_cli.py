@@ -6,15 +6,14 @@ from rich.console import Console
 from sqlalchemy import Engine
 
 from exegol_history.cli.arguments import parse_arguments
-from exegol_history.cli.functions import (
+from exegol_history.cli.constants import (
     EXPORT_SUBCOMMAND,
     HOSTS_SUBCOMMAND,
     IMPORT_SUBCOMMAND,
-    cli_export_objects,
-    cli_import_objects,
 )
+from exegol_history.cli.functions import cli_export_objects, cli_import_objects
+from exegol_history.db_api.file_types import HostsImportFileType
 from exegol_history.db_api.hosts import Host, add_hosts, get_hosts
-from exegol_history.db_api.importing import HostsImportFileType
 from exegol_history.tests.common import (
     HOSTNAME_TEST_VALUE,
     IP_TEST_VALUE,
@@ -74,7 +73,7 @@ def test_export_host_json(engine: Engine, TEST_HOST2: list[Host]):
         == f'''[
   {{
     "ip": "{IP_TEST_VALUE}",
-    "hostname": null,
+    "hostname": "",
     "role": "{ROLE_TEST_VALUE}"
   }},
   {{
@@ -100,20 +99,18 @@ def test_export_import_host_csv(engine: Engine, TEST_HOST2: list[Host]):
     exported_csv = console.file.getvalue()
 
     # Write the exported CSV into a file
-    temp_csv = tempfile.NamedTemporaryFile("w", delete=False)
-    temp_csv.write(exported_csv)
-    temp_csv.seek(0)
+    with tempfile.NamedTemporaryFile("w", delete=False) as temp_csv:
+        temp_csv.write(exported_csv)
+        temp_csv.seek(0)
 
-    delete_all_entries(engine)
+        delete_all_entries(engine)
 
-    assert len(get_hosts(engine)) == 0
+        assert len(get_hosts(engine)) == 0
 
-    command_line = f"{IMPORT_SUBCOMMAND} {HOSTS_SUBCOMMAND} --format {HostsImportFileType.CSV.name} -f {temp_csv.name}".split()
-    args = parse_arguments().parse_args(command_line)
+        command_line = f"{IMPORT_SUBCOMMAND} {HOSTS_SUBCOMMAND} --format {HostsImportFileType.CSV.name} -f {temp_csv.name}".split()
+        args = parse_arguments().parse_args(command_line)
 
-    cli_import_objects(args, engine)
-
-    temp_csv.close()
+        cli_import_objects(args, engine)
 
     assert get_hosts(engine) == TEST_HOST2
 
@@ -130,20 +127,18 @@ def test_export_import_host_json(engine: Engine, TEST_HOST2: list[Host]):
     exported_csv = console.file.getvalue()
 
     # Write the exported CSV into a file
-    temp_csv = tempfile.NamedTemporaryFile("w", delete=False)
-    temp_csv.write(exported_csv)
-    temp_csv.seek(0)
+    with tempfile.NamedTemporaryFile("w", delete=False) as temp_csv:
+        temp_csv.write(exported_csv)
+        temp_csv.seek(0)
 
-    delete_all_entries(engine)
+        delete_all_entries(engine)
 
-    assert len(get_hosts(engine)) == 0
+        assert len(get_hosts(engine)) == 0
 
-    command_line = f"{IMPORT_SUBCOMMAND} {HOSTS_SUBCOMMAND} --format {HostsImportFileType.JSON.name} -f {temp_csv.name}".split()
-    args = parse_arguments().parse_args(command_line)
+        command_line = f"{IMPORT_SUBCOMMAND} {HOSTS_SUBCOMMAND} --format {HostsImportFileType.JSON.name} -f {temp_csv.name}".split()
+        args = parse_arguments().parse_args(command_line)
 
-    cli_import_objects(args, engine)
-
-    temp_csv.close()
+        cli_import_objects(args, engine)
 
     assert get_hosts(engine) == TEST_HOST2
 

@@ -52,9 +52,9 @@ class HostForm(Container):
 
             tmp = {
                 "host_id": self.host.host_id if self.host else None,
-                "ip": ip if ip else None,
-                "hostname": hostname if hostname else None,
-                "role": role if role else None,
+                "ip": ip,
+                "hostname": hostname,
+                "role": role,
             }
 
             self.screen.dismiss(tmp)

@@ -1,19 +1,20 @@
 import pathlib
+
 from textual import on
-from textual.screen import ModalScreen
 from textual.app import ComposeResult
-from exegol_history.db_api.exporting import CredsExportFileType, HostsExportFileType
-from exegol_history.db_api.importing import CredsImportFileType, HostsImportFileType
-from exegol_history.tui.widgets.action_buttons import ActionButtons
-from exegol_history.tui.widgets.import_file import AssetsType
 from textual.containers import Container, Horizontal
+from textual.screen import ModalScreen
 from textual.widgets import (
     Button,
-    Select,
     Input,
+    Select,
 )
 
+from exegol_history.db_api.file_types import CredsExportFileType, HostsExportFileType
+from exegol_history.db_api.importing import CredsImportFileType, HostsImportFileType
 from exegol_history.tui.screens.open_file import OpenFileScreen
+from exegol_history.tui.widgets.action_buttons import ActionButtons
+from exegol_history.tui.widgets.import_file import AssetsType
 
 ID_CONFIRM_BUTTON = "confirm_button"
 ID_BROWSE_BUTTON = "browse_button"

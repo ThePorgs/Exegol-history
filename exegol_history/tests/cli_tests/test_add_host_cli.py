@@ -1,7 +1,8 @@
 from sqlalchemy import Engine
 
 from exegol_history.cli.arguments import parse_arguments
-from exegol_history.cli.functions import ADD_SUBCOMMAND, HOSTS_SUBCOMMAND, add_object
+from exegol_history.cli.constants import ADD_SUBCOMMAND, HOSTS_SUBCOMMAND
+from exegol_history.cli.functions import add_object
 from exegol_history.db_api.hosts import Host, get_hosts
 from exegol_history.tests.common import (
     HOSTNAME_TEST_VALUE,

@@ -107,18 +107,22 @@ def add_subparser(subparsers):
         CREDS_SUBCOMMAND, help="Add or update credentials in the database."
     )
     credential_add_parser.add_argument(
-        "-u", "--username", help="Username for the credential entry."
+        "-u", "--username", help="Username for the credential entry.", default=""
     )
     credential_add_parser.add_argument(
-        "-p", "--password", help="Password for the credential entry."
+        "-p", "--password", help="Password for the credential entry.", default=""
     )
     credential_add_parser.add_argument(
         "-H",
         "--hash",
         help="Password hash (such as NTLM, MD5, etc.) for the credential entry.",
+        default="",
     )
     credential_add_parser.add_argument(
-        "-d", "--domain", help="Domain associated with the credential entry."
+        "-d",
+        "--domain",
+        help="Domain associated with the credential entry.",
+        default="",
     )
     credential_add_parser.add_argument(
         "-s",
@@ -136,9 +140,10 @@ def add_subparser(subparsers):
         "-r",
         "--role",
         help="Role of the host in the environment (e.g., SCCM, ADCS, DC, WKS).",
+        default="",
     )
     hosts_add_parser.add_argument(
-        "-n", "--hostname", help="Hostname or NetBIOS name of the host."
+        "-n", "--hostname", help="Hostname or NetBIOS name of the host.", default=""
     )
     hosts_add_parser.add_argument(
         "-s",
@@ -223,18 +228,20 @@ def edit_subparser(subparsers):
         help="ID used to know which credentials to edit.",
     )
     credential_edit_parser.add_argument(
-        "-u", "--username", help="Username for the credential entry."
+        "-u", "--username", help="Username for the credential entry.", default="",
     )
     credential_edit_parser.add_argument(
-        "-p", "--password", help="Password for the credential entry."
+        "-p", "--password", help="Password for the credential entry.", default="",
     )
     credential_edit_parser.add_argument(
         "-H",
         "--hash",
         help="Password hash (such as NTLM, MD5, etc.) for the credential entry.",
+        default="",
     )
     credential_edit_parser.add_argument(
-        "-d", "--domain", help="Domain associated with the credential entry."
+        "-d", "--domain", help="Domain associated with the credential entry.",
+        default="",
     )
 
     # Hosts
@@ -252,9 +259,11 @@ def edit_subparser(subparsers):
         "-r",
         "--role",
         help="Role of the host in the environment (e.g., SCCM, ADCS, DC, WKS).",
+        default="",
     )
     hosts_edit_parser.add_argument(
         "-n", "--hostname", help="Hostname or NetBIOS name of the host."
+        ,default="",
     )
 
 

@@ -71,12 +71,12 @@ class NetexecSyncer:
                 "SELECT ip, hostname FROM hosts",
             ),
             "wmi.db": (
-                "SELECT username, password FROM users",
+                "SELECT username, password, domain FROM users",
                 "SELECT ip, hostname FROM hosts",
             ),
         }
 
-    def sync(self) -> tuple[list[dict], list[dict]]:
+    def sync(self) -> tuple[list[Credential], list[Credential], list[Host]]:
         synced = []
 
         if self.workspaces_dir.exists():
@@ -90,8 +90,22 @@ class NetexecSyncer:
 
         return synced
 
-    def process_workspace(self, workspace_path: Path) -> tuple[list[dict], list[dict]]:
+    @staticmethod
+    def is_domain_credentials(db_file: str):
+        return db_file in [
+            "rdp.db",
+            "smb.db",
+            "wmi.db",
+            "winrm.db",
+            "mssql.db",
+            "ldap.db",
+        ]
+
+    def process_workspace(
+        self, workspace_path: Path
+    ) -> tuple[list[Credential], list[Credential], list[Host]]:
         credentials = []
+        domain_credentials = []
         hosts = []
 
         for db_file, queries in self.db_files.items():
@@ -112,9 +126,16 @@ class NetexecSyncer:
             if db_file_path.is_file():
                 if self.sync_credentials:
                     try:
-                        credentials += self.extract_credentials(
+                        extracted_credentials = self.extract_credentials(
                             db_file_path, queries[0]
                         )
+
+                        if NetexecSyncer.is_domain_credentials(
+                            db_file
+                        ):  # If it's a domain credential, rules of conflict are different
+                            domain_credentials += extracted_credentials
+                        else:
+                            credentials += extracted_credentials
                     except Exception as e:
                         print(e)
                         continue
@@ -137,7 +158,7 @@ class NetexecSyncer:
                     session.execute(query)
                     session.commit()
 
-        return (credentials, hosts)
+        return (credentials, domain_credentials, hosts)
 
     def extract_credentials(self, db_file_path: str, query: str) -> list[dict]:
         if not query:

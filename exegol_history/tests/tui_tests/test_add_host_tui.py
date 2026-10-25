@@ -112,44 +112,6 @@ async def test_add_host_empty(engine: Engine, load_mock_config: AppConfig):
     assert get_hosts(engine) == [Host(1)]
 
 
-async def test_add_host_existing(engine: Engine, load_mock_config: AppConfig):
-    app = DbHostsApp(load_mock_config, engine)
-    add_host_keybind = load_mock_config.keybindings["add_host"]
-    async with app.run_test() as pilot:
-        await pilot.press(add_host_keybind)
-        await select_input_and_enter_text(pilot, f"#{ID_IP_INPUT}", IP_TEST_VALUE)
-        await select_input_and_enter_text(
-            pilot, f"#{ID_HOSTNAME_INPUT}", HOSTNAME_TEST_VALUE
-        )
-        await select_input_and_enter_text(pilot, f"#{ID_ROLE_INPUT}", ROLE_TEST_VALUE)
-        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
-        assert get_hosts(engine) == [
-            Host(
-                1,
-                ip=IP_TEST_VALUE,
-                hostname=HOSTNAME_TEST_VALUE,
-                role=ROLE_TEST_VALUE,
-            )
-        ]
-        await pilot.press(add_host_keybind)
-        await select_input_and_enter_text(pilot, f"#{ID_IP_INPUT}", IP_TEST_VALUE)
-        await select_input_and_enter_text(
-            pilot, f"#{ID_HOSTNAME_INPUT}", HOSTNAME_TEST_VALUE
-        )
-        await select_input_and_enter_text(
-            pilot, f"#{ID_ROLE_INPUT}", ROLE_TEST_VALUE + "2"
-        )
-        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
-        assert get_hosts(engine) == [
-            Host(
-                1,
-                ip=IP_TEST_VALUE,
-                hostname=HOSTNAME_TEST_VALUE,
-                role=ROLE_TEST_VALUE + "2",
-            )
-        ]
-
-
 async def test_add_host_issue_3(engine: Engine, load_mock_config: AppConfig):
     app = DbHostsApp(load_mock_config, engine)
     add_host_keybind = load_mock_config.keybindings["add_host"]

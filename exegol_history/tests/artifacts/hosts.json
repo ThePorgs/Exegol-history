@@ -6,17 +6,17 @@
   },
   {
     "ip": "127.0.0.12",
-    "hostname": null,
-    "role": null
+    "hostname": "",
+    "role": ""
   },
   {
     "ip": "127.0.0.12",
     "hostname": "DC012",
-    "role": null
+    "role": ""
   },
   {
     "ip": "127.0.0.13",
-    "hostname": null,
-    "role": null
+    "hostname": "",
+    "role": ""
   }
 ]

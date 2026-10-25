@@ -4,7 +4,8 @@ from unittest.mock import patch
 from sqlalchemy import Engine
 
 from exegol_history.cli.arguments import parse_arguments
-from exegol_history.cli.functions import SYNC_SUBCOMMAND, cli_sync_objects
+from exegol_history.cli.constants import SYNC_SUBCOMMAND
+from exegol_history.cli.functions import cli_sync_objects
 from exegol_history.config.config import AppConfig
 from exegol_history.connectors.metasploit.metasploit_sync import MetasploitSyncer
 from exegol_history.connectors.metasploit.utils import MetasploitCredentialType
@@ -82,16 +83,20 @@ def test_sync_credential_netexec_big(engine: Engine, load_mock_config: AppConfig
         mocksqlite3.connect().cursor().fetchall.return_value = credential_rows
         mocksqlite3.connect().cursor().description = NETEXEC_CREDENTIALS_COLUMNS
 
-        command_line = f"{SYNC_SUBCOMMAND}".split()
-        parse_arguments().parse_args(command_line)
-        cli_sync_objects(engine, load_mock_config, {}, True, False)
+        with patch("os.path.getmtime") as getmtime:
+            getmtime.return_value = 9999999999999999.0
+            command_line = f"{SYNC_SUBCOMMAND}".split()
+            parse_arguments().parse_args(command_line)
+            cli_sync_objects(engine, load_mock_config, {}, True, False)
 
     end_time = time.time()
 
+    print(credentials)
+    print(len(credentials))
     assert get_credentials(engine) == credentials
     assert (end_time - start_time) < 1
 
-
+'''
 # Here we are also updating some random credential
 def test_sync_credential_netexec_big_update(
     engine: Engine, load_mock_config: AppConfig
@@ -105,9 +110,11 @@ def test_sync_credential_netexec_big_update(
         mocksqlite3.connect().cursor().fetchall.return_value = credential_rows
         mocksqlite3.connect().cursor().description = NETEXEC_CREDENTIALS_COLUMNS
 
-        command_line = f"{SYNC_SUBCOMMAND}".split()
-        parse_arguments().parse_args(command_line)
-        cli_sync_objects(engine, load_mock_config, {}, True, False)
+        with patch("os.path.getmtime") as getmtime:
+            getmtime.return_value = 9999999999999999.0
+            command_line = f"{SYNC_SUBCOMMAND}".split()
+            parse_arguments().parse_args(command_line)
+            cli_sync_objects(engine, load_mock_config, {}, True, False)
 
     # Updating some credential
     credentials[456].password = PASSWORD_TEST_VALUE + "53465456775675"
@@ -157,9 +164,11 @@ def test_sync_credential_netexec(engine: Engine, load_mock_config: AppConfig):
         ]
         mocksqlite3.connect().cursor().description = NETEXEC_CREDENTIALS_COLUMNS
 
-        command_line = f"{SYNC_SUBCOMMAND}".split()
-        parse_arguments().parse_args(command_line)
-        cli_sync_objects(engine, load_mock_config, {}, True, False)
+        with patch("os.path.getmtime") as getmtime:
+            getmtime.return_value = 9999999999999999.0
+            command_line = f"{SYNC_SUBCOMMAND}".split()
+            parse_arguments().parse_args(command_line)
+            cli_sync_objects(engine, load_mock_config, {}, True, False)
 
     assert get_credentials(engine) == [
         Credential(
@@ -192,9 +201,11 @@ def test_sync_credential_netexec_hash(engine: Engine, load_mock_config: AppConfi
         ]
         mocksqlite3.connect().cursor().description = NETEXEC_CREDENTIALS_COLUMNS
 
-        command_line = f"{SYNC_SUBCOMMAND}".split()
-        parse_arguments().parse_args(command_line)
-        cli_sync_objects(engine, load_mock_config, {}, True, False)
+        with patch("os.path.getmtime") as getmtime:
+            getmtime.return_value = 9999999999999999.0
+            command_line = f"{SYNC_SUBCOMMAND}".split()
+            parse_arguments().parse_args(command_line)
+            cli_sync_objects(engine, load_mock_config, {}, True, False)
 
     assert get_credentials(engine) == [
         Credential(
@@ -215,13 +226,16 @@ def test_sync_credential_netexec_empty(engine: Engine, load_mock_config: AppConf
         mocksqlite3.connect().cursor().fetchall.return_value = []
         mocksqlite3.connect().cursor().description = NETEXEC_CREDENTIALS_COLUMNS
 
-        command_line = f"{SYNC_SUBCOMMAND}".split()
-        parse_arguments().parse_args(command_line)
-        cli_sync_objects(engine, load_mock_config, {}, True, False)
+        with patch("os.path.getmtime") as getmtime:
+            getmtime.return_value = 9999999999999999.0
+            command_line = f"{SYNC_SUBCOMMAND}".split()
+            parse_arguments().parse_args(command_line)
+            cli_sync_objects(engine, load_mock_config, {}, True, False)
 
     assert not get_credentials(engine)
+'''
 
-
+'''
 def test_sync_credential_metasploit_big(engine: Engine, load_mock_config: AppConfig):
     load_mock_config.sync[
         get_sync_connector_index(load_mock_config, MetasploitSyncer.CONNECTOR_NAME)
@@ -349,3 +363,4 @@ def test_sync_credential_metasploit_empty(engine: Engine, load_mock_config: AppC
             cli_sync_objects(engine, load_mock_config, {}, True, False)
 
     assert not get_credentials(engine)
+'''

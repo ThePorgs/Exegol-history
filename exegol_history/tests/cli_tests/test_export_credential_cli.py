@@ -6,19 +6,18 @@ from rich.console import Console
 from sqlalchemy import Engine
 
 from exegol_history.cli.arguments import parse_arguments
-from exegol_history.cli.functions import (
+from exegol_history.cli.constants import (
     CREDS_SUBCOMMAND,
     EXPORT_SUBCOMMAND,
     IMPORT_SUBCOMMAND,
-    cli_export_objects,
-    cli_import_objects,
 )
+from exegol_history.cli.functions import cli_export_objects, cli_import_objects
 from exegol_history.db_api.creds import (
     Credential,
     add_credentials,
     get_credentials,
 )
-from exegol_history.db_api.importing import CredsImportFileType
+from exegol_history.db_api.file_types import CredsImportFileType
 from exegol_history.tests.common import (
     DOMAIN_TEST_VALUE,
     HASH_TEST_VALUE,
@@ -81,9 +80,9 @@ def test_export_credential_json(engine: Engine, TEST_CREDENTIAL2: list[Credentia
         == f'''[
   {{
     "username": "{USERNAME_TEST_VALUE}",
-    "password": null,
+    "password": "",
     "hash": "{HASH_TEST_VALUE}",
-    "domain": null
+    "domain": ""
   }},
   {{
     "username": "{USERNAME_TEST_VALUE + "2"}",
@@ -123,20 +122,18 @@ def test_export_import_credential_csv(
     exported_csv = console.file.getvalue()
 
     # Write the exported CSV into a file
-    temp_csv = tempfile.NamedTemporaryFile("w", delete=False)
-    temp_csv.write(exported_csv)
-    temp_csv.seek(0)
+    with tempfile.NamedTemporaryFile("w", delete=False) as temp_csv:
+        temp_csv.write(exported_csv)
+        temp_csv.seek(0)
 
-    delete_all_entries(engine)
+        delete_all_entries(engine)
 
-    assert len(get_credentials(engine)) == 0
+        assert len(get_credentials(engine)) == 0
 
-    command_line = f"{IMPORT_SUBCOMMAND} {CREDS_SUBCOMMAND} --format {CredsImportFileType.CSV.name} -f {temp_csv.name}".split()
-    args = parse_arguments().parse_args(command_line)
+        command_line = f"{IMPORT_SUBCOMMAND} {CREDS_SUBCOMMAND} --format {CredsImportFileType.CSV.name} -f {temp_csv.name}".split()
+        args = parse_arguments().parse_args(command_line)
 
-    cli_import_objects(args, engine)
-
-    temp_csv.close()
+        cli_import_objects(args, engine)
 
     assert get_credentials(engine) == TEST_CREDENTIAL2
 
@@ -155,20 +152,18 @@ def test_export_import_credential_json(
     exported_csv = console.file.getvalue()
 
     # Write the exported CSV into a file
-    temp_csv = tempfile.NamedTemporaryFile("w", delete=False)
-    temp_csv.write(exported_csv)
-    temp_csv.seek(0)
+    with tempfile.NamedTemporaryFile("w", delete=False) as temp_csv:
+        temp_csv.write(exported_csv)
+        temp_csv.seek(0)
 
-    delete_all_entries(engine)
+        delete_all_entries(engine)
 
-    assert len(get_credentials(engine)) == 0
+        assert len(get_credentials(engine)) == 0
 
-    command_line = f"{IMPORT_SUBCOMMAND} {CREDS_SUBCOMMAND} --format {CredsImportFileType.JSON.name} -f {temp_csv.name}".split()
-    args = parse_arguments().parse_args(command_line)
+        command_line = f"{IMPORT_SUBCOMMAND} {CREDS_SUBCOMMAND} --format {CredsImportFileType.JSON.name} -f {temp_csv.name}".split()
+        args = parse_arguments().parse_args(command_line)
 
-    cli_import_objects(args, engine)
-
-    temp_csv.close()
+        cli_import_objects(args, engine)
 
     assert get_credentials(engine) == TEST_CREDENTIAL2
 

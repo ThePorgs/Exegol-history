@@ -17,8 +17,6 @@ def import_objects(
     kdbx_password: str = None,
     keyfile_path: str = None,
 ) -> list[Credential | Host]:
-    result = list()
-
     match file_type:
         case CredsImportFileType.PYPYKATZ_JSON:
             objects = import_creds_pypykatz_json(file_raw)
@@ -31,21 +29,14 @@ def import_objects(
         case CredsImportFileType.JSON | HostsImportFileType.JSON:
             objects = json.loads(file_raw)
 
-    for object in objects:
-        # Reference: https://stackoverflow.com/questions/2544710/how-i-can-get-rid-of-none-values-in-dictionary, answer by John La Rooy
-        # Remove empty string value
-        object = {k: v if v != "" else None for k, v in object.items()}
-
-        result.append(object)
-
-    return result
+    return objects
 
 
 def import_objects_csv(file_raw: bytes):
     file_raw = io.StringIO(file_raw.decode("utf-8"))
     dialect = csv.Sniffer().sniff(file_raw.readline())
     file_raw.seek(0)
-    return csv.DictReader(file_raw, delimiter=dialect.delimiter)
+    return csv.DictReader(file_raw, delimiter=dialect.delimiter, restval="")
 
 
 def import_creds_pypykatz_json(file_raw: bytes) -> dict[Any]:
@@ -64,7 +55,7 @@ def import_creds_pypykatz_json(file_raw: bytes) -> dict[Any]:
                 if dict_key not in parsed_credentials:
                     parsed_credentials[dict_key] = {
                         "username": username,
-                        "password": None,
+                        "password": "",
                         "hash": nt_hash,
                         "domain": domain,
                     }
@@ -82,7 +73,7 @@ def import_creds_pypykatz_json(file_raw: bytes) -> dict[Any]:
                     parsed_credentials[dict_key] = {
                         "username": username,
                         "password": password,
-                        "hash": None,
+                        "hash": "",
                         "domain": domain,
                     }
                 else:

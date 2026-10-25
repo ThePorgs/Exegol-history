@@ -4,7 +4,8 @@ from rich.console import Console
 from sqlalchemy import Engine
 
 from exegol_history.cli.arguments import parse_arguments
-from exegol_history.cli.functions import EDIT_SUBCOMMAND, HOSTS_SUBCOMMAND, edit_object
+from exegol_history.cli.constants import EDIT_SUBCOMMAND, HOSTS_SUBCOMMAND
+from exegol_history.cli.functions import edit_object
 from exegol_history.db_api.hosts import Host, add_hosts, get_hosts
 from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST
 from exegol_history.tests.common import (

@@ -72,10 +72,10 @@ class CredentialForm(Container):
                 "credential_id": self.credential.credential_id
                 if self.credential
                 else None,
-                "username": username if username else None,
-                "password": password if password else None,
-                "hash": hash if hash else None,
-                "domain": domain if domain else None,
+                "username": username,
+                "password": password,
+                "hash": hash,
+                "domain": domain,
             }
 
             self.screen.dismiss(tmp)

@@ -4,11 +4,8 @@ from rich.console import Console
 from sqlalchemy import Engine
 
 from exegol_history.cli.arguments import parse_arguments
-from exegol_history.cli.functions import (
-    CREDS_SUBCOMMAND,
-    DELETE_SUBCOMMAND,
-    delete_objects,
-)
+from exegol_history.cli.constants import CREDS_SUBCOMMAND, DELETE_SUBCOMMAND
+from exegol_history.cli.functions import delete_objects
 from exegol_history.db_api.creds import (
     Credential,
     add_credentials,

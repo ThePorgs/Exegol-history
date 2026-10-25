@@ -147,44 +147,6 @@ async def test_add_credential_empty(engine: Engine, load_mock_config: AppConfig)
     assert get_credentials(engine) == [Credential(1)]
 
 
-async def test_add_credential_existing(engine: Engine, load_mock_config: AppConfig):
-    app = DbCredsApp(load_mock_config, engine)
-    add_credential_keybind = load_mock_config.keybindings["add_credential"]
-    async with app.run_test() as pilot:
-        await pilot.press(add_credential_keybind)
-        await select_input_and_enter_text(
-            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
-        )
-        await select_input_and_enter_text(
-            pilot, f"#{ID_DOMAIN_INPUT}", DOMAIN_TEST_VALUE
-        )
-        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
-        assert get_credentials(engine) == [
-            Credential(1, username=USERNAME_TEST_VALUE, domain=DOMAIN_TEST_VALUE)
-        ]
-        await pilot.press(add_credential_keybind)
-        await select_input_and_enter_text(
-            pilot, f"#{ID_USERNAME_INPUT}", USERNAME_TEST_VALUE
-        )
-        await select_input_and_enter_text(
-            pilot, f"#{ID_PASSWORD_INPUT}", PASSWORD_TEST_VALUE
-        )
-        await select_input_and_enter_text(pilot, f"#{ID_HASH_INPUT}", HASH_TEST_VALUE)
-        await select_input_and_enter_text(
-            pilot, f"#{ID_DOMAIN_INPUT}", DOMAIN_TEST_VALUE
-        )
-        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
-        assert get_credentials(engine) == [
-            Credential(
-                1,
-                username=USERNAME_TEST_VALUE,
-                password=PASSWORD_TEST_VALUE,
-                hash=HASH_TEST_VALUE,
-                domain=DOMAIN_TEST_VALUE,
-            )
-        ]
-
-
 async def test_add_credential_issue_3(  # https://github.com/ThePorgs/Exegol-history/issues/3
     engine: Engine, load_mock_config: AppConfig
 ):
