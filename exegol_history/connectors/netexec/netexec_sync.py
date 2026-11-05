@@ -216,7 +216,9 @@ class NetexecSyncer:
 
             if "domain" in columns:
                 ip, hostname, domain = row
-                hostname = hostname + "." + domain
+
+                if hostname != domain: # FQDN only if the domain is a real domain
+                    hostname = hostname + "." + domain
             elif "ip" in columns:
                 ip, hostname = row
             else:
