@@ -7,6 +7,7 @@ from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
 from exegol_history.db_api.kerberos import Ticket
 from exegol_history.cli.arguments import check_delimiter  # noqa: F401 (re-export)
+import json
 
 CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
 HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP", "ROLE"]
@@ -60,35 +61,42 @@ def write_kerberos_in_profile(ticket: Ticket, config: AppConfig):
 def parse_and_update(
     profile_sh_path: Union[str, Path], variables_correspondance: Dict[str, str]
 ):
-    with open(profile_sh_path, "r") as profile:
-        variables = profile.readlines()
+    with open(profile_sh_path, "r+") as profile:
+        profile_json = json.loads(profile)
 
-    for i, line in enumerate(variables):
-        if platform.system() == "Windows":
-            tmp = re.search(VARIABLE_REGEX_WINDOWS, line)
-        else:
-            tmp = re.search(VARIABLE_REGEX_UNIX, line)
+        for variable_name, variable_value in enumerate(variables_correspondance):
+            profile_json[variable_name] = variable_value
 
-        if tmp:
-            variable_name = tmp.group(1)
+        profile.write(json.dumps(profile_json))
+    #with open(profile_sh_path, "r") as profile:
+    #    variables = profile.readlines()
+#
+    #for i, line in enumerate(variables):
+    #    if platform.system() == "Windows":
+    #        tmp = re.search(VARIABLE_REGEX_WINDOWS, line)
+    #    else:
+    #        tmp = re.search(VARIABLE_REGEX_UNIX, line)
+#
+    #    if tmp:
+    #        variable_name = tmp.group(1)
+#
+    #        if variable_name in variables_correspondance.keys():
+    #            new_value = variables_correspondance[variable_name]
+    #            if new_value:
+    #                if platform.system() == "Windows":
+    #                    line = f"Set-Variable -Name {variable_name} -Value '{new_value}' -Scope Global\n"
+    #                else:
+    #                    line = f"export {variable_name}='{new_value}'\n"
+    #            else:
+    #                if platform.system() == "Windows":
+    #                    line = f"Remove-Variable -Name {variable_name} -Scope Global -ErrorAction SilentlyContinue\n"
+    #                else:
+    #                    line = f"unset {variable_name}\n"
+#
+    #            variables[i] = line
 
-            if variable_name in variables_correspondance.keys():
-                new_value = variables_correspondance[variable_name]
-                if new_value:
-                    if platform.system() == "Windows":
-                        line = f"Set-Variable -Name {variable_name} -Value '{new_value}' -Scope Global\n"
-                    else:
-                        line = f"export {variable_name}='{new_value}'\n"
-                else:
-                    if platform.system() == "Windows":
-                        line = f"Remove-Variable -Name {variable_name} -Scope Global -ErrorAction SilentlyContinue\n"
-                    else:
-                        line = f"unset {variable_name}\n"
-
-                variables[i] = line
-
-    with open(profile_sh_path, "w") as profile:
-        profile.write("".join(variables))
+    #with open(profile_sh_path, "w") as profile:
+        #profile.write("".join(variables))
 
 
 def console_error(message: str):
