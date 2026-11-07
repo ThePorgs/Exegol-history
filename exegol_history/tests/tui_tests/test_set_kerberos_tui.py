@@ -61,8 +61,8 @@ async def test_kerberos_tui_identity_enriched_at_mount(load_mock_config: AppConf
             # Tickets are scanned in a background worker
             await wait_for_tickets(app, pilot)
             table = app.screen.query_one(ObjectsDataTable)
-            usernames = list(table.get_column_at(1))
-            domains = list(table.get_column_at(2))
+            usernames = list(table.get_column_values_at(1))
+            domains = list(table.get_column_values_at(2))
             assert KRB_USERNAME_TEST_VALUE in usernames
             assert KRB_DOMAIN_TEST_VALUE in domains
 

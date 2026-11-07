@@ -311,7 +311,7 @@ class DbCredsApp(App):
 
         table = self.screen.query_one(ObjectsDataTable)
         self.push_screen(
-            AddObjectScreen(domains=set(filter(None, table.get_column_at(4)))),
+            AddObjectScreen(domains=set(filter(None, table.get_column_values_at(4)))),
             self.check_added_creds,
         )
 
@@ -386,7 +386,7 @@ class DbCredsApp(App):
                 EditObjectScreen(
                     AssetsType.Credentials,
                     credential,
-                    domains=set(filter(None, table.get_column_at(4))),
+                    domains=set(filter(None, table.get_column_values_at(4))),
                 ),
                 check_edit_creds,
             )

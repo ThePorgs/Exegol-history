@@ -40,6 +40,7 @@ exclude-newer = "2 weeks"
 [tool.uv.build-backend]
 module-name = "exegol_history"
 module-root = ""
+wheel-exclude = ["exegol_history/tests"]
 
 [build-system]
 requires = ["uv_build>=0.10.7,<0.11.0"]

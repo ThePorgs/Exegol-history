@@ -1,6 +1,5 @@
-import platform
-import shutil
 import tomllib
+from importlib.resources import files
 from pathlib import Path
 
 from sqlalchemy import Engine, create_engine
@@ -30,7 +29,7 @@ DEFAULT_KEYBINDS = {
 class AppConfig:
     EXEGOL_HISTORY_HOME_FOLDER_NAME = Path.home() / ".exegol_history"
     CONFIG_FILENAME = "config.toml"
-    PROFILE_SH_FILENAME_UNIX = "profile.sh"
+    SOURCE_FILENAME = "exh_source.sh"
     DATA_FILENAME = "exh_data.json"
 
     def __init__(
@@ -39,8 +38,9 @@ class AppConfig:
         if not Path(config_path).is_file():
             Path(config_path).parent.mkdir(exist_ok=True)
 
-            default_config_path = Path(__file__).parent / AppConfig.CONFIG_FILENAME
-            shutil.copy(default_config_path, config_path)
+            with open(config_path, "w") as data_file:
+                data = files("exegol_history.config").joinpath(AppConfig.CONFIG_FILENAME)
+                data_file.write(data.read_text("utf-8"))
 
         with open(config_path, "rb") as config_file:
             config_data = tomllib.load(config_file)
@@ -72,11 +72,20 @@ class AppConfig:
         return engine
 
     @staticmethod
-    def setup_profile(data_path: str):
+    def setup_profile(source_path: str, data_path: str):
+        if not Path(source_path).exists():
+            Path(source_path).parent.mkdir(exist_ok=True, parents=True)
+
+            with open(source_path, "w") as data_file:
+                data = files("exegol_history.resources").joinpath(AppConfig.DATA_FILENAME)
+                data_file.write(data.read_text("utf-8"))
+
         if not Path(data_path).exists():
             Path(data_path).parent.mkdir(exist_ok=True, parents=True)
-            default_data_path = Path(__file__).parent.parent.parent / AppConfig.DATA_FILENAME
-            shutil.copy(default_data_path, Path(data_path))
+
+            with open(data_path, "w") as data_file:
+                data = files("exegol_history.resources").joinpath(AppConfig.SOURCE_FILENAME)
+                data_file.write(data.read_text("utf-8"))
 
 
 class ConfigPaths:
@@ -84,13 +93,10 @@ class ConfigPaths:
         self,
         db_name: str = "exh.db",
         data_path: str = "/opt/tools/Exegol-history/exh_data.json",
+        profile_sh_path: str | None = None,  # config.toml written by older versions
     ):
         self.db_name = db_name
-
-        if data_path == "/opt/tools/Exegol-history/profile.sh": # Retrocompatibility
-            self.data_path = "/opt/tools/Exegol-history/exh_data.json"
-        else:
-            self.data_path = data_path
+        self.data_path = data_path
 
 
 class ConfigSyncNetexec:

@@ -1,15 +1,15 @@
-#info: this file is used by the exegol-history.py utility. Exegol terminals source it to export env vars
-_exh_file="/opt/tools/Exegol-history/exh_data.json"
-_exh_vars=("INTERFACE" "DOMAIN" "DOMAIN_SID" "USER" "PASSWORD" "NT_HASH" "KRB5CCNAME" "DC_IP" "DC_HOST" "DB_HOSTNAME" "ROLE" "TARGET" "IP" "ATTACKER_IP")
-
-if [[ -r "$_exh_file" ]]; then
-    eval "$(jq -r '
-        $ARGS.positional[] as $v
-        | if has($v) | not then empty
-        elif .[$v] == null then "unset \($v)"
-        else "export \($v)=\(.[$v] | tostring | @sh)"
-        end
-    ' "$_exh_file" --args "${_exh_vars[@]}")"
-fi
-
-unset _exh_file _exh_vars
+#info: this file was used as buffer by the exegol-history.py utility. Exegol terminals source it to export env vars
+#export INTERFACE='eth0'
+#export DOMAIN='DOMAIN.LOCAL'
+#export DOMAIN_SID='S-1-5-11-39129514-1145628974-103568174'
+#export USER='someuser'
+#export PASSWORD='somepassword'
+#export NT_HASH='c1c635aa12ae60b7fe39e28456a7bac6'
+#export KRB5CCNAME='/workspace/ticket.ccache'
+#export DC_IP='192.168.56.101'
+#export DC_HOST='DC01.DOMAIN.LOCAL'
+#export DB_HOSTNAME='DC01.DOMAIN.LOCAL'
+#export ROLE='MSSQL'
+#export TARGET='192.168.56.69'
+#export IP='192.168.56.69'
+#export ATTACKER_IP='192.168.56.1'
