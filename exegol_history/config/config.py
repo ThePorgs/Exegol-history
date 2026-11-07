@@ -33,7 +33,7 @@ class AppConfig:
     DATA_FILENAME = "exh_data.json"
 
     def __init__(
-        self, config_path: str = EXEGOL_HISTORY_HOME_FOLDER_NAME / CONFIG_FILENAME
+        self, config_path: Path = EXEGOL_HISTORY_HOME_FOLDER_NAME / CONFIG_FILENAME
     ):
         write_file(config_path, "exegol_history.config", AppConfig.CONFIG_FILENAME)
         with open(config_path, "rb") as config_file:
@@ -67,19 +67,20 @@ class AppConfig:
 
     @staticmethod
     def setup_profile(source_path: str, data_path: str):
-        write_file(source_path, "exegol_history.resources", AppConfig.DATA_FILENAME)
-        write_file(data_path, "exegol_history.resources", AppConfig.SOURCE_FILENAME)
+        write_file(source_path, "exegol_history.resources", AppConfig.SOURCE_FILENAME)
+        write_file(data_path, "exegol_history.resources", AppConfig.DATA_FILENAME)
 
 
 class ConfigPaths:
     def __init__(
         self,
         db_name: str = "exh.db",
-        data_path: str = "/opt/tools/Exegol-history/exh_data.json",
-        profile_sh_path: str | None = None,  # config.toml written by older versions
+        data_path: Path = Path("~/.exegol_history/exh_data.json"),
+        source_path: Path = "~/.exegol_history/exh_source.sh",
     ):
         self.db_name = db_name
-        self.data_path = data_path
+        self.data_path = data_path.expanduser()
+        self.source_path = source_path.expanduser()
 
 
 class ConfigSyncNetexec:
