@@ -99,7 +99,7 @@ def main():
 
     if need_config:
         config = AppConfig()
-        AppConfig.setup_profile(config.paths.profile_sh_path)
+        AppConfig.setup_profile(config.paths.data_path)
 
         db_path = AppConfig.EXEGOL_HISTORY_HOME_FOLDER_NAME / config.paths.db_name
 

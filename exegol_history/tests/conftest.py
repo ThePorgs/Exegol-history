@@ -39,7 +39,7 @@ def engine() -> Engine:
 @pytest.fixture
 def load_mock_config() -> AppConfig:
     mock_config = AppConfig(TEST_CONFIG_PATH)
-    mock_config.paths.profile_sh_path = TEST_PROFILE_SH
+    mock_config.paths.data_path = TEST_PROFILE_SH
 
     for connector in mock_config.sync:
         connector.enabled = False

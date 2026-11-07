@@ -92,7 +92,7 @@ async def test_add_and_set_host_full(engine: Engine, load_mock_config: AppConfig
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo $IP $TARGET $DC_HOST",
+            f"source {load_mock_config.paths.data_path} && echo $IP $TARGET $DC_HOST",
         ],
         stdout=subprocess.PIPE,
     )

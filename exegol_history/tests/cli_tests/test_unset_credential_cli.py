@@ -31,7 +31,7 @@ def test_unset_credential(load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${CREDS_VARIABLES[0]} ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
+            f"source {load_mock_config.paths.data_path} && echo ${CREDS_VARIABLES[0]} ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -48,7 +48,7 @@ def test_unset_credential(load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${CREDS_VARIABLES[0]} ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
+            f"source {load_mock_config.paths.data_path} && echo ${CREDS_VARIABLES[0]} ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
         ],
         stdout=subprocess.PIPE,
     )

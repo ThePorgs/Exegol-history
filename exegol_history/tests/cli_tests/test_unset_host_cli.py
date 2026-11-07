@@ -24,7 +24,7 @@ def test_unset_host(load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -41,7 +41,7 @@ def test_unset_host(load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]}",
         ],
         stdout=subprocess.PIPE,
     )

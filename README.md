@@ -95,14 +95,14 @@ add-zsh-hook precmd update_prompt
 </details>
 
 ### 4. Modify your `exh` config file
-You might need to modify the `profile_sh_path` directive to match with what you put in the step 2.
+You might need to modify the `data_path` directive to match with what you put in the step 2.
 
 ## 📝 Configuration
 A small configuration file `config.toml` can be used to customise the database name,keybinds and theme for the TUI:
 ```toml
 [paths]
 db_name = "DB.kdbx"
-profile_sh_path = "/opt/tools/Exegol-history/profile.sh"
+data_path = "/opt/tools/Exegol-history/profile.sh"
 
 # Keybinds list: https://github.com/Textualize/textual/blob/8f85ece761031a756a1ecfa345b519c9c915e04b/src/textual/keys.py#L9
 [keybindings]

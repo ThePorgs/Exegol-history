@@ -20,7 +20,7 @@ VARIABLE_REGEX_WINDOWS = r"(?:Set|Remove)-Variable -Name (\S*) (?:-Value '[^']*?
 
 
 def write_host_in_profile(host: Host, config: AppConfig):
-    profile_sh_path = config.paths.profile_sh_path
+    data_path = config.paths.data_path
     variables_correspondance = {
         HOSTS_VARIABLES[0]: host.ip,
         HOSTS_VARIABLES[1]: host.ip,
@@ -31,11 +31,11 @@ def write_host_in_profile(host: Host, config: AppConfig):
         variables_correspondance[HOSTS_VARIABLES[3]] = host.hostname
         variables_correspondance[HOSTS_VARIABLES[4]] = host.ip
 
-    parse_and_update(profile_sh_path, variables_correspondance)
+    parse_and_update(data_path, variables_correspondance)
 
 
 def write_credential_in_profile(credential: Credential, config: AppConfig):
-    profile_sh_path = config.paths.profile_sh_path
+    data_path = config.paths.data_path
     variables_correspondance = {
         CREDS_VARIABLES[0]: credential.username,
         CREDS_VARIABLES[1]: credential.password,
@@ -43,11 +43,11 @@ def write_credential_in_profile(credential: Credential, config: AppConfig):
         CREDS_VARIABLES[3]: credential.domain,
     }
 
-    parse_and_update(profile_sh_path, variables_correspondance)
+    parse_and_update(data_path, variables_correspondance)
 
 
 def write_kerberos_in_profile(ticket: Ticket, config: AppConfig):
-    profile_sh_path = config.paths.profile_sh_path
+    data_path = config.paths.data_path
     # Setting a Kerberos ticket sets USER/DOMAIN/KRB5CCNAME and clears any
     # password or NT hash currently set since we now authenticate with a ticket.
     variables_correspondance = {
@@ -58,7 +58,7 @@ def write_kerberos_in_profile(ticket: Ticket, config: AppConfig):
         KERBEROS_VARIABLES[4]: None,
     }
 
-    parse_and_update(profile_sh_path, variables_correspondance)
+    parse_and_update(data_path, variables_correspondance)
 
 
 def parse_and_update(
@@ -71,9 +71,13 @@ def parse_and_update(
         profile_json[variable_name] = variable_value
 
     fd, tmp = tempfile.mkstemp(dir=Path(data_path).parent, suffix=".json")
-    with os.fdopen(fd, "w", encoding="utf-8") as f:
-        json.dump(profile_json, f, indent=2, ensure_ascii=False)
-    os.replace(tmp, data_path)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(profile_json, f, indent=2, ensure_ascii=False)
+        os.replace(tmp, data_path)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
 
 
 def console_error(message: str):

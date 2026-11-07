@@ -54,7 +54,7 @@ async def test_set_host_only_ip_linux(engine: Engine, load_mock_config: AppConfi
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -66,7 +66,7 @@ async def test_set_host_only_ip_linux(engine: Engine, load_mock_config: AppConfi
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]} ${HOSTS_VARIABLES[5]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]} ${HOSTS_VARIABLES[5]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -95,7 +95,7 @@ async def test_set_host_half_linux(engine: Engine, load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -108,7 +108,7 @@ async def test_set_host_half_linux(engine: Engine, load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]} ${HOSTS_VARIABLES[5]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]} ${HOSTS_VARIABLES[5]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -138,7 +138,7 @@ async def test_set_host_full_linux(engine: Engine, load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[5]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[5]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -151,7 +151,7 @@ async def test_set_host_full_linux(engine: Engine, load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -184,7 +184,7 @@ async def test_set_host_dc_linux(engine: Engine, load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -212,7 +212,7 @@ async def test_set_host_dc_linux(engine: Engine, load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.profile_sh_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]}",
+            f"source {load_mock_config.paths.data_path} && echo ${HOSTS_VARIABLES[0]} ${HOSTS_VARIABLES[1]} ${HOSTS_VARIABLES[2]} ${HOSTS_VARIABLES[3]} ${HOSTS_VARIABLES[4]}",
         ],
         stdout=subprocess.PIPE,
     )

@@ -72,12 +72,7 @@ class AppConfig:
         return engine
 
     @staticmethod
-    def setup_profile(profile_path: str, data_path: str):
-        if not Path(profile_path).exists():
-            Path(profile_path).parent.mkdir(exist_ok=True, parents=True)
-            default_config_path = Path(__file__).parent.parent.parent / AppConfig.PROFILE_SH_FILENAME_UNIX
-            shutil.copy(default_config_path, Path(profile_path))
-
+    def setup_profile(data_path: str):
         if not Path(data_path).exists():
             Path(data_path).parent.mkdir(exist_ok=True, parents=True)
             default_data_path = Path(__file__).parent.parent.parent / AppConfig.DATA_FILENAME
@@ -88,10 +83,14 @@ class ConfigPaths:
     def __init__(
         self,
         db_name: str = "exh.db",
-        profile_sh_path: str = "/opt/tools/Exegol-history/profile.sh",
+        data_path: str = "/opt/tools/Exegol-history/exh_data.json",
     ):
         self.db_name = db_name
-        self.profile_sh_path = profile_sh_path
+
+        if data_path == "/opt/tools/Exegol-history/profile.sh": # Retrocompatibility
+            self.data_path = "/opt/tools/Exegol-history/exh_data.json"
+        else:
+            self.data_path = data_path
 
 
 class ConfigSyncNetexec:
