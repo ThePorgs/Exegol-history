@@ -1,9 +1,9 @@
 import tomllib
-from importlib.resources import files
 from pathlib import Path
 
 from sqlalchemy import Engine, create_engine
 
+from exegol_history.config.utils import write_file
 from exegol_history.connectors.metasploit.metasploit_sync import MetasploitSyncer
 from exegol_history.connectors.netexec.netexec_sync import NetexecSyncer
 from exegol_history.db_api.creds import Base
@@ -35,13 +35,7 @@ class AppConfig:
     def __init__(
         self, config_path: str = EXEGOL_HISTORY_HOME_FOLDER_NAME / CONFIG_FILENAME
     ):
-        if not Path(config_path).is_file():
-            Path(config_path).parent.mkdir(exist_ok=True)
-
-            with open(config_path, "w") as data_file:
-                data = files("exegol_history.config").joinpath(AppConfig.CONFIG_FILENAME)
-                data_file.write(data.read_text("utf-8"))
-
+        write_file(config_path, "exegol_history.config", AppConfig.CONFIG_FILENAME)
         with open(config_path, "rb") as config_file:
             config_data = tomllib.load(config_file)
 
@@ -73,19 +67,8 @@ class AppConfig:
 
     @staticmethod
     def setup_profile(source_path: str, data_path: str):
-        if not Path(source_path).exists():
-            Path(source_path).parent.mkdir(exist_ok=True, parents=True)
-
-            with open(source_path, "w") as data_file:
-                data = files("exegol_history.resources").joinpath(AppConfig.DATA_FILENAME)
-                data_file.write(data.read_text("utf-8"))
-
-        if not Path(data_path).exists():
-            Path(data_path).parent.mkdir(exist_ok=True, parents=True)
-
-            with open(data_path, "w") as data_file:
-                data = files("exegol_history.resources").joinpath(AppConfig.SOURCE_FILENAME)
-                data_file.write(data.read_text("utf-8"))
+        write_file(source_path, "exegol_history.resources", AppConfig.DATA_FILENAME)
+        write_file(data_path, "exegol_history.resources", AppConfig.SOURCE_FILENAME)
 
 
 class ConfigPaths:
