@@ -10,8 +10,9 @@ from exegol_history.db_api.file_types import (
 )
 from exegol_history.db_api.hosts import Host
 
-DEFAULTS = {"username": "", "password": "", "hash": "", "domain": "", "sync_key": ""}
-
+CREDS_DEFAULTS = {"username": "", "password": "", "hash": "", "domain": "", "sync_key": ""}
+HOSTS_DEFAULTS = {"ip": "", "hostname": "", "role": ""}
+PYPYKATZ_SECRETS = {"msv_creds": ("NThash", "hash"), "wdigest_creds": ("password", "password")}
 
 def import_objects(
     file_type: CredsImportFileType | HostsImportFileType,
@@ -30,8 +31,19 @@ def import_objects(
             objects = import_objects_csv(file_raw)
         case CredsImportFileType.JSON | HostsImportFileType.JSON:
             objects = json.loads(file_raw)
+        case _:
+            raise NotImplementedError(f"Type {file_type} is not implemented yet for import")
 
-    return [{**DEFAULTS, **row} for row in objects]
+    if isinstance(file_type, CredsImportFileType):
+        defaults, allowed = CREDS_DEFAULTS, {*CREDS_DEFAULTS, "credential_id"}
+    else:
+        defaults, allowed = HOSTS_DEFAULTS, {*HOSTS_DEFAULTS, "host_id"}
+
+    rows = [{**defaults, **row} for row in objects]
+    if unknown := {key for row in rows for key in row} - allowed:
+        raise ValueError(f"Unknown column(s): {', '.join(sorted(unknown))}")
+
+    return rows
 
 
 def import_objects_csv(file_raw: bytes):
@@ -42,81 +54,31 @@ def import_objects_csv(file_raw: bytes):
     return csv.DictReader(file_raw, delimiter=dialect.delimiter, restval="")
 
 
-def import_creds_pypykatz_json(file_raw: bytes) -> dict[Any]:
+def import_creds_pypykatz_json(file_raw: bytes) -> list[dict]:
+    credentials_json = json.loads(file_raw)
+    logon_sessions = next(iter(credentials_json.values()))["logon_sessions"]
     parsed_credentials = {}
-    credentials_json = json.load(io.BytesIO(file_raw))
-    logon_sessions = credentials_json[[*credentials_json][0]]["logon_sessions"]
 
-    for key, sessions in logon_sessions.items():
-        if sessions.get("msv_creds"):
-            for msv_credential in sessions.get("msv_creds"):
-                username = msv_credential["username"]
-                nt_hash = msv_credential["NThash"]
-                domain = msv_credential["domainname"]
-                dict_key = f"{username}\\{domain}"
+    for session in logon_sessions.values():
+        for section, (secret_field, field) in PYPYKATZ_SECRETS.items():
+            for entry in session.get(section) or []:
+                username, domain = entry["username"], entry["domainname"]
+                credential = parsed_credentials.setdefault(
+                    (username, domain),
+                    {"username": username, "password": "", "hash": "", "domain": domain},
+                )
+                credential[field] = entry[secret_field] or ""
 
-                if dict_key not in parsed_credentials:
-                    parsed_credentials[dict_key] = {
-                        "username": username,
-                        "password": "",
-                        "hash": nt_hash,
-                        "domain": domain,
-                    }
-                else:
-                    parsed_credentials[dict_key]["hash"] = nt_hash if nt_hash else ""
-
-        if sessions.get("wdigest_creds"):
-            for wdigest_credential in sessions.get("wdigest_creds"):
-                username = wdigest_credential["username"]
-                password = wdigest_credential["password"]
-                domain = wdigest_credential["domainname"]
-                dict_key = f"{username}\\{domain}"
-
-                if dict_key not in parsed_credentials:
-                    parsed_credentials[dict_key] = {
-                        "username": username,
-                        "password": password,
-                        "hash": "",
-                        "domain": domain,
-                    }
-                else:
-                    parsed_credentials[dict_key]["password"] = (
-                        password if password else ""
-                    )
-
-    return [credential for _, credential in parsed_credentials.items()]
+    return list(parsed_credentials.values())
 
 
-def import_creds_secretsdump(file_raw: bytes) -> list[Credential]:
-    parsed_credentials = []
-    credentials = csv.reader(
-        io.StringIO(file_raw.decode("utf-8")),
-        delimiter=":",
-    )
-
-    for row in credentials:
-        credential = Credential(username=row[0], hash=row[3])
-        dict = credential.__dict__
-        dict.pop("_sa_instance_state", None)
-
-        parsed_credentials.append(dict)
-
-    return parsed_credentials
+def import_creds_secretsdump(file_raw: bytes) -> list[dict]:
+    rows = csv.reader(io.StringIO(file_raw.decode("utf-8")), delimiter=":")
+    return [Credential.dict(username=row[0], hash=row[3]) for row in rows]
 
 
-def import_creds_kdbx(
-    file_raw, kdbx_password: str = None, keyfile_path: str = None
-) -> list[Credential]:
-    parsed_credentials = list()
-    from pykeepass import PyKeePass  # lazy: pulls lxml, ~70 ms
+def import_creds_kdbx(file_raw, kdbx_password: str = None, keyfile_path: str = None) -> list[dict]:
+    from pykeepass import PyKeePass
 
     kp = PyKeePass(io.BytesIO(file_raw), password=kdbx_password, keyfile=keyfile_path)
-
-    for entry in kp.entries:
-        credential = Credential(username=entry.username, password=entry.password)
-        dict = credential.__dict__
-        dict.pop("_sa_instance_state", None)
-
-        parsed_credentials.append(dict)
-
-    return parsed_credentials
+    return [Credential.dict(username=e.username, password=e.password) for e in kp.entries]

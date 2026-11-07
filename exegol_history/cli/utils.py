@@ -22,14 +22,14 @@ VARIABLE_REGEX_WINDOWS = r"(?:Set|Remove)-Variable -Name (\S*) (?:-Value '[^']*?
 def write_host_in_profile(host: Host, config: AppConfig):
     data_path = config.paths.data_path
     variables_correspondance = {
-        HOSTS_VARIABLES[0]: host.ip,
-        HOSTS_VARIABLES[1]: host.ip,
-        HOSTS_VARIABLES[2]: host.hostname,
+        "IP": host.ip,
+        "TARGET": host.ip,
+        "DB_HOSTNAME": host.hostname,
     }
 
     if host.role == "DC":
-        variables_correspondance[HOSTS_VARIABLES[3]] = host.hostname
-        variables_correspondance[HOSTS_VARIABLES[4]] = host.ip
+        variables_correspondance["DC_HOST"] = host.hostname
+        variables_correspondance["DC_IP"] = host.ip
 
     parse_and_update(data_path, variables_correspondance)
 
@@ -37,10 +37,10 @@ def write_host_in_profile(host: Host, config: AppConfig):
 def write_credential_in_profile(credential: Credential, config: AppConfig):
     data_path = config.paths.data_path
     variables_correspondance = {
-        CREDS_VARIABLES[0]: credential.username,
-        CREDS_VARIABLES[1]: credential.password,
-        CREDS_VARIABLES[2]: credential.hash,
-        CREDS_VARIABLES[3]: credential.domain,
+        "USER": credential.username,
+        "PASSWORD": credential.password,
+        "NT_HASH": credential.hash,
+        "DOMAIN": credential.domain,
     }
 
     parse_and_update(data_path, variables_correspondance)
@@ -51,11 +51,11 @@ def write_kerberos_in_profile(ticket: Ticket, config: AppConfig):
     # Setting a Kerberos ticket sets USER/DOMAIN/KRB5CCNAME and clears any
     # password or NT hash currently set since we now authenticate with a ticket.
     variables_correspondance = {
-        KERBEROS_VARIABLES[0]: ticket.username,
-        KERBEROS_VARIABLES[1]: ticket.domain,
-        KERBEROS_VARIABLES[2]: ticket.path,
-        KERBEROS_VARIABLES[3]: None,
-        KERBEROS_VARIABLES[4]: None,
+        "USER": ticket.username,
+        "DOMAIN": ticket.domain,
+        "KRB5CCNAME": ticket.path,
+        "PASSWORD": None,
+        "NT_HASH": None,
     }
 
     parse_and_update(data_path, variables_correspondance)
@@ -80,13 +80,18 @@ def parse_and_update(
         raise
 
 
-def console_error(message: str):
-    return f"[[bold red]![/bold red]] {escape(str(message))}"
+def _console_message(symbol: str, color: str, message) -> str:
+    return f"[[bold {color}]{symbol}[/bold {color}]] {escape(str(message))}"
 
 
-def console_success(message: str):
-    return f"[[bold green]+[/bold green]] {escape(str(message))}"
+def console_error(message) -> str:
+    return _console_message("!", "red", message)
 
 
-def console_info(message: str):
-    return f"[[bold blue]*[/bold blue]] {escape(str(message))}"
+def console_success(message) -> str:
+    return _console_message("+", "green", message)
+
+
+def console_info(message) -> str:
+    return _console_message("*", "blue", message)
+

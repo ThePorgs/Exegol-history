@@ -1,7 +1,6 @@
 import csv
 import io
 import json
-from typing import Any
 
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.hosts import Host
@@ -10,64 +9,26 @@ from exegol_history.db_api.importing import CredsImportFileType, HostsImportFile
 CREDENTIAL_PROPERTY_NAME_ID = "credential_id"
 CREDENTIAL_PROPERTY_NAME_SYNC_KEY = "sync_key"
 HOST_PROPERTY_NAME_ID = "host_id"
+EXCLUDED_COLUMNS = {"credential_id", "host_id", "sync_key"}
 
 
-def export_objects(
-    format: CredsImportFileType | HostsImportFileType,
-    objects: list[Any],
-    delimiter: str = None,
-) -> str:
+def exported_columns(model) -> list[str]:
+    return [c.name for c in model.__table__.columns if c.name not in EXCLUDED_COLUMNS]
+
+
+def export_objects(format, objects, delimiter: str = None) -> str:
+    model = Credential if isinstance(format, CredsImportFileType) else Host
+    columns = exported_columns(model)
+    rows = [{c: getattr(o, c) for c in columns} for o in objects]
+
     match format:
-        case CredsImportFileType.CSV:
-            export_output = export_objects_csv(objects, delimiter, Credential)
-        case HostsImportFileType.CSV:
-            export_output = export_objects_csv(objects, delimiter, Host)
         case CredsImportFileType.JSON | HostsImportFileType.JSON:
-            export_output = export_objects_json(objects)
+            return json.dumps(rows)
+        case CredsImportFileType.CSV | HostsImportFileType.CSV:
+            output = io.StringIO()
+            writer = csv.DictWriter(output, fieldnames=columns, delimiter=delimiter or ",")
+            writer.writeheader()
+            writer.writerows(rows)
+            return output.getvalue()
         case _:
-            raise NotImplementedError(
-                f"Type {format} is not implemented yet for export"
-            )
-
-    return export_output
-
-
-def export_objects_json(objects: list[Any]):
-    results = []
-
-    for object in objects:
-        dict = object.as_dict()
-        dict.pop(CREDENTIAL_PROPERTY_NAME_ID, None)
-        dict.pop(HOST_PROPERTY_NAME_ID, None)
-        dict.pop(CREDENTIAL_PROPERTY_NAME_SYNC_KEY, None)
-        results.append(dict)
-
-    return json.dumps(results)
-
-
-def export_objects_csv(
-    objects: list[Credential | Host],
-    delimiter: str,
-    obj_type: type[Credential | Host],
-):
-    csv_string = io.StringIO()
-    csv_writer = csv.writer(
-        csv_string,
-        delimiter=delimiter if delimiter else ",",
-    )
-    column_names = []
-
-    for column in obj_type.__mapper__.columns:
-        if column.name not in [
-            CREDENTIAL_PROPERTY_NAME_ID,
-            CREDENTIAL_PROPERTY_NAME_SYNC_KEY,
-            HOST_PROPERTY_NAME_ID,
-        ]:
-            column_names.append(column.name)
-
-    csv_writer.writerow(column_names)
-
-    for o in objects:
-        csv_writer.writerow([getattr(o, column_name) for column_name in column_names])
-
-    return csv_string.getvalue()
+            raise NotImplementedError(f"Type {format} is not implemented yet for export")

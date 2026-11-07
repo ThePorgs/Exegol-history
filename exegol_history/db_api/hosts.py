@@ -1,10 +1,14 @@
-import sqlalchemy
-from sqlalchemy import Engine, UniqueConstraint, func, select
+from sqlalchemy import Engine, UniqueConstraint
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
-from exegol_history.db_api.base import Base
-from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST, OBJECT_ALREADY_EXIST
+from exegol_history.db_api.base import (
+    Base,
+    delete_rows,
+    get_rows,
+    keep_existing_if_empty,
+    update_rows,
+)
 
 
 class Host(Base):
@@ -36,15 +40,6 @@ class Host(Base):
             and (self.role == value.role)
         )
 
-    # Reference: https://stackoverflow.com/questions/5022066/how-to-serialize-sqlalchemy-result-to-json
-    def as_dict(self):
-        return {
-            column.name: getattr(self, column.name) for column in self.__table__.columns
-        }
-
-    def __repr__(self) -> str:
-        return f"Host(host_id={self.host_id}, ip={self.ip}, hostname={self.hostname}, role={self.role})"
-
     def __iter__(self):
         return iter([self.host_id, self.ip, self.hostname, self.role])
 
@@ -64,53 +59,23 @@ def add_hosts(engine: Engine, hosts: list[dict]):
     if not hosts:
         return
 
+    query = insert(Host)
+    query = query.on_conflict_do_update(
+        index_elements=["ip", "hostname"],
+        set_={"role": keep_existing_if_empty(query, Host, "role")},
+    )
+
     with Session(engine) as session:
-        query = insert(Host)
-        query = query.on_conflict_do_update(
-            index_elements=["ip", "hostname"],
-            set_={
-                "ip": query.excluded.ip,
-                "hostname": query.excluded.hostname,
-                "role": func.coalesce(func.nullif(query.excluded.role, ""), Host.role),
-            },
-        )
         session.execute(query, hosts)
         session.commit()
 
-
 def get_hosts(engine: Engine, host_id: str = None) -> list[Host]:
-    hosts = []
-
-    if host_id:
-        query = select(Host).where(Host.host_id == host_id)
-    else:
-        query = select(Host)
-
-    with Session(engine) as session:
-        for host in session.scalars(query):
-            session.expunge(host)
-            hosts.append(host)
-
-        return hosts
+    return get_rows(engine, Host, host_id)
 
 
-def delete_hosts(engine: Engine, host_ids: list[str] = list()):
-    with Session(engine) as session:
-        query = Host.__table__.delete().where(Host.host_id.in_(host_ids))
-        result = session.execute(query)
-
-        session.commit()
-
-    if result.rowcount <= 0:
-        raise RuntimeError(MESSAGE_ID_NOT_EXIST)
+def delete_hosts(engine: Engine, host_ids: list[str]):
+    delete_rows(engine, Host, host_ids)
 
 
-def edit_hosts(engine: Engine, hosts: list[Host]):
-    with Session(engine) as session:
-        try:
-            session.bulk_update_mappings(Host, hosts)
-            session.commit()
-        except sqlalchemy.exc.IntegrityError:
-            raise RuntimeError(OBJECT_ALREADY_EXIST)
-        except Exception:
-            raise RuntimeError(MESSAGE_ID_NOT_EXIST)
+def edit_hosts(engine: Engine, hosts: list):
+    update_rows(engine, Host, hosts)

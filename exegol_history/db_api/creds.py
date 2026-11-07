@@ -1,14 +1,21 @@
-import sqlalchemy
-from sqlalchemy import Engine, Index, func, select, text
+from sqlalchemy import Engine, Index, text
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
-from exegol_history.db_api.base import Base
-from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST, OBJECT_ALREADY_EXIST
+from exegol_history.db_api.base import (
+    Base,
+    delete_rows,
+    get_rows,
+    keep_existing_if_empty,
+    update_rows,
+)
 
 DOMAIN_KEYED = text("sync_key = 'domain'")
 PASSWORD_KEYED = text("sync_key = 'password'")
-
+CONFLICT_RULES = {
+    "domain": (["username", "domain"], DOMAIN_KEYED, ["password", "hash"]),
+    "password": (["username", "password"], PASSWORD_KEYED, ["hash", "domain"]),
+}
 
 class Credential(Base):
     __tablename__ = "credentials"
@@ -64,15 +71,6 @@ class Credential(Base):
             and (self.sync_key == value.sync_key)
         )
 
-    def __repr__(self) -> str:
-        return f"Credential(credential_id={self.credential_id}, username={self.username}, password={self.password}, hash={self.hash}, domain={self.domain}, sync_key={self.sync_key})"
-
-    # Reference: https://stackoverflow.com/questions/5022066/how-to-serialize-sqlalchemy-result-to-json
-    def as_dict(self):
-        return {
-            column.name: getattr(self, column.name) for column in self.__table__.columns
-        }
-
     def __iter__(self):
         return iter(
             [self.credential_id, self.username, self.password, self.hash, self.domain]
@@ -101,80 +99,33 @@ def add_credentials(engine: Engine, credentials: list[dict], sync_key: str = "")
     if not credentials:
         return
 
+    query = insert(Credential)
+    if sync_key in CONFLICT_RULES:
+        index_elements, index_where, completed = CONFLICT_RULES[sync_key]
+        query = query.on_conflict_do_update(
+            index_elements=index_elements,
+            index_where=index_where,
+            set_={c: keep_existing_if_empty(query, Credential, c) for c in completed},
+        )
+
     with Session(engine) as session:
-        query = insert(Credential)
-
-        if sync_key == "domain":
-            query = query.on_conflict_do_update(
-                index_elements=["username", "domain"],
-                index_where=DOMAIN_KEYED,
-                set_={
-                    "password": func.coalesce(
-                        func.nullif(query.excluded.password, ""), Credential.password
-                    ),
-                    "hash": func.coalesce(
-                        func.nullif(query.excluded.hash, ""), Credential.hash
-                    ),
-                },
-            )
-        elif sync_key == "password":
-            query = query.on_conflict_do_update(
-                index_elements=["username", "password"],
-                index_where=PASSWORD_KEYED,
-                set_={
-                    "hash": func.coalesce(
-                        func.nullif(query.excluded.hash, ""), Credential.hash
-                    ),
-                    "domain": func.coalesce(
-                        func.nullif(query.excluded.domain, ""), Credential.domain
-                    ),
-                },
-            )
-
         session.execute(query, credentials)
         session.commit()
 
 
-def get_credentials(
-    engine: Engine, credential_id: str = None, redacted: bool = False
-) -> list[Credential]:
-    credentials = []
+def get_credentials(engine: Engine, credential_id: str = None, redacted: bool = False) -> list[Credential]:
+    credentials = get_rows(engine, Credential, credential_id)
 
-    if credential_id:
-        query = select(Credential).where(Credential.credential_id == credential_id)
-    else:
-        query = select(Credential)
+    if redacted:
+        for credential in credentials:
+            credential.password = credential.hash = Credential.REDACT_SEPARATOR * 8
 
-    with Session(engine) as session:
-        for credential in session.scalars(query):
-            if redacted:
-                credential.password = Credential.REDACT_SEPARATOR * 8
-                credential.hash = Credential.REDACT_SEPARATOR * 8
-
-            credentials.append(credential)
-
-        return credentials
+    return credentials
 
 
-def delete_credentials(engine: Engine, credential_ids: list[str] = list()):
-    with Session(engine) as session:
-        query = Credential.__table__.delete().where(
-            Credential.credential_id.in_(credential_ids)
-        )
-        result = session.execute(query)
-
-        session.commit()
-
-    if result.rowcount <= 0:
-        raise RuntimeError(MESSAGE_ID_NOT_EXIST)
+def delete_credentials(engine: Engine, credential_ids: list[str]):
+    delete_rows(engine, Credential, credential_ids)
 
 
-def edit_credentials(engine: Engine, credentials: list[Credential]):
-    with Session(engine) as session:
-        try:
-            session.bulk_update_mappings(Credential, credentials)
-            session.commit()
-        except sqlalchemy.exc.IntegrityError:
-            raise RuntimeError(OBJECT_ALREADY_EXIST)
-        except Exception:
-            raise RuntimeError(MESSAGE_ID_NOT_EXIST)
+def edit_credentials(engine: Engine, credentials: list):
+    update_rows(engine, Credential, credentials)
