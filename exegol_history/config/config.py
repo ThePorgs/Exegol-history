@@ -75,12 +75,13 @@ class ConfigPaths:
     def __init__(
         self,
         db_name: str = "exh.db",
-        data_path: Path = Path("~/.exegol_history/exh_data.json"),
-        source_path: Path = "~/.exegol_history/exh_source.sh",
+        data_path: str | Path = Path("~/.exegol_history/exh_data.json"),
+        source_path: str | Path = "~/.exegol_history/exh_source.sh",
+        profile_sh_path: str | None = None, # keep for retrocompatibility
     ):
         self.db_name = db_name
-        self.data_path = data_path.expanduser()
-        self.source_path = source_path.expanduser()
+        self.data_path = Path(data_path).expanduser()
+        self.source_path = Path(source_path).expanduser()
 
 
 class ConfigSyncNetexec:
