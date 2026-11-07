@@ -54,17 +54,6 @@ source /opt/tools/Exegol-history/profile.sh
 ```
 </details>
 
-<details>
-<summary>PowerShell</summary>
-
-Add this to your Powershell `$PROFILE`:
-```powershell
-function exh {
-    exegol-history $Args; if($?) { . $profile }
-}
-. C:\Program Files\Exegol-history\profile.ps1
-```
-</details>
 
 ### 3. Set up your prompt to display variables (optional)
 To see which user you are currently using, you can add the `USER` and `DOMAIN` environnment variable to your prompt.

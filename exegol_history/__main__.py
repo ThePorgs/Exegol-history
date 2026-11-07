@@ -148,5 +148,5 @@ def main():
         else:
             raise NotImplementedError("This function is not available")
     except Exception:
-        console.print_exception(show_locals=True)
+        console.print_exception(show_locals=False)
         sys.exit(1)

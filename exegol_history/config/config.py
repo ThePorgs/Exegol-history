@@ -31,7 +31,7 @@ class AppConfig:
     EXEGOL_HISTORY_HOME_FOLDER_NAME = Path.home() / ".exegol_history"
     CONFIG_FILENAME = "config.toml"
     PROFILE_SH_FILENAME_UNIX = "profile.sh"
-    PROFILE_SH_FILENAME_WINDOWS = "profile.ps1"
+    DATA_FILENAME = "exh_data.json"
 
     def __init__(
         self, config_path: str = EXEGOL_HISTORY_HOME_FOLDER_NAME / CONFIG_FILENAME
@@ -72,18 +72,16 @@ class AppConfig:
         return engine
 
     @staticmethod
-    def setup_profile(profile_path: str):
+    def setup_profile(profile_path: str, data_path: str):
         if not Path(profile_path).exists():
             Path(profile_path).parent.mkdir(exist_ok=True, parents=True)
-
-            default_config_path = (
-                Path(__file__).parent.parent.parent
-                / AppConfig.PROFILE_SH_FILENAME_WINDOWS
-                if platform.system() == "Windows"
-                else Path(__file__).parent.parent.parent
-                / AppConfig.PROFILE_SH_FILENAME_UNIX
-            )
+            default_config_path = Path(__file__).parent.parent.parent / AppConfig.PROFILE_SH_FILENAME_UNIX
             shutil.copy(default_config_path, Path(profile_path))
+
+        if not Path(data_path).exists():
+            Path(data_path).parent.mkdir(exist_ok=True, parents=True)
+            default_data_path = Path(__file__).parent.parent.parent / AppConfig.DATA_FILENAME
+            shutil.copy(default_data_path, Path(data_path))
 
 
 class ConfigPaths:

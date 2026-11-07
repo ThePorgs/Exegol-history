@@ -153,7 +153,7 @@ def cli_export_objects(args: argparse.Namespace, engine: Engine, console: Consol
         if file_format in (CredsImportFileType.JSON, HostsImportFileType.JSON):
             console.print_json(export_output)
         else:
-            console.print(export_output, highlight=False)
+            console.print(export_output, markup=False, highlight=False, soft_wrap=True)
 
 
 def cli_import_objects(args: argparse.Namespace, engine: Engine):

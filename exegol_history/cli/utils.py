@@ -62,30 +62,27 @@ def write_kerberos_in_profile(ticket: Ticket, config: AppConfig):
 
 
 def parse_and_update(
-    profile_sh_path: Union[str, Path], variables_correspondance: Dict[str, str]
+    data_path: Union[str, Path], variables_correspondance: Dict[str, str]
 ):
-    with open(profile_sh_path, "r", encoding="utf-8") as profile:
+    with open(data_path, "r", encoding="utf-8") as profile:
         profile_json = json.load(profile)
 
     for variable_name, variable_value in variables_correspondance.items():
         profile_json[variable_name] = variable_value
 
-    fd, tmp = tempfile.mkstemp(dir="/opt/tools/Exegol-history/", suffix=".json")
+    fd, tmp = tempfile.mkstemp(dir=Path(data_path).parent, suffix=".json")
     with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(profile_json, f, indent=2, ensure_ascii=False)
-    os.replace(tmp, profile_sh_path)
-
-    #with open(profile_sh_path, "w", encoding="utf-8") as profile:
-    #    json.dump(profile_json, profile, indent=2, ensure_ascii=False)
+    os.replace(tmp, data_path)
 
 
 def console_error(message: str):
-    return f"[[bold red]![/bold red]] {escape(message)}"
+    return f"[[bold red]![/bold red]] {escape(str(message))}"
 
 
 def console_success(message: str):
-    return f"[[bold green]+[/bold green]] {escape(message)}"
+    return f"[[bold green]+[/bold green]] {escape(str(message))}"
 
 
 def console_info(message: str):
-    return f"[[bold blue]*[/bold blue]] {escape(message)}"
+    return f"[[bold blue]*[/bold blue]] {escape(str(message))}"

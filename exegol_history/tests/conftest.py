@@ -27,7 +27,6 @@ TEST_DB_PATH = TEST_ARTIFACTS_PATH / TEST_DB_NAME
 TEST_NETEXEC_PATH = TEST_ARTIFACTS_PATH / "netexec_artifacts"
 TEST_CONFIG_PATH = TEST_ARTIFACTS_PATH / AppConfig.CONFIG_FILENAME
 TEST_PROFILE_SH = TEST_ARTIFACTS_PATH / "profile.sh"
-TEST_PROFILE_PS1 = TEST_ARTIFACTS_PATH / "profile.ps1"
 TEST_KERBEROS_PATH = TEST_ARTIFACTS_PATH / "kerberos_artifacts"
 
 
@@ -40,11 +39,7 @@ def engine() -> Engine:
 @pytest.fixture
 def load_mock_config() -> AppConfig:
     mock_config = AppConfig(TEST_CONFIG_PATH)
-
-    if platform.system() == "Windows":
-        mock_config.paths.profile_sh_path = TEST_PROFILE_PS1
-    else:
-        mock_config.paths.profile_sh_path = TEST_PROFILE_SH
+    mock_config.paths.profile_sh_path = TEST_PROFILE_SH
 
     for connector in mock_config.sync:
         connector.enabled = False
@@ -63,13 +58,10 @@ def load_mock_config() -> AppConfig:
 @pytest.fixture(scope="function", autouse=True)
 def clean():
     default_profile_path_unix = (Path(__file__).parent.parent.parent) / "profile.sh"
-    default_profile_path_windows = (Path(__file__).parent.parent.parent) / "profile.ps1"
     pathlib.Path.unlink(TEST_PROFILE_SH, missing_ok=True)
-    pathlib.Path.unlink(TEST_PROFILE_PS1, missing_ok=True)
     pathlib.Path.unlink(TEST_CONFIG_PATH, missing_ok=True)
     pathlib.Path.unlink(TEST_DB_PATH, missing_ok=True)
     shutil.copy(default_profile_path_unix, TEST_PROFILE_SH)
-    shutil.copy(default_profile_path_windows, TEST_PROFILE_PS1)
 
 
 @pytest.fixture(scope="function")
