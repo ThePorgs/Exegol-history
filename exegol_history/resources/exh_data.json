@@ -1,7 +1,5 @@
 {
-    "INTERFACE":null,
     "DOMAIN":null,
-    "DOMAIN_SID":null,
     "USER":null,
     "PASSWORD":null,
     "NT_HASH":null,
@@ -11,6 +9,5 @@
     "DB_HOSTNAME":null,
     "ROLE":null,
     "TARGET":null,
-    "IP":null,
-    "ATTACKER_IP":null
+    "IP":null
 }

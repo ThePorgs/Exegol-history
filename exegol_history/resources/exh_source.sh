@@ -1,5 +1,5 @@
 #info: this file is used by the exegol-history.py utility. Exegol terminals source it to export env vars
-_exh_file="~/.exegol_history/exh_data.json"
+_exh_file="$HOME/.exegol_history/exh_data.json"
 _exh_vars=("INTERFACE" "DOMAIN" "DOMAIN_SID" "USER" "PASSWORD" "NT_HASH" "KRB5CCNAME" "DC_IP" "DC_HOST" "DB_HOSTNAME" "ROLE" "TARGET" "IP" "ATTACKER_IP")
 
 if [[ -r "$_exh_file" ]]; then
