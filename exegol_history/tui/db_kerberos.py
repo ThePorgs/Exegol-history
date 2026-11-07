@@ -102,7 +102,7 @@ class DbKerberosApp(App):
             with VerticalScroll(id=ID_DESCRIBE_PANEL):
                 yield Static(
                     "Select a ticket to display its description.",
-                    id=ID_DESCRIBE_STATIC,
+                    id=ID_DESCRIBE_STATIC, markup=False,
                 )
         yield Rule(line_style="heavy")
         yield SearchInput(placeholder="🔍 Search...", id="search-bar")
@@ -188,7 +188,7 @@ class DbKerberosApp(App):
     def _get_selected_ticket(self) -> Ticket:
         table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
-        row_data = table.get_row_at(selected_row)
+        row_data = table.get_row_values_at(selected_row)
         return Ticket(row_data[0], row_data[1], row_data[2])
 
     def _show_description(self, path: str) -> None:
@@ -202,7 +202,7 @@ class DbKerberosApp(App):
         self, event: ObjectsDataTable.RowHighlighted
     ) -> None:
         try:
-            row_data = event.data_table.get_row(event.row_key)
+            row_data = event.data_table.get_row_values(event.row_key)
             self._show_description(row_data[0])
         except Exception:
             pass
@@ -265,6 +265,6 @@ class DbKerberosApp(App):
                 output_path,
                 self.config.kerberos.ticket_converter_command,
             )
-            self.notify(f"Ticket converted to {output_path}", severity="information")
+            self.notify(f"Ticket converted to {output_path}", severity="information", markup=False,)
         except RuntimeError as e:
-            self.notify(f"There was an error while converting: {e}", severity="error")
+            self.notify(f"There was an error while converting: {e}", severity="error", markup=False,)

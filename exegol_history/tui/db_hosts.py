@@ -209,7 +209,7 @@ class DbHostsApp(App):
             try:
                 table = self.screen.query_one(ObjectsDataTable)
                 selected_row = table.cursor_row
-                row_data = table.get_row_at(selected_row)
+                row_data = table.get_row_values_at(selected_row)
                 select_host = get_hosts(self.engine, host_id=row_data[0])[0]
 
                 self.exit(select_host)
@@ -240,7 +240,7 @@ class DbHostsApp(App):
         table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
         try:
-            row_data = table.get_row_at(selected_row)
+            row_data = table.get_row_values_at(selected_row)
             ip = row_data[1]
             copy_in_clipboard(ip)
         except Exception:
@@ -253,7 +253,7 @@ class DbHostsApp(App):
         selected_row = table.cursor_row
 
         try:
-            row_data = table.get_row_at(selected_row)
+            row_data = table.get_row_values_at(selected_row)
             hostname = row_data[2]
             copy_in_clipboard(hostname)
         except Exception:
@@ -285,7 +285,7 @@ class DbHostsApp(App):
                     self.notify("Hosts successfully exported !", severity="information")
                 except Exception as e:
                     self.notify(
-                        f"There was an error while exporting: {e}", severity="error"
+                        f"There was an error while exporting: {e}", severity="error", markup=False,
                     )
 
     def action_export_host(self) -> None:
@@ -317,7 +317,7 @@ class DbHostsApp(App):
 
         try:
             self.push_screen(
-                DeleteObjectScreen([table.get_row_at(selected_row)[0]]),
+                DeleteObjectScreen([table.get_row_values_at(selected_row)[0]]),
                 check_delete,
             )
         except RowDoesNotExist:
@@ -331,7 +331,7 @@ class DbHostsApp(App):
             try:
                 edit_hosts(self.engine, [host])
             except RuntimeError as e:
-                self.notify(f"There was an error while editing: {e}", severity="error")
+                self.notify(f"There was an error while editing: {e}", severity="error", markup=False,)
 
             self.update_table()
 
@@ -339,7 +339,7 @@ class DbHostsApp(App):
         selected_row = table.cursor_row
 
         try:
-            row_data = table.get_row_at(selected_row)
+            row_data = table.get_row_values_at(selected_row)
             host = get_hosts(self.engine, host_id=row_data[0])[0]
             self.push_screen(
                 EditObjectScreen(AssetsType.Hosts, host),

@@ -158,7 +158,7 @@ class DbCredsApp(App):
             from exegol_history.tui.screens.add_object import AddObjectScreen
 
             self.push_screen(
-                AddObjectScreen(domains=set(table.get_column_at(4))),
+                AddObjectScreen(domains=set(table.get_column_values_at(4))),
                 self.check_added_creds,
             )
 
@@ -233,7 +233,7 @@ class DbCredsApp(App):
             try:
                 table = self.screen.query_one(ObjectsDataTable)
                 selected_row = table.cursor_row
-                row_data = table.get_row_at(selected_row)
+                row_data = table.get_row_values_at(selected_row)
                 select_credential = get_credentials(
                     self.engine, credential_id=row_data[0]
                 )[0]
@@ -267,7 +267,7 @@ class DbCredsApp(App):
         selected_row = table.cursor_row
 
         try:
-            row_data = table.get_row_at(selected_row)
+            row_data = table.get_row_values_at(selected_row)
             username = row_data[1]
             copy_in_clipboard(username)
         except Exception:
@@ -279,7 +279,7 @@ class DbCredsApp(App):
         table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
         try:
-            row_data = table.get_row_at(selected_row)
+            row_data = table.get_row_values_at(selected_row)
             password = row_data[2]
             copy_in_clipboard(password)
         except Exception:
@@ -291,7 +291,7 @@ class DbCredsApp(App):
         table = self.screen.query_one(ObjectsDataTable)
         selected_row = table.cursor_row
         try:
-            row_data = table.get_row_at(selected_row)
+            row_data = table.get_row_values_at(selected_row)
             hash = row_data[3]
             copy_in_clipboard(hash)
         except Exception:
@@ -333,7 +333,7 @@ class DbCredsApp(App):
                     )
                 except Exception as e:
                     self.notify(
-                        f"There was an error while exporting: {e}", severity="error"
+                        f"There was an error while exporting: {e}", severity="error", markup=False,
                     )
 
     def action_export_credential(self) -> None:
@@ -358,7 +358,7 @@ class DbCredsApp(App):
 
         try:
             self.push_screen(
-                DeleteObjectScreen([table.get_row_at(selected_row)[0]]),
+                DeleteObjectScreen([table.get_row_values_at(selected_row)[0]]),
                 check_delete,
             )
         except RowDoesNotExist:
@@ -372,7 +372,7 @@ class DbCredsApp(App):
             try:
                 edit_credentials(self.engine, [credential])
             except RuntimeError as e:
-                self.notify(f"There was an error while editing: {e}", severity="error")
+                self.notify(f"There was an error while editing: {e}", severity="error", markup=False,)
 
             self.update_table()
 
@@ -380,7 +380,7 @@ class DbCredsApp(App):
         selected_row = table.cursor_row
 
         try:
-            row_data = table.get_row_at(selected_row)
+            row_data = table.get_row_values_at(selected_row)
             credential = get_credentials(self.engine, credential_id=row_data[0])[0]
             self.push_screen(
                 EditObjectScreen(

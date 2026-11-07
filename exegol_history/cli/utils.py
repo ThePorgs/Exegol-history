@@ -8,6 +8,9 @@ from exegol_history.db_api.hosts import Host
 from exegol_history.db_api.kerberos import Ticket
 from exegol_history.cli.arguments import check_delimiter  # noqa: F401 (re-export)
 import json
+from rich.markup import escape
+import os
+import tempfile
 
 CREDS_VARIABLES = ["USER", "PASSWORD", "NT_HASH", "DOMAIN"]
 HOSTS_VARIABLES = ["IP", "TARGET", "DB_HOSTNAME", "DC_HOST", "DC_IP", "ROLE"]
@@ -61,51 +64,28 @@ def write_kerberos_in_profile(ticket: Ticket, config: AppConfig):
 def parse_and_update(
     profile_sh_path: Union[str, Path], variables_correspondance: Dict[str, str]
 ):
-    with open(profile_sh_path, "r+") as profile:
-        profile_json = json.loads(profile)
+    with open(profile_sh_path, "r", encoding="utf-8") as profile:
+        profile_json = json.load(profile)
 
-        for variable_name, variable_value in enumerate(variables_correspondance):
-            profile_json[variable_name] = variable_value
+    for variable_name, variable_value in variables_correspondance.items():
+        profile_json[variable_name] = variable_value
 
-        profile.write(json.dumps(profile_json))
-    #with open(profile_sh_path, "r") as profile:
-    #    variables = profile.readlines()
-#
-    #for i, line in enumerate(variables):
-    #    if platform.system() == "Windows":
-    #        tmp = re.search(VARIABLE_REGEX_WINDOWS, line)
-    #    else:
-    #        tmp = re.search(VARIABLE_REGEX_UNIX, line)
-#
-    #    if tmp:
-    #        variable_name = tmp.group(1)
-#
-    #        if variable_name in variables_correspondance.keys():
-    #            new_value = variables_correspondance[variable_name]
-    #            if new_value:
-    #                if platform.system() == "Windows":
-    #                    line = f"Set-Variable -Name {variable_name} -Value '{new_value}' -Scope Global\n"
-    #                else:
-    #                    line = f"export {variable_name}='{new_value}'\n"
-    #            else:
-    #                if platform.system() == "Windows":
-    #                    line = f"Remove-Variable -Name {variable_name} -Scope Global -ErrorAction SilentlyContinue\n"
-    #                else:
-    #                    line = f"unset {variable_name}\n"
-#
-    #            variables[i] = line
+    fd, tmp = tempfile.mkstemp(dir="/opt/tools/Exegol-history/", suffix=".json")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(profile_json, f, indent=2, ensure_ascii=False)
+    os.replace(tmp, profile_sh_path)
 
-    #with open(profile_sh_path, "w") as profile:
-        #profile.write("".join(variables))
+    #with open(profile_sh_path, "w", encoding="utf-8") as profile:
+    #    json.dump(profile_json, profile, indent=2, ensure_ascii=False)
 
 
 def console_error(message: str):
-    return f"[[bold red]![/bold red]] {message}"
+    return f"[[bold red]![/bold red]] {escape(message)}"
 
 
 def console_success(message: str):
-    return f"[[bold green]+[/bold green]] {message}"
+    return f"[[bold green]+[/bold green]] {escape(message)}"
 
 
 def console_info(message: str):
-    return f"[[bold blue]*[/bold blue]] {message}"
+    return f"[[bold blue]*[/bold blue]] {escape(message)}"
