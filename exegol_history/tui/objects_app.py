@@ -120,24 +120,16 @@ class ObjectsApp(TableApp):
             )
         }
 
-    def compose(self) -> ComposeResult:
-        yield Header()
-        yield ObjectsDataTable()
-        yield Rule(line_style="heavy")
-        yield SearchInput(placeholder="🔍 Search...", id="search-bar")
-        yield Footer()
 
-    def on_mount(self) -> None:
-        self.register_theme(self.custom_theme)
-        self.theme = "custom"
-        self.table.add_columns(*self.COLUMNS)
+    def load_data(self) -> None:
+        # Called by TableApp.on_mount: don't define on_mount here, Textual
+        # would run both and add every column twice.
         self.update_table()
-        self.set_keymap(self.config.keybindings)
-        self.query_one(SearchInput).focus()
         if self.show_add_screen:
             self.action_add_object()
         if self.background_sync:
             self.sync_connectors()
+
 
     @work(thread=True, exclusive=True, group="sync", exit_on_error=False)
     def sync_connectors(self) -> None:
@@ -149,29 +141,6 @@ class ObjectsApp(TableApp):
             return
         self.call_from_thread(self.update_table)
 
-    @on(Input.Changed, "#search-bar")
-    def search(self, event: Input.Changed) -> None:
-        self._filter_table(event.value)
-
-    def _filter_table(self, query: str) -> None:
-        query = query.lower()
-        self.table.clear()
-        self.table.add_rows(
-            row
-            for row, haystack in zip(self.original_data, self._search_index)
-            if query in haystack
-        )
-
-    def on_key(self, event: events.Key) -> None:
-        # Enter selects a row only on the main screen, not inside a modal.
-        on_main_screen = self.screen is self.screen_stack[0]
-        if event.key == Keys.Enter and on_main_screen and (row := self.selected_row()):
-            self.exit(self.get_objects(row[0])[0])
-
-    def action_copy_column(self, column: int) -> None:
-        if row := self.selected_row():
-            copy_in_clipboard(row[column])
-        self.exit()
 
     def action_add_object(self) -> None:
         from exegol_history.tui.screens.add_object import AddObjectScreen
