@@ -1,8 +1,9 @@
 from textual.widgets import DataTable
 from textual.widgets._data_table import RowDoesNotExist
-from textual.widgets._data_table import CellType, ColumnKey, RowDoesNotExist, RowKey
+from textual.widgets._data_table import CellType, ColumnKey, RowKey
 from collections.abc import Iterable
 from rich.text import Text
+
 
 class _PlainCell(Text):
     """A cell displayed as literal text.
@@ -24,6 +25,7 @@ def _from_cell(value: CellType) -> CellType:
     if isinstance(value, _PlainCell):
         return value.plain
     return value
+
 
 class ObjectsDataTable(DataTable):
     def __init__(self):
@@ -51,7 +53,6 @@ class ObjectsDataTable(DataTable):
 
     def get_column_values_at(self, column_index: int) -> Iterable[CellType]:
         return (_from_cell(cell) for cell in self.get_column_at(column_index))
-
 
     def action_select_cursor(self) -> None:
         super().action_select_cursor()

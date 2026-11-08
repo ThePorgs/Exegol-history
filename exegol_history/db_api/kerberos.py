@@ -1,52 +1,32 @@
 import os
 import re
-import shutil
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
-# Common extensions used for Kerberos CCACHE tickets.
+CCACHE_PREFIX = "krb5cc_"
 CCACHE_EXTENSIONS = ".ccache"
 
 
+@dataclass
 class Ticket:
-    """
-    Represents a Kerberos CCACHE ticket found on disk.
+    """A Kerberos CCACHE ticket found on disk.
 
-    ``describe_output`` caches the output of describeTicket.py so it only has to
-    be computed once (at scan / refresh time) rather than every time the ticket
-    is highlighted in the TUI. It is intentionally kept out of __iter__ and
-    __eq__ so it does not become a table column nor affect ticket identity.
+    describe_output caches describeTicket.py's output, computed once at scan /
+    refresh time. It is neither a table column nor part of the ticket identity.
     """
 
-    def __init__(
-        self,
-        path: str,
-        username: Optional[str] = None,
-        domain: Optional[str] = None,
-        describe_output: Optional[str] = None,
-    ):
-        self.path = str(path)
-        self.username = username
-        self.domain = domain
-        self.describe_output = describe_output
+    path: str
+    username: str | None = None
+    domain: str | None = None
+    describe_output: str | None = field(default=None, compare=False, repr=False)
 
-    def __eq__(self, value) -> bool:
-        return (
-            isinstance(value, Ticket)
-            and self.path == value.path
-            and self.username == value.username
-            and self.domain == value.domain
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"Ticket(path={self.path}, username={self.username}, domain={self.domain})"
-        )
+    def __post_init__(self):
+        self.path = str(self.path)
 
     def __iter__(self):
-        return iter([self.path, self.username, self.domain])
+        return iter((self.path, self.username, self.domain))
 
 
 def scan_ccache_tickets(search_paths: list[str], search_depth: int = 3) -> list[Ticket]:
@@ -81,8 +61,9 @@ def scan_ccache_tickets(search_paths: list[str], search_depth: int = 3) -> list[
                 dirnames[:] = []
 
             for name in filenames:
+                lower_name = name.lower()
                 # Cheap filename check first, before touching the filesystem.
-                if not name.lower().startswith("krb5cc_") and not name.lower().endswith(
+                if not lower_name.startswith(CCACHE_PREFIX) and not lower_name.endswith(
                     CCACHE_EXTENSIONS
                 ):
                     continue
@@ -100,48 +81,38 @@ def scan_ccache_tickets(search_paths: list[str], search_depth: int = 3) -> list[
     return tickets
 
 
-def describe_ticket(
-    ticket_path: str, describe_ticket_command: str = "describeTicket.py"
-) -> str:
-    """
-    Run Impacket's describeTicket.py on the given ticket and return its output.
-    """
+def run_impacket_tool(command: str, *args: str) -> tuple[int, str]:
     try:
         result = subprocess.run(
-            [describe_ticket_command, ticket_path],
+            [command, *args],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             check=False,
         )
     except FileNotFoundError:
-        return (
-            f"'{describe_ticket_command}' was not found, is Impacket installed and "
-            "available in the PATH?"
+        raise RuntimeError(
+            f"'{command}' was not found, is Impacket installed and available in the PATH?"
         )
 
-    return result.stdout.decode("utf-8", errors="replace")
+    return result.returncode, result.stdout.decode("utf-8", errors="replace")
 
 
-def parse_ticket_identity(describe_output: str) -> tuple[Optional[str], Optional[str]]:
-    """
-    Extract the username and domain from describeTicket.py output.
+def describe_ticket(
+    ticket_path: str, describe_ticket_command: str = "describeTicket.py"
+) -> str:
+    """Run Impacket's describeTicket.py on the given ticket and return its output."""
+    try:
+        return run_impacket_tool(describe_ticket_command, ticket_path)[1]
+    except RuntimeError as e:
+        return str(e)
 
-    describeTicket.py prints a line such as:
-        User Name                 : john
-        User Realm                : DOMAIN.LOCAL
-    """
-    username = None
-    domain = None
 
-    username_match = re.search(r"User Name\s*:\s*(\S+)", describe_output)
-    if username_match:
-        username = username_match.group(1)
+def parse_ticket_identity(describe_output: str) -> tuple[str | None, str | None]:
+    def value_of(label: str) -> str | None:
+        match = re.search(rf"{label}\s*:\s*(\S+)", describe_output)
+        return match.group(1) if match else None
 
-    domain_match = re.search(r"User Realm\s*:\s*(\S+)", describe_output)
-    if domain_match:
-        domain = domain_match.group(1)
-
-    return username, domain
+    return value_of("User Name"), value_of("User Realm")
 
 
 def describe_and_enrich_tickets(
@@ -162,11 +133,8 @@ def describe_and_enrich_tickets(
         return tickets
 
     def _describe(ticket: Ticket) -> None:
-        output = describe_ticket(ticket.path, describe_ticket_command)
-        ticket.describe_output = output
-        username, domain = parse_ticket_identity(output)
-        ticket.username = username
-        ticket.domain = domain
+        ticket.describe_output = describe_ticket(ticket.path, describe_ticket_command)
+        ticket.username, ticket.domain = parse_ticket_identity(ticket.describe_output)
 
     workers = max(1, min(max_workers, len(tickets)))
     with ThreadPoolExecutor(max_workers=workers) as executor:
@@ -181,29 +149,14 @@ def convert_ticket(
     output_path: str,
     ticket_converter_command: str = "ticketConverter.py",
 ) -> str:
-    """
-    Convert a ticket using Impacket's ticketConverter.py.
+    returncode, output = run_impacket_tool(
+        ticket_converter_command, input_path, output_path
+    )
 
-    The conversion direction is inferred by the tool itself based on the input
-    file format (ccache <-> kirbi).
-    """
-    try:
-        result = subprocess.run(
-            [ticket_converter_command, input_path, output_path],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            check=False,
-        )
-    except FileNotFoundError:
-        raise RuntimeError(
-            f"'{ticket_converter_command}' was not found, is Impacket installed and "
-            "available in the PATH?"
-        )
+    if returncode != 0:
+        raise RuntimeError(output)
 
-    if result.returncode != 0:
-        raise RuntimeError(result.stdout.decode("utf-8", errors="replace"))
-
-    return result.stdout.decode("utf-8", errors="replace")
+    return output
 
 
 def kirbi_output_path(ticket_path: str) -> str:
@@ -211,10 +164,3 @@ def kirbi_output_path(ticket_path: str) -> str:
     Compute a sensible .kirbi output path from a ccache ticket path.
     """
     return str(Path(ticket_path).with_suffix(".kirbi"))
-
-
-def is_tool_available(command: str) -> bool:
-    """
-    Return True if the given command is available in the PATH.
-    """
-    return shutil.which(command) is not None

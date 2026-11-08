@@ -1,5 +1,4 @@
 import pathlib
-import platform
 import shutil
 from pathlib import Path
 
@@ -26,7 +25,8 @@ TEST_ARTIFACTS_PATH = Path("exegol_history") / "tests" / "artifacts"
 TEST_DB_PATH = TEST_ARTIFACTS_PATH / TEST_DB_NAME
 TEST_NETEXEC_PATH = TEST_ARTIFACTS_PATH / "netexec_artifacts"
 TEST_CONFIG_PATH = TEST_ARTIFACTS_PATH / AppConfig.CONFIG_FILENAME
-TEST_PROFILE_SH = TEST_ARTIFACTS_PATH / "profile.sh"
+TEST_EXH_SOURCE_SH = TEST_ARTIFACTS_PATH / "exh_source.sh"
+TEST_EXH_DATA = TEST_ARTIFACTS_PATH / "exh_data.json"
 TEST_KERBEROS_PATH = TEST_ARTIFACTS_PATH / "kerberos_artifacts"
 
 
@@ -39,7 +39,8 @@ def engine() -> Engine:
 @pytest.fixture
 def load_mock_config() -> AppConfig:
     mock_config = AppConfig(TEST_CONFIG_PATH)
-    mock_config.paths.data_path = TEST_PROFILE_SH
+    mock_config.paths.data_path = TEST_EXH_DATA
+    mock_config.paths.source_path = TEST_EXH_SOURCE_SH
 
     for connector in mock_config.sync:
         connector.enabled = False
@@ -57,11 +58,29 @@ def load_mock_config() -> AppConfig:
 
 @pytest.fixture(scope="function", autouse=True)
 def clean():
-    default_profile_path_unix = (Path(__file__).parent.parent.parent) / "profile.sh"
-    pathlib.Path.unlink(TEST_PROFILE_SH, missing_ok=True)
+    default_exh_source_path_unix = (
+        (Path(__file__).parent.parent) / "resources" / "exh_source.sh"
+    )
+    default_exh_data_path_unix = (
+        (Path(__file__).parent.parent) / "resources" / "exh_data.json"
+    )
+    pathlib.Path.unlink(TEST_EXH_SOURCE_SH, missing_ok=True)
+    pathlib.Path.unlink(TEST_EXH_DATA, missing_ok=True)
     pathlib.Path.unlink(TEST_CONFIG_PATH, missing_ok=True)
     pathlib.Path.unlink(TEST_DB_PATH, missing_ok=True)
-    shutil.copy(default_profile_path_unix, TEST_PROFILE_SH)
+    shutil.copy(default_exh_source_path_unix, TEST_EXH_SOURCE_SH)
+    shutil.copy(default_exh_data_path_unix, TEST_EXH_DATA)
+
+    # Modify the data path
+    with open(TEST_EXH_SOURCE_SH, "r") as f:
+        source_text = f.read()
+
+    source_text = source_text.replace(
+        "$HOME/.exegol_history/exh_data.json", str(TEST_EXH_DATA)
+    )
+
+    with open(TEST_EXH_SOURCE_SH, "w") as f:
+        f.write(source_text)
 
 
 @pytest.fixture(scope="function")

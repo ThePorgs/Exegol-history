@@ -207,7 +207,7 @@ async def test_kerberos_tui_set_in_profile_linux(load_mock_config: AppConfig):
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.data_path} && "
+            f"source {load_mock_config.paths.source_path} && "
             f"echo ${KERBEROS_VARIABLES[0]} ${KERBEROS_VARIABLES[1]} ${KERBEROS_VARIABLES[2]}",
         ],
         stdout=subprocess.PIPE,

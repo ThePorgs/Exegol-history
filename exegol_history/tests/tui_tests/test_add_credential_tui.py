@@ -126,7 +126,7 @@ async def test_add_and_set_credential_full(engine: Engine, load_mock_config: App
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.data_path} && echo $PASSWORD $USER $NT_HASH $DOMAIN",
+            f"source {load_mock_config.paths.source_path} && echo $PASSWORD $USER $NT_HASH $DOMAIN",
         ],
         stdout=subprocess.PIPE,
     )

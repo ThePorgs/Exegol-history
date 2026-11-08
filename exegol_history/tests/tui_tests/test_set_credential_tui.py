@@ -59,7 +59,7 @@ async def test_set_credential_only_username_linux(
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.data_path} && echo ${CREDS_VARIABLES[0]}",
+            f"source {load_mock_config.paths.source_path} && echo ${CREDS_VARIABLES[0]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -71,7 +71,7 @@ async def test_set_credential_only_username_linux(
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.data_path} && echo ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
+            f"source {load_mock_config.paths.source_path} && echo ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -104,7 +104,7 @@ async def test_set_credential_half_linux(engine: Engine, load_mock_config: AppCo
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.data_path} && echo ${CREDS_VARIABLES[0]} ${CREDS_VARIABLES[1]}",
+            f"source {load_mock_config.paths.source_path} && echo ${CREDS_VARIABLES[0]} ${CREDS_VARIABLES[1]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -117,7 +117,7 @@ async def test_set_credential_half_linux(engine: Engine, load_mock_config: AppCo
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.data_path} && echo ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
+            f"source {load_mock_config.paths.source_path} && echo ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
         ],
         stdout=subprocess.PIPE,
     )
@@ -154,7 +154,7 @@ async def test_set_credential_full_linux(engine: Engine, load_mock_config: AppCo
         [
             "bash",
             "-c",
-            f"source {load_mock_config.paths.data_path} && echo ${CREDS_VARIABLES[0]} ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
+            f"source {load_mock_config.paths.source_path} && echo ${CREDS_VARIABLES[0]} ${CREDS_VARIABLES[1]} ${CREDS_VARIABLES[2]} ${CREDS_VARIABLES[3]}",
         ],
         stdout=subprocess.PIPE,
     )

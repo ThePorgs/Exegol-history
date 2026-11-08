@@ -179,6 +179,8 @@ pyrightconfig.json
 exegol_history/tests/artifacts/test.sqlite3
 exegol_history/tests/artifacts/test.key
 exegol_history/tests/artifacts/profile.sh
+exegol_history/tests/artifacts/exh_source.sh
+exegol_history/tests/artifacts/exh_data.json
 
 # Devbox
 devbox.lock

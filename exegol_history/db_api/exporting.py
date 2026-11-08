@@ -26,9 +26,13 @@ def export_objects(format, objects, delimiter: str = None) -> str:
             return json.dumps(rows)
         case CredsImportFileType.CSV | HostsImportFileType.CSV:
             output = io.StringIO()
-            writer = csv.DictWriter(output, fieldnames=columns, delimiter=delimiter or ",")
+            writer = csv.DictWriter(
+                output, fieldnames=columns, delimiter=delimiter or ","
+            )
             writer.writeheader()
             writer.writerows(rows)
             return output.getvalue()
         case _:
-            raise NotImplementedError(f"Type {format} is not implemented yet for export")
+            raise NotImplementedError(
+                f"Type {format} is not implemented yet for export"
+            )

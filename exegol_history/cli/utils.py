@@ -1,5 +1,3 @@
-import re
-import platform
 from pathlib import Path
 from typing import Dict, Union
 from exegol_history.config.config import AppConfig
@@ -94,4 +92,3 @@ def console_success(message) -> str:
 
 def console_info(message) -> str:
     return _console_message("*", "blue", message)
-

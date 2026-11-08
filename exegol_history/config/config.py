@@ -77,7 +77,7 @@ class ConfigPaths:
         db_name: str = "exh.db",
         data_path: str | Path = Path("~/.exegol_history/exh_data.json"),
         source_path: str | Path = "~/.exegol_history/exh_source.sh",
-        profile_sh_path: str | None = None, # keep for retrocompatibility
+        profile_sh_path: str | None = None,  # keep for retrocompatibility
     ):
         self.db_name = db_name
         self.data_path = Path(data_path).expanduser()

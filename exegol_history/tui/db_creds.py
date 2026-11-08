@@ -1,4 +1,9 @@
-from exegol_history.db_api.creds import add_credentials, delete_credentials, edit_credentials, get_credentials
+from exegol_history.db_api.creds import (
+    add_credentials,
+    delete_credentials,
+    edit_credentials,
+    get_credentials,
+)
 from exegol_history.tui.objects_app import CopyAction, ObjectsApp
 from exegol_history.tui.widgets.import_file import AssetsType
 

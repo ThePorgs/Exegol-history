@@ -163,7 +163,12 @@ class ImportFile(Container):
                 else:
                     self.screen.dismiss(parsed_assets)
             except Exception as e:
-                self.notify(f"{e}", title="Error parsing the content", severity="error", markup=False,)
+                self.notify(
+                    f"{e}",
+                    title="Error parsing the content",
+                    severity="error",
+                    markup=False,
+                )
                 pass
         elif event.button.id == ID_KDBX_KEYFILE_BUTTON:
 

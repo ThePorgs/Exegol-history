@@ -17,6 +17,7 @@ CONFLICT_RULES = {
     "password": (["username", "password"], PASSWORD_KEYED, ["hash", "domain"]),
 }
 
+
 class Credential(Base):
     __tablename__ = "credentials"
     __table_args__ = (
@@ -113,7 +114,9 @@ def add_credentials(engine: Engine, credentials: list[dict], sync_key: str = "")
         session.commit()
 
 
-def get_credentials(engine: Engine, credential_id: str = None, redacted: bool = False) -> list[Credential]:
+def get_credentials(
+    engine: Engine, credential_id: str = None, redacted: bool = False
+) -> list[Credential]:
     credentials = get_rows(engine, Credential, credential_id)
 
     if redacted:

@@ -1,7 +1,6 @@
 import csv
 import io
 import json
-from typing import Any
 
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.file_types import (
@@ -10,9 +9,19 @@ from exegol_history.db_api.file_types import (
 )
 from exegol_history.db_api.hosts import Host
 
-CREDS_DEFAULTS = {"username": "", "password": "", "hash": "", "domain": "", "sync_key": ""}
+CREDS_DEFAULTS = {
+    "username": "",
+    "password": "",
+    "hash": "",
+    "domain": "",
+    "sync_key": "",
+}
 HOSTS_DEFAULTS = {"ip": "", "hostname": "", "role": ""}
-PYPYKATZ_SECRETS = {"msv_creds": ("NThash", "hash"), "wdigest_creds": ("password", "password")}
+PYPYKATZ_SECRETS = {
+    "msv_creds": ("NThash", "hash"),
+    "wdigest_creds": ("password", "password"),
+}
+
 
 def import_objects(
     file_type: CredsImportFileType | HostsImportFileType,
@@ -32,7 +41,9 @@ def import_objects(
         case CredsImportFileType.JSON | HostsImportFileType.JSON:
             objects = json.loads(file_raw)
         case _:
-            raise NotImplementedError(f"Type {file_type} is not implemented yet for import")
+            raise NotImplementedError(
+                f"Type {file_type} is not implemented yet for import"
+            )
 
     if isinstance(file_type, CredsImportFileType):
         defaults, allowed = CREDS_DEFAULTS, {*CREDS_DEFAULTS, "credential_id"}
@@ -65,7 +76,12 @@ def import_creds_pypykatz_json(file_raw: bytes) -> list[dict]:
                 username, domain = entry["username"], entry["domainname"]
                 credential = parsed_credentials.setdefault(
                     (username, domain),
-                    {"username": username, "password": "", "hash": "", "domain": domain},
+                    {
+                        "username": username,
+                        "password": "",
+                        "hash": "",
+                        "domain": domain,
+                    },
                 )
                 credential[field] = entry[secret_field] or ""
 
@@ -77,8 +93,12 @@ def import_creds_secretsdump(file_raw: bytes) -> list[dict]:
     return [Credential.dict(username=row[0], hash=row[3]) for row in rows]
 
 
-def import_creds_kdbx(file_raw, kdbx_password: str = None, keyfile_path: str = None) -> list[dict]:
+def import_creds_kdbx(
+    file_raw, kdbx_password: str = None, keyfile_path: str = None
+) -> list[dict]:
     from pykeepass import PyKeePass
 
     kp = PyKeePass(io.BytesIO(file_raw), password=kdbx_password, keyfile=keyfile_path)
-    return [Credential.dict(username=e.username, password=e.password) for e in kp.entries]
+    return [
+        Credential.dict(username=e.username, password=e.password) for e in kp.entries
+    ]

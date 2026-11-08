@@ -7,7 +7,9 @@ from exegol_history.db_api.utils import MESSAGE_ID_NOT_EXIST, OBJECT_ALREADY_EXI
 
 class Base(DeclarativeBase):
     def as_dict(self) -> dict:
-        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+        return {
+            column.name: getattr(self, column.name) for column in self.__table__.columns
+        }
 
     def __repr__(self) -> str:
         fields = ", ".join(f"{name}={value}" for name, value in self.as_dict().items())
@@ -20,7 +22,9 @@ def primary_key(model):
 
 def keep_existing_if_empty(query, model, column: str):
     """ON CONFLICT value: the new value, or the stored one if the new is empty."""
-    return func.coalesce(func.nullif(getattr(query.excluded, column), ""), getattr(model, column))
+    return func.coalesce(
+        func.nullif(getattr(query.excluded, column), ""), getattr(model, column)
+    )
 
 
 def get_rows(engine: Engine, model, object_id=None) -> list:

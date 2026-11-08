@@ -69,6 +69,7 @@ def add_hosts(engine: Engine, hosts: list[dict]):
         session.execute(query, hosts)
         session.commit()
 
+
 def get_hosts(engine: Engine, host_id: str = None) -> list[Host]:
     return get_rows(engine, Host, host_id)
 

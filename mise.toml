@@ -17,11 +17,6 @@ arg "<type>" help="Program to debug (creds or hosts)" default="creds" { choices 
 '''
 
 run = '''
-echo "[*] Please run the 'poetry run textual console -x EVENT -x DEBUG -x SYSTEM' command"
-
-if [[ ${usage_type?} = "creds" ]]; then
-    uv run textual run --dev exegol-history.py set creds
-else
-    uv run textual run --dev exegol-history.py set hosts
-fi
+echo "[*] Please run the 'uv run textual console -x EVENT -x DEBUG -x SYSTEM' command"
+uv run textual run --dev exegol-history.py set "${usage_type?}"
 '''
