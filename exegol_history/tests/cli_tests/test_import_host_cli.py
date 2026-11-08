@@ -9,9 +9,12 @@ from exegol_history.cli.functions import cli_import_objects
 from exegol_history.db_api.hosts import Host, get_hosts
 from exegol_history.db_api.importing import HostsImportFileType
 from exegol_history.tests.common import (
+    HOSTNAME_TEST_VALUE,
+    IP_TEST_VALUE,
     TEST_HOSTS_CSV_COLON,
     TEST_HOSTS_CSV_COMMA,
     TEST_HOSTS_JSON,
+    TEST_HOSTS_NMAP_XML,
     delete_all_entries,
 )
 
@@ -43,6 +46,17 @@ def test_import_host_json(engine: Engine, HOSTS_TEST_VALUE: list[Host]):
     cli_import_objects(args, engine)
 
     assert get_hosts(engine) == HOSTS_TEST_VALUE
+
+
+def test_import_host_nmap(engine: Engine, HOSTS_TEST_VALUE: list[Host]):
+    command_line = f"{IMPORT_SUBCOMMAND} {HOSTS_SUBCOMMAND} --format {HostsImportFileType.NMAP_XML.name} -f {TEST_HOSTS_NMAP_XML}".split()
+    args = parse_arguments().parse_args(command_line)
+
+    cli_import_objects(args, engine)
+
+    assert get_hosts(engine) == [
+        Host(1, ip=IP_TEST_VALUE, hostname=HOSTNAME_TEST_VALUE)
+    ]
 
 
 def test_import_host_bad_format(engine: Engine):

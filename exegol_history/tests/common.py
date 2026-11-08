@@ -110,6 +110,7 @@ TEST_CREDS_SECRETSDUMP = TEST_ARTIFACTS_PATH / "secretsdump.dsv"
 TEST_CREDS_KDBX = TEST_ARTIFACTS_PATH / "import.kdbx"
 TEST_CREDS_KDBX_KEYFILE = TEST_ARTIFACTS_PATH / "import.key"
 TEST_NETEXEC_WORKSPACE = TEST_ARTIFACTS_PATH / "netexec_artifacts"
+TEST_HOSTS_NMAP_XML = TEST_ARTIFACTS_PATH / "nmap.xml"
 
 # Path for patching function for mocking
 SQLITE3_PATCH_PATH = "exegol_history.connectors.netexec.netexec_sync.sqlite3"

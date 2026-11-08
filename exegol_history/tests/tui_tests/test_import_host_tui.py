@@ -3,6 +3,7 @@ from common import (
     IP_TEST_VALUE,
     ROLE_TEST_VALUE,
     TEST_HOSTS_CSV_COMMA,
+    TEST_HOSTS_NMAP_XML,
     select_input_and_enter_text,
     select_select_index,
 )
@@ -77,3 +78,32 @@ async def test_import_host_csv_file(
         await pilot.click(f"#{ID_CONFIRM_IMPORT_BUTTON}")
 
     assert get_hosts(engine) == HOSTS_TEST_VALUE
+
+
+async def test_import_host_nmap_file(
+    engine: Engine, load_mock_config: AppConfig, HOSTS_TEST_VALUE: list[Host]
+):
+    app = DbHostsApp(load_mock_config, engine)
+    add_host_keybind = load_mock_config.keybindings["add_host"]
+
+    async with app.run_test(size=(400, 400)) as pilot:
+        await pilot.press(add_host_keybind)
+
+        # Switch tab
+        await pilot.press(Keys.Right)
+
+        await pilot.click(f"#{ID_IMPORT_BUTTON}")
+        pilot.app.screen.query_one(f"#{ID_PATH_INPUT}").value = str(TEST_HOSTS_NMAP_XML)
+        await pilot.pause()
+        await pilot.click(f"#{ID_CONFIRM_BUTTON}")
+
+        # Choose CSV file type
+        await select_select_index(
+            pilot, f"#{ID_FILE_TYPE_SELECT}", HostsImportFileType.NMAP_XML.value
+        )
+
+        await pilot.click(f"#{ID_CONFIRM_IMPORT_BUTTON}")
+
+    assert get_hosts(engine) == [
+        Host(1, ip=IP_TEST_VALUE, hostname=HOSTNAME_TEST_VALUE)
+    ]

@@ -2,20 +2,16 @@ from dataclasses import dataclass
 from functools import partial
 
 from sqlalchemy import Engine
-from textual import events, on, work
-from textual.app import ComposeResult, SystemCommand
+from textual import work
+from textual.app import SystemCommand
 from textual.binding import Binding
 from textual.keys import Keys
 from textual.screen import Screen
-from textual.widgets import Footer, Header, Input, Rule
 
 from exegol_history.config.config import AppConfig
 from exegol_history.db_api.exporting import export_objects
-from exegol_history.db_api.utils import copy_in_clipboard
 from exegol_history.tui.table_app import TableApp
 from exegol_history.tui.widgets.import_file import AssetsType
-from exegol_history.tui.widgets.object_datatable import ObjectsDataTable
-from exegol_history.tui.widgets.search_input import SearchInput
 
 FUNCTION_KEYS = [Keys.F1, Keys.F2, Keys.F3, Keys.F4, Keys.F5, Keys.F6, Keys.F7, Keys.F8]
 
@@ -120,7 +116,6 @@ class ObjectsApp(TableApp):
             )
         }
 
-
     def load_data(self) -> None:
         # Called by TableApp.on_mount: don't define on_mount here, Textual
         # would run both and add every column twice.
@@ -129,7 +124,6 @@ class ObjectsApp(TableApp):
             self.action_add_object()
         if self.background_sync:
             self.sync_connectors()
-
 
     @work(thread=True, exclusive=True, group="sync", exit_on_error=False)
     def sync_connectors(self) -> None:
@@ -140,7 +134,6 @@ class ObjectsApp(TableApp):
         except Exception:
             return
         self.call_from_thread(self.update_table)
-
 
     def action_add_object(self) -> None:
         from exegol_history.tui.screens.add_object import AddObjectScreen

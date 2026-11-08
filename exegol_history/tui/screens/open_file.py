@@ -1,8 +1,11 @@
+from pathlib import Path
+
 from textual.screen import ModalScreen
 from textual.app import ComposeResult
 from textual.widgets import Static, DirectoryTree, Button, Input
 from textual.containers import Container
 from exegol_history.tui.widgets.action_buttons import ActionButtons, ID_CONFIRM_BUTTON
+from exegol_history.tui.widgets.navigable_directory_tree import NavigableDirectoryTree
 
 ID_PATH_INPUT = "select_path_input"
 
@@ -20,7 +23,7 @@ class OpenFileScreen(ModalScreen):
                 self.message,
                 id="question",
             )
-            yield DirectoryTree("/", id="directory_tree")
+            yield NavigableDirectoryTree(Path.cwd(), id="directory_tree")
             yield Input(placeholder="Selected path...", id=ID_PATH_INPUT)
             yield ActionButtons()
 

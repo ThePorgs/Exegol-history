@@ -14,6 +14,7 @@ class CredsImportFileType(Enum):
 class HostsImportFileType(Enum):
     CSV = 1
     JSON = 2
+    NMAP_XML = 3
 
 
 class CredsExportFileType(Enum):

@@ -1,6 +1,7 @@
 import csv
 import io
 import json
+from xml.etree import ElementTree
 
 from exegol_history.db_api.creds import Credential
 from exegol_history.db_api.file_types import (
@@ -21,6 +22,7 @@ PYPYKATZ_SECRETS = {
     "msv_creds": ("NThash", "hash"),
     "wdigest_creds": ("password", "password"),
 }
+NMAP_HOSTNAME_PRIORITY = ("user", "PTR")
 
 
 def import_objects(
@@ -40,6 +42,8 @@ def import_objects(
             objects = import_objects_csv(file_raw)
         case CredsImportFileType.JSON | HostsImportFileType.JSON:
             objects = json.loads(file_raw)
+        case HostsImportFileType.NMAP_XML:
+            objects = import_hosts_nmap_xml(file_raw)
         case _:
             raise NotImplementedError(
                 f"Type {file_type} is not implemented yet for import"
@@ -102,3 +106,44 @@ def import_creds_kdbx(
     return [
         Credential.dict(username=e.username, password=e.password) for e in kp.entries
     ]
+
+
+def import_hosts_nmap_xml(file_raw: bytes) -> list[dict]:
+    """Hosts from an Nmap XML report (nmap -oX): one per IP address of every
+    host that is up, with its hostname when Nmap found one.
+
+    ElementTree never resolves external entities and the bundled expat (2.4.1+)
+    rejects entity expansion attacks, so untrusted reports are safe to parse.
+    """
+    try:
+        report = ElementTree.fromstring(file_raw)
+    except ElementTree.ParseError as e:
+        raise ValueError(f"Invalid Nmap XML report: {e}") from e
+
+    if report.tag != "nmaprun":
+        raise ValueError(
+            "Invalid Nmap XML report: the root element should be <nmaprun>"
+        )
+
+    hosts = {}
+    for host in report.findall("host"):
+        status = host.find("status")
+        if status is not None and status.get("state") != "up":
+            continue
+
+        names = {
+            name.get("type"): name.get("name", "")
+            for name in host.findall("hostnames/hostname")
+        }
+        hostname = next(
+            (names[t] for t in NMAP_HOSTNAME_PRIORITY if names.get(t)),
+            next(iter(names.values()), ""),
+        )
+
+        for address in host.findall("address"):
+            if address.get("addrtype") in ("ipv4", "ipv6") and address.get("addr"):
+                ip = address.get("addr")
+                # (ip, hostname) is unique in the database: keep one row each
+                hosts[(ip, hostname.lower())] = Host.dict(ip=ip, hostname=hostname)
+
+    return list(hosts.values())
