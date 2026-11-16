@@ -1,3 +1,4 @@
+import pytest
 from sqlalchemy import Engine
 
 from exegol_history.cli.arguments import parse_arguments
@@ -11,32 +12,25 @@ from exegol_history.tests.common import (
 )
 
 
-def test_add_host_only_ip(engine: Engine):
-    command_line = f"{ADD_SUBCOMMAND} {HOSTS_SUBCOMMAND} --ip {IP_TEST_VALUE}".split()
-    args = parse_arguments().parse_args(command_line)
-
-    add_object(args, engine, {})
-
-    assert get_hosts(engine) == [Host(1, ip=IP_TEST_VALUE)]
-
-
-def test_add_host_half(engine: Engine):
-    command_line = f"{ADD_SUBCOMMAND} {HOSTS_SUBCOMMAND} --ip {IP_TEST_VALUE} --hostname {HOSTNAME_TEST_VALUE}".split()
-    args = parse_arguments().parse_args(command_line)
-
-    add_object(args, engine, {})
-
-    assert get_hosts(engine) == [
-        Host(1, ip=IP_TEST_VALUE, hostname=HOSTNAME_TEST_VALUE)
-    ]
-
-
-def test_add_host_full(engine: Engine):
-    command_line = f"{ADD_SUBCOMMAND} {HOSTS_SUBCOMMAND} --ip {IP_TEST_VALUE} --hostname {HOSTNAME_TEST_VALUE} --role {ROLE_TEST_VALUE}".split()
-    args = parse_arguments().parse_args(command_line)
-
-    add_object(args, engine, {})
-
-    assert get_hosts(engine) == [
-        Host(1, ip=IP_TEST_VALUE, hostname=HOSTNAME_TEST_VALUE, role=ROLE_TEST_VALUE)
-    ]
+@pytest.mark.parametrize(
+    "command_line,expected_result",
+    [
+        (
+            f"{ADD_SUBCOMMAND} {HOSTS_SUBCOMMAND} --ip {IP_TEST_VALUE}",
+            [Host(1, ip=IP_TEST_VALUE)],
+        ),
+        (
+            f"{ADD_SUBCOMMAND} {HOSTS_SUBCOMMAND} --ip {IP_TEST_VALUE} --hostname {HOSTNAME_TEST_VALUE}",
+            [Host(1, ip=IP_TEST_VALUE, hostname=HOSTNAME_TEST_VALUE)],
+        ),
+        (
+            f"{ADD_SUBCOMMAND} {HOSTS_SUBCOMMAND} --ip {IP_TEST_VALUE} --hostname {HOSTNAME_TEST_VALUE} --role {ROLE_TEST_VALUE}",
+            [
+                Host(1, ip=IP_TEST_VALUE, hostname=HOSTNAME_TEST_VALUE, role=ROLE_TEST_VALUE)
+            ],
+        ),
+    ],
+)
+def test_add_host(engine: Engine, command_line: str, expected_result: list[Host]):
+    add_object(parse_arguments().parse_args(command_line.split()), engine, {})
+    assert get_hosts(engine) == expected_result
